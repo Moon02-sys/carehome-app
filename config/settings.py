@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-wjisp)2hw$!o&6&s!52#z-b+tmlf6a+@^m$x-aljr!7aa-dl-z
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['isanchez.pythonanywhere.com', 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -79,13 +79,31 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+import os
+
+# Detectar si estamos en PythonAnywhere
+if 'PYTHONANYWHERE_DOMAIN' in os.environ or 'isanchez.pythonanywhere.com' in os.environ.get('PYTHONANYWHERE_SITE', ''):
+    # Configuración MySQL para producción
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'isanchez$carehome',
+            'USER': 'isanchez',
+            'PASSWORD': 'Django#123',  # CAMBIA ESTO por tu contraseña real
+            'HOST': 'isanchez.mysql.pythonanywhere-services.com',
+            'OPTIONS': {
+                'charset': 'utf8mb4',
+            },
+        }
     }
-}
-# isanchez Django#123
+else:
+    # SQLite para desarrollo local
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -121,13 +139,15 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Media files (uploads)
-MEDIA_URL = 'media/'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 # Login settings
 LOGIN_URL = 'accounts:login'
