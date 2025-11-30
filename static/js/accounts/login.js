@@ -1,0 +1,158 @@
+// login.js - refactorizado para ejecutarse como archivo independiente
+document.addEventListener('DOMContentLoaded', function () {
+    initLoginValidation();
+    initRecoveryValidation();
+});
+
+function initLoginValidation() {
+    const pwd = document.getElementById('password');
+    if (!pwd) return; // no estamos en la página de login
+
+    const icon = document.getElementById('password-icon');
+    const reqUpper = document.getElementById('req-upper');
+    const reqLower = document.getElementById('req-lower');
+    const reqNumber = document.getElementById('req-number');
+    const reqLength = document.getElementById('req-length');
+    const requirementsDiv = document.getElementById('password-requirements');
+    const username = document.getElementById('username');
+    const btnLogin = document.getElementById('btnLogin');
+
+    function validatePassword(value) {
+        const hasUpper = /[A-Z]/.test(value);
+        const hasLower = /[a-z]/.test(value);
+        const hasNumber = /\d/.test(value);
+        const hasLength = value.length >= 8;
+        return { hasUpper, hasLower, hasNumber, hasLength };
+    }
+
+    function updateUI(state) {
+        if (reqUpper) reqUpper.style.color = state.hasUpper ? '#198754' : '#dc3545';
+        if (reqLower) reqLower.style.color = state.hasLower ? '#198754' : '#dc3545';
+        if (reqNumber) reqNumber.style.color = state.hasNumber ? '#198754' : '#dc3545';
+        if (reqLength) reqLength.style.color = state.hasLength ? '#198754' : '#dc3545';
+
+        const allOk = state.hasUpper && state.hasLower && state.hasNumber && state.hasLength;
+        if (!allOk && pwd.value.length > 0) {
+            if (icon) icon.style.display = 'block';
+            pwd.classList.add('is-invalid');
+        } else {
+            if (icon) icon.style.display = 'none';
+            pwd.classList.remove('is-invalid');
+        }
+        checkFormValidity();
+    }
+
+    function checkFormValidity() {
+        if (!btnLogin) return;
+        const state = validatePassword(pwd.value || '');
+        const isUsernameValid = username ? username.value.trim().length > 0 : false;
+        const isPasswordValid = state.hasUpper && state.hasLower && state.hasNumber && state.hasLength;
+        // Comentamos la validación estricta para permitir cualquier contraseña
+        // btnLogin.disabled = !(isUsernameValid && isPasswordValid);
+        btnLogin.disabled = !isUsernameValid; // Solo validar que haya username
+    }
+
+    pwd.addEventListener('input', function (e) {
+        const s = validatePassword(e.target.value);
+        updateUI(s);
+    });
+
+    if (requirementsDiv) {
+        pwd.addEventListener('focus', function () { requirementsDiv.style.display = 'block'; });
+        pwd.addEventListener('blur', function () { requirementsDiv.style.display = 'none'; });
+    }
+
+    if (username) username.addEventListener('input', checkFormValidity);
+
+    // El formulario se enviará normalmente, no necesitamos interceptar el click
+    // Initialize UI (autofill cases)
+    updateUI(validatePassword(pwd.value || ''));
+}
+
+function initRecoveryValidation() {
+    const newPwd = document.getElementById('newPassword');
+    if (!newPwd) return; // no hay modal de recovery en esta página
+
+    const confirmPwd = document.getElementById('confirmPassword');
+    const newPwdIcon = document.getElementById('new-pwd-icon');
+    const confirmPwdIcon = document.getElementById('confirm-pwd-icon');
+    const confirmFeedback = document.getElementById('confirmPasswordFeedback');
+    const btnSubmit = document.getElementById('btnRecoverSubmit');
+    const recoveryRequirements = document.getElementById('recovery-requirements');
+    const recReqUpper = document.getElementById('rec-req-upper');
+    const recReqLower = document.getElementById('rec-req-lower');
+    const recReqNumber = document.getElementById('rec-req-number');
+    const recReqLength = document.getElementById('rec-req-length');
+    const recoveryEmail = document.getElementById('recoveryEmail');
+    const recoveryModal = document.getElementById('recoveryModal');
+    const recoveryForm = document.getElementById('recoveryForm');
+
+    function validateNew(value) {
+        const hasUpper = /[A-Z]/.test(value);
+        const hasLower = /[a-z]/.test(value);
+        const hasNumber = /\d/.test(value);
+        const hasLength = value.length >= 8;
+        return { hasUpper, hasLower, hasNumber, hasLength };
+    }
+
+    function updateUI() {
+        const newState = validateNew(newPwd.value || '');
+        const match = newPwd.value === (confirmPwd ? confirmPwd.value : '') && newPwd.value.length > 0;
+
+        if (recReqUpper) recReqUpper.style.color = newState.hasUpper ? '#198754' : '#dc3545';
+        if (recReqLower) recReqLower.style.color = newState.hasLower ? '#198754' : '#dc3545';
+        if (recReqNumber) recReqNumber.style.color = newState.hasNumber ? '#198754' : '#dc3545';
+        if (recReqLength) recReqLength.style.color = newState.hasLength ? '#198754' : '#dc3545';
+
+        const allOk = newState.hasUpper && newState.hasLower && newState.hasNumber && newState.hasLength;
+
+        if (!allOk && newPwd.value.length > 0) {
+            if (newPwdIcon) newPwdIcon.style.display = 'block';
+            newPwd.classList.add('is-invalid');
+        } else {
+            if (newPwdIcon) newPwdIcon.style.display = 'none';
+            newPwd.classList.remove('is-invalid');
+        }
+
+        if (confirmPwd) {
+            if (confirmPwd.value.length > 0) {
+                if (match) {
+                    confirmPwd.classList.remove('is-invalid');
+                    if (confirmPwdIcon) confirmPwdIcon.style.display = 'none';
+                    if (confirmFeedback) { confirmFeedback.textContent = ''; confirmFeedback.style.color = '#198754'; }
+                } else {
+                    confirmPwd.classList.add('is-invalid');
+                    if (confirmPwdIcon) confirmPwdIcon.style.display = 'block';
+                    if (confirmFeedback) { confirmFeedback.textContent = 'Las contraseñas no coinciden'; confirmFeedback.style.color = '#dc3545'; }
+                }
+            } else {
+                confirmPwd.classList.remove('is-invalid');
+                if (confirmPwdIcon) confirmPwdIcon.style.display = 'none';
+                if (confirmFeedback) { confirmFeedback.textContent = ''; }
+            }
+        }
+
+        const canSubmit = allOk && match && recoveryEmail && recoveryEmail.value.trim().length > 0;
+        if (btnSubmit) btnSubmit.disabled = !canSubmit;
+    }
+
+    newPwd.addEventListener('input', updateUI);
+    if (confirmPwd) confirmPwd.addEventListener('input', updateUI);
+    if (recoveryEmail) recoveryEmail.addEventListener('input', updateUI);
+
+    if (recoveryRequirements) {
+        newPwd.addEventListener('focus', function () { recoveryRequirements.style.display = 'block'; });
+        newPwd.addEventListener('blur', function () { recoveryRequirements.style.display = 'none'; });
+    }
+
+    if (recoveryModal && recoveryForm) {
+        recoveryModal.addEventListener('hidden.bs.modal', function () {
+            recoveryForm.reset();
+            if (recoveryRequirements) recoveryRequirements.style.display = 'none';
+            updateUI();
+        });
+    }
+
+    // initialize
+    updateUI();
+}

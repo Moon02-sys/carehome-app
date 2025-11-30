@@ -1,0 +1,283 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ STRINGS.HOME_TITLE }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/home/home.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">{{ STRINGS.HOME_TITLE }}</h2>
+        <div class="d-flex align-items-center">
+            <i class="bi bi-bell me-3 text-muted" style="font-size: 1.2rem;"></i>
+            <i class="bi bi-person-circle text-muted" style="font-size: 1.5rem;"></i>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <!-- Residentes Card -->
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card text-bg-success border-0">
+                <div class="card-body text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <i class="bi bi-house-fill" style="font-size: 2.5rem;"></i>
+                        </div>
+                        <div class="text-end">
+                            <h2 class="mb-0 fs-2">0</h2>
+                            <small class="fs-6">{{ STRINGS.RESIDENTS }}</small>
+                        </div>
+                    </div>
+                    <a href="{% url 'management:residents_list' %}" class="btn btn-light text-success mt-3 d-flex justify-content-between align-items-center w-100 fs-6 text-decoration-none">
+                        <span>{{ STRINGS.RESIDENTS }}</span><i class="bi bi-arrow-right-circle-fill fs-5"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Salidas Card -->
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card text-bg-primary border-0">
+                <div class="card-body text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <i class="bi bi-info-circle-fill" style="font-size: 2.5rem;"></i>
+                        </div>
+                        <div class="text-end">
+                            <h2 class="mb-0 fs-2">0</h2>
+                            <small class="fs-6">Salidas</small>
+                        </div>
+                    </div>
+                    <span data-bs-toggle="tooltip" data-bs-placement="top" title="Función no disponible actualmente">
+                        <button class="btn btn-light text-primary mt-3 d-flex justify-content-between align-items-center w-100 fs-6" type="button" disabled>
+                            <span>Recepción</span><i class="bi bi-arrow-right-circle-fill fs-5"></i>
+                        </button>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Registro Card -->
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card text-bg-danger border-0">
+                <div class="card-body text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <i class="bi bi-plus-square-fill" style="font-size: 2.5rem;"></i>
+                        </div>
+                        <div class="text-end">
+                            <h2 class="mb-0 fs-2">Registro</h2>
+                            <small class="fs-6">Hoja de registrar</small>
+                        </div>
+                    </div>
+                    <a href="{% url 'registry:registry_list' %}" class="btn btn-light text-danger mt-3 d-flex justify-content-between align-items-center w-100 fs-6 text-decoration-none">
+                        <span>Registrar</span><i class="bi bi-arrow-right-circle-fill fs-5"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recepción Card -->
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card text-bg-warning border-0">
+                <div class="card-body text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <i class="bi bi-truck" style="font-size: 2.5rem;"></i>
+                        </div>
+                        <div class="text-end">
+                            <h2 class="mb-0 fs-2">0</h2>
+                            <small class="fs-6">Últimos días</small>
+                        </div>
+                    </div>
+                    <button class="btn btn-light text-warning mt-3 d-flex justify-content-between align-items-center w-100 fs-6" type="button" data-bs-toggle="modal" data-bs-target="#nuevaCaidaModal">
+                        <span>Nueva caída</span><i class="bi bi-arrow-right-circle-fill fs-5"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search and Filter -->
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Buscar en la tabla..." id="searchInput">
+                <button class="btn btn-outline-secondary" type="button" id="clearBtn">Limpiar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Data Table -->
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="sortable" data-column="0">Panel <i class="bi bi-arrow-down-up"></i></th>
+                            <th class="sortable" data-column="1">Fecha - hora <i class="bi bi-arrow-down-up"></i></th>
+                            <th class="sortable" data-column="2">Tipo <i class="bi bi-arrow-down-up"></i></th>
+                            <th>Descripción</th>
+                            <th class="sortable" data-column="4">Residente <i class="bi bi-arrow-down-up"></i></th>
+                            <th class="sortable" data-column="5">De <i class="bi bi-arrow-down-up"></i></th>
+                            <th class="sortable" data-column="6">Estado <i class="bi bi-arrow-down-up"></i></th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>JS</td>
+                            <td>17/11/25 - 07:30</td>
+                            <td>Alimentación</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td><span class="badge bg-success">Abierto</span></td>
+                            <td><button class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i></button></td>
+                        </tr>
+                        <tr>
+                            <td>MA</td>
+                            <td>16/11/25 - 20:12</td>
+                            <td>Deposición</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td><span class="badge bg-danger">Cerrado</span></td>
+                            <td><button class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i></button></td>
+                        </tr>
+                        <tr>
+                            <td>CR</td>
+                            <td>18:01 13/11/25</td>
+                            <td>Hidratación</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td><span class="badge bg-success">Abierto</span></td>
+                            <td><button class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i></button></td>
+                        </tr>
+                        <tr>
+                            <td>RE</td>
+                            <td>09:45 12/11/25</td>
+                            <td>Medicación</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td><span class="badge bg-danger">Cerrado</span></td>
+                            <td><button class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i></button></td>
+                        </tr>
+                        <tr>
+                            <td>EN</td>
+                            <td>19:29 10/11/25</td>
+                            <td>Cita médica</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td><span class="badge bg-success">Abierto</span></td>
+                            <td><button class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i></button></td>
+                        </tr>
+                        <tr>
+                            <td>SA</td>
+                            <td>5/11/25 -08:33</td>
+                            <td>Mantenimiento</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td><span class="badge bg-danger">Cerrado</span></td>
+                            <td><button class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i></button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Nueva Caída -->
+<div class="modal fade" id="nuevaCaidaModal" tabindex="-1" aria-labelledby="nuevaCaidaModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold" id="nuevaCaidaModalLabel">Nueva Caída</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="nuevaCaidaForm">
+
+                    <!-- Lugar y Familiar informado -->
+                    <div class="row">
+                        <!-- Fecha -->
+                        <div class="col-md-6 mb-3">
+                            <label for="fecha" class="form-label">Fecha<span class="text-danger">*</span></label>
+                            <input type="date" class="form-control" id="fecha" required>
+                        </div>
+
+                        <!-- Residente -->
+                        <div class="col-md-6 mb-3">
+                            <label for="residente" class="form-label">Residente<span class="text-danger">*</span></label>
+                            <select class="form-select" id="residente" required>
+                                <option selected disabled>Nadie seleccionado</option>
+                                <option value="1">Residente 1</option>
+                                <option value="2">Residente 2</option>
+                                <option value="3">Residente 3</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="lugar" class="form-label">Lugar<span class="text-danger">*</span></label>
+                            <select class="form-select" id="lugar" required>
+                                <option selected disabled value="">Seleccione un lugar</option>
+                                <option value="habitacion">Habitación</option>
+                                <option value="baño">Baño</option>
+                                <option value="comedor">Comedor</option>
+                                <option value="pasillo">Pasillo</option>
+                                <option value="jardin">Jardín</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="familiarInformado" class="form-label">Familiar informado</label>
+                            <input type="text" class="form-control" id="familiarInformado" placeholder="Nombre del familiar">
+                        </div>
+                    </div>
+
+                    <!-- Causa -->
+                    <div class="mb-3">
+                        <label for="causa" class="form-label">Causa</label>
+                        <textarea class="form-control" id="causa" rows="2" placeholder="Describa la causa de la caída"></textarea>
+                    </div>
+
+                    <!-- Consecuencias -->
+                    <div class="mb-3">
+                        <label for="consecuencias" class="form-label">Consecuencias</label>
+                        <textarea class="form-control" id="consecuencias" rows="2" placeholder="Describa las consecuencias"></textarea>
+                    </div>
+
+                    <!-- Observaciones -->
+                    <div class="mb-3">
+                        <label for="observaciones" class="form-label">Observaciones</label>
+                        <textarea class="form-control" id="observaciones" rows="2" placeholder="Agregue observaciones adicionales"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle"></i> Cerrar
+                </button>
+                <button type="button" class="btn btn-primary" id="registrarCaidaBtn">
+                    <i class="bi bi-save"></i> Registrar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/home/home.js' %}?v=3"></script>
+{% endblock %}

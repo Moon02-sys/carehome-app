@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+
+{% block title %}Perfil Residente{% endblock %}
+
+{% block content %}
+<main class="flex-fill">
+    <div class="container-fluid py-4">
+        <div class="row">
+            <div class="col-12 d-flex justify-content-between align-items-start mb-4">
+                <div class="d-flex align-items-start gap-4">
+                    <div class="bg-light d-flex align-items-center justify-content-center" style="width:140px;height:140px;">
+                        <span class="text-muted">img</span>
+                    </div>
+                    <div>
+                        <h3 class="mb-1">NOMBRE</h3>
+                        <div class="small text-muted">Fecha de ingreso: <strong class="text-dark">--/--/----</strong></div>
+                        <div class="small text-muted">Edad: <strong class="text-dark">-- años</strong></div>
+                    </div>
+                </div>
+                <div class="text-end">
+                    <label for="selectOtro" class="form-label small mb-1">Selecciona otro residente</label>
+                    <select id="selectOtro" class="form-select form-select-sm" style="min-width:200px;">
+                        <option>--</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-12">
+                <ul class="nav nav-tabs">
+                    <li class="nav-item"><a class="nav-link active" href="#">Información general</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Médico</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Enfermera</a></li>
+                </ul>
+            </div>
+        </div>
+        <form>
+            <div class="row align-items-center mb-4">
+                <div class="col-auto">
+                    <label class="btn btn-outline-secondary"><i class="bi bi-upload me-2"></i> Subir foto <input type="file" class="d-none" accept="image/*"></label>
+                    <div class="small text-muted mt-2 fst-italic">Max. 5 Megabytes - Extensiones permitidas: 'jpeg', 'jpg', 'gif', 'png'</div>
+                </div>
+            </div>
+            <!-- Form fields laid out with Bootstrap grid -->
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label for="nombre" class="form-label">Nombre <span class="text-danger">*</span></label>
+                    <input id="nombre" class="form-control" required>
+                </div>
+                <div class="col-md-4">
+                    <label for="apellido1" class="form-label">Primer apellido <span class="text-danger">*</span></label>
+                    <input id="apellido1" class="form-control" required>
+                </div>
+                <div class="col-md-4">
+                    <label for="apellido2" class="form-label">Segundo apellido</label>
+                    <input id="apellido2" class="form-control">
+                </div>
+                <div class="col-md-4">
+                    <label for="nif" class="form-label">NIF/NIE <span class="text-danger">*</span></label>
+                    <input id="nif" class="form-control" required>
+                </div>
+                <div class="col-md-4">
+                    <label for="fechaNac" class="form-label">Fecha de nacimiento <span class="text-danger">*</span></label>
+                    <input id="fechaNac" type="date" class="form-control" required>
+                </div>
+                <div class="col-md-4">
+                    <label for="genero" class="form-label">Género</label>
+                    <select id="genero" class="form-select">
+                        <option value="">--</option>
+                    </select>
+                </div>
+                <div class="col-md-8">
+                    <label for="direccion" class="form-label">Dirección de procedencia</label>
+                    <input id="direccion" class="form-control">
+                </div>
+                <div class="col-md-4">
+                    <label for="localidad" class="form-label">Localidad</label>
+                    <input id="localidad" class="form-control">
+                </div>
+                <div class="col-md-4">
+                    <label for="provincia" class="form-label">Provincia</label>
+                    <select id="provincia" class="form-select">
+                        <option value="">--</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label for="pais" class="form-label">País</label>
+                    <input id="pais" class="form-control">
+                </div>
+                <div class="col-md-4">
+                    <label for="telefono" class="form-label">Teléfono</label>
+                    <input id="telefono" class="form-control">
+                </div>
+                <div class="col-md-6">
+                    <label for="nss" class="form-label">NSS</label>
+                    <input id="nss" class="form-control">
+                </div>
+                <div class="col-md-6">
+                    <label for="tarjeta" class="form-label">Número de tarjeta sanitaria</label>
+                    <input id="tarjeta" class="form-control">
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-12 d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</main>
+{% endblock %}

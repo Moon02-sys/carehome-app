@@ -1,0 +1,84 @@
+<!-- Left Column - Residents List -->
+<div class="col-md-4 col-lg-3">
+    <div class="card bg-light">
+        <div class="card-header bg-secondary text-white">
+            <h6 class="mb-0">Residentes</h6>
+        </div>
+        <div class="card-body p-0">
+            <div class="list-group list-group-flush" style="max-height: 500px; overflow-y: auto;">
+                <button class="list-group-item list-group-item-action">Residente 1</button>
+                <button class="list-group-item list-group-item-action">Residente 2</button>
+                <button class="list-group-item list-group-item-action">Residente 3</button>
+                <button class="list-group-item list-group-item-action">Residente 4</button>
+                <button class="list-group-item list-group-item-action">Residente 5</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Right Column - Form -->
+<div class="col-md-8 col-lg-9">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h6 class="mb-0">Fecha</h6>
+        </div>
+        <div class="card-body">
+            <!-- Time Input -->
+            <div class="mb-4">
+                <label class="form-label fw-bold">
+                    <i class="bi bi-clock"></i> Hora
+                </label>
+                <div class="row g-2">
+                    <div class="col-auto">
+                        <input type="number" class="form-control" value="10" min="0" max="23" style="width: 70px;">
+                    </div>
+                    <div class="col-auto align-self-center">
+                        <span class="fw-bold">:</span>
+                    </div>
+                    <div class="col-auto">
+                        <input type="number" class="form-control" value="00" min="0" max="59" style="width: 70px;">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Food Items -->
+            <div class="mb-3">
+                <label class="form-label fw-bold">Ingesta de sólidos</label>
+                <select class="form-select" aria-label="Descripción de sólidos">
+                    <option selected>Seleccione una opción</option>
+                    <option value="1">Descripción 1</option>
+                    <option value="2">Descripción 2</option>
+                    <option value="3">Descripción 3</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">1 Plato</label>
+                <select class="form-select" aria-label="Descripción del primer plato"></select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">2 Plato</label>
+                <select class="form-select" aria-label="Descripción del segundo plato"></select>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label fw-bold">Postre</label>
+                <select class="form-select" aria-label="Descripción del postre"></select>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="d-flex gap-2 justify-content-start">
+                <button type="button" class="btn btn-primary">
+                    <i class="bi bi-save"></i> Guardar
+                </button>
+                <button type="button" class="btn btn-info text-white">
+                    <i class="bi bi-plus-circle"></i> Anotar
+                </button>
+                <button type="button" class="btn btn-danger">
+                    <i class="bi bi-trash"></i> Borrar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
