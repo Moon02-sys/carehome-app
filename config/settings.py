@@ -89,7 +89,7 @@ if 'PYTHONANYWHERE_DOMAIN' in os.environ or 'isanchez.pythonanywhere.com' in os.
             'ENGINE': 'django.db.backends.mysql',
             'NAME': 'isanchez$carehome',
             'USER': 'isanchez',
-            'PASSWORD': 'Django#123',  # CAMBIA ESTO por tu contraseña real
+            'PASSWORD': 'mysql123',  # CAMBIA ESTO por tu contraseña real
             'HOST': 'isanchez.mysql.pythonanywhere-services.com',
             'OPTIONS': {
                 'charset': 'utf8mb4',
