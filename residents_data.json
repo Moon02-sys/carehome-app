@@ -1,0 +1,128 @@
+[
+  {
+    "model": "management.resident",
+    "pk": 1,
+    "fields": {
+      "name": "María",
+      "first_surname": "García",
+      "second_surname": "López",
+      "nif_nie": "12345678A",
+      "birthdate": "1945-03-15",
+      "gender": "F",
+      "address": "Calle Mayor 45, 3º A",
+      "locality": "Madrid",
+      "province": "Madrid",
+      "country": "España",
+      "phone": "912345678",
+      "social_security_number": "281234567890",
+      "is_active": true,
+      "admission_date": "2023-01-15",
+      "discharge_date": null
+    }
+  },
+  {
+    "model": "management.resident",
+    "pk": 2,
+    "fields": {
+      "name": "Juan",
+      "first_surname": "Martínez",
+      "second_surname": "Fernández",
+      "nif_nie": "23456789B",
+      "birthdate": "1938-07-22",
+      "gender": "M",
+      "address": "Avenida de la Constitución 12",
+      "locality": "Sevilla",
+      "province": "Sevilla",
+      "country": "España",
+      "phone": "654321098",
+      "social_security_number": "281234567891",
+      "is_active": true,
+      "admission_date": "2022-06-10",
+      "discharge_date": null
+    }
+  },
+  {
+    "model": "management.resident",
+    "pk": 3,
+    "fields": {
+      "name": "Carmen",
+      "first_surname": "Rodríguez",
+      "second_surname": "Sánchez",
+      "nif_nie": "34567890C",
+      "birthdate": "1942-11-08",
+      "gender": "F",
+      "address": "Plaza España 8, 1º B",
+      "locality": "Barcelona",
+      "province": "Barcelona",
+      "country": "España",
+      "phone": "934567890",
+      "social_security_number": "281234567892",
+      "is_active": true,
+      "admission_date": "2023-09-20",
+      "discharge_date": null
+    }
+  },
+  {
+    "model": "management.resident",
+    "pk": 4,
+    "fields": {
+      "name": "Antonio",
+      "first_surname": "López",
+      "second_surname": "Gómez",
+      "nif_nie": "45678901D",
+      "birthdate": "1940-05-30",
+      "gender": "M",
+      "address": "Calle Real 23",
+      "locality": "Valencia",
+      "province": "Valencia",
+      "country": "España",
+      "phone": "963456789",
+      "social_security_number": "281234567893",
+      "is_active": true,
+      "admission_date": "2021-11-05",
+      "discharge_date": null
+    }
+  },
+  {
+    "model": "management.resident",
+    "pk": 5,
+    "fields": {
+      "name": "Dolores",
+      "first_surname": "Pérez",
+      "second_surname": "Ruiz",
+      "nif_nie": "56789012E",
+      "birthdate": "1944-02-14",
+      "gender": "F",
+      "address": "Calle San Juan 56, 2º C",
+      "locality": "Zaragoza",
+      "province": "Zaragoza",
+      "country": "España",
+      "phone": "976543210",
+      "social_security_number": "281234567894",
+      "is_active": true,
+      "admission_date": "2024-03-12",
+      "discharge_date": null
+    }
+  },
+  {
+    "model": "management.resident",
+    "pk": 6,
+    "fields": {
+      "name": "Francisco",
+      "first_surname": "González",
+      "second_surname": "Moreno",
+      "nif_nie": "67890123F",
+      "birthdate": "1939-09-25",
+      "gender": "M",
+      "address": "Avenida Andalucía 34",
+      "locality": "Málaga",
+      "province": "Málaga",
+      "country": "España",
+      "phone": "951234567",
+      "social_security_number": "281234567895",
+      "is_active": true,
+      "admission_date": "2022-08-18",
+      "discharge_date": null
+    }
+  }
+]

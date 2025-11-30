@@ -2,7 +2,11 @@
 {% block title %}{{ STRINGS.RESIDENT_LIST_TITLE }}{% endblock %}
 
 {% load static %}
+{% block extra_js %}
 <script src="{% static 'js/management/resident-list.js' %}"></script>
+<script src="{% static 'js/management/resident-add.js' %}"></script>
+{% endblock %}
+
 {% block content %}
 <div class="container-fluid py-4">
 <!-- Header -->
@@ -18,6 +22,11 @@
                 <input type="text" class="form-control border-secondary" placeholder="Buscar residente..." aria-label="Buscar residente">
                 <button class="btn btn-secondary" onclick="clearSearch()">{{ STRINGS.BUTTON_CLEAR }}</button>
             </div>
+        </div>
+        <div class="col-md-6 col-lg-8 text-end">
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addResidentModal">
+                <i class="bi bi-plus-circle me-1"></i> Añadir Residente
+            </button>
         </div>
     </div>
     <!-- Table Section -->
@@ -191,6 +200,100 @@
                         </table>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Añadir Residente -->
+<div class="modal fade" id="addResidentModal" tabindex="-1" aria-labelledby="addResidentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold" id="addResidentModalLabel">Añadir Residente</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addResidentForm">
+                    <!-- Datos Personales -->
+                    <h6 class="fw-bold mb-3 text-primary">Datos Personales</h6>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="name" class="form-label">Nombre<span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="name" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="first_surname" class="form-label">Primer Apellido<span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="first_surname" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="second_surname" class="form-label">Segundo Apellido</label>
+                            <input type="text" class="form-control" id="second_surname">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="nif_nie" class="form-label">NIF/NIE<span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="nif_nie" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="birthdate" class="form-label">Fecha de Nacimiento<span class="text-danger">*</span></label>
+                            <input type="date" class="form-control" id="birthdate" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="gender" class="form-label">Género<span class="text-danger">*</span></label>
+                            <select class="form-select" id="gender" required>
+                                <option selected disabled>Seleccione...</option>
+                                <option value="M">Masculino</option>
+                                <option value="F">Femenino</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Datos de Contacto -->
+                    <h6 class="fw-bold mb-3 text-primary mt-4">Datos de Contacto</h6>
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label for="address" class="form-label">Dirección</label>
+                            <input type="text" class="form-control" id="address">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="locality" class="form-label">Localidad</label>
+                            <input type="text" class="form-control" id="locality">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="province" class="form-label">Provincia</label>
+                            <input type="text" class="form-control" id="province">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="country" class="form-label">País</label>
+                            <input type="text" class="form-control" id="country" value="España">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="phone" class="form-label">Teléfono</label>
+                            <input type="tel" class="form-control" id="phone">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="social_security_number" class="form-label">Número de Seguridad Social</label>
+                            <input type="text" class="form-control" id="social_security_number">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle"></i> Cancelar
+                </button>
+                <button type="button" class="btn btn-primary" id="saveResidentBtn">
+                    <i class="bi bi-save"></i> Guardar
+                </button>
             </div>
         </div>
     </div>
