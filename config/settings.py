@@ -81,14 +81,8 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'isanchez$carehome',
-        'USER': 'isanchez',
-        'PASSWORD': 'mysql123',
-        'HOST': 'isanchez.mysql.pythonanywhere-services.com',
-        'OPTIONS': {
-            'charset': 'utf8mb4',
-        },
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
