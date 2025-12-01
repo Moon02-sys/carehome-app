@@ -79,18 +79,31 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'isanchez$carehome',
-        'USER': 'isanchez',
-        'PASSWORD': 'mysql123',
-        'HOST': 'isanchez.mysql.pythonanywhere-services.com',
-        'OPTIONS': {
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-        },
+import os
+
+# Detectar si estamos en PythonAnywhere
+if 'PYTHONANYWHERE_DOMAIN' in os.environ or 'isanchez.pythonanywhere.com' in os.environ.get('HOSTNAME', ''):
+    # Configuración para PythonAnywhere (MySQL)
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'isanchez$carehome',
+            'USER': 'isanchez',
+            'PASSWORD': 'mysql123',
+            'HOST': 'isanchez.mysql.pythonanywhere-services.com',
+            'OPTIONS': {
+                'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+            },
+        }
     }
-}
+else:
+    # Configuración para desarrollo local (SQLite)
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
