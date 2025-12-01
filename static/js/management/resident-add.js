@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
         // Enviar datos al servidor
-        fetch('/gestion/residents/add/', {
+        fetch('/management/residents/add/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

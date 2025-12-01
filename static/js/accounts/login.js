@@ -2,7 +2,93 @@
 document.addEventListener('DOMContentLoaded', function () {
     initLoginValidation();
     initRecoveryValidation();
+    initLoginFormSubmit();
 });
+
+function initLoginFormSubmit() {
+    const loginForm = document.getElementById('loginForm');
+    if (!loginForm) return;
+    
+    loginForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        const btnLogin = document.getElementById('btnLogin');
+        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        
+        // Deshabilitar botón durante el envío
+        btnLogin.disabled = true;
+        btnLogin.textContent = 'Iniciando...';
+        
+        fetch('/accounts/login/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken,
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({
+                username: username,
+                password: password
+            })
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(data => {
+                    throw new Error(data.error || 'Error al iniciar sesión');
+                });
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                window.location.href = data.redirect_url;
+            } else {
+                showLoginError(data.error || 'Error al iniciar sesión');
+                btnLogin.disabled = false;
+                btnLogin.textContent = 'Iniciar sesión';
+            }
+        })
+        .catch(error => {
+            showLoginError(error.message || 'Usuario o contraseña incorrectos');
+            btnLogin.disabled = false;
+            btnLogin.textContent = 'Iniciar sesión';
+        });
+    });
+}
+
+function showLoginError(message) {
+    let errorDiv = document.getElementById('loginError');
+    let errorMessage = document.getElementById('loginErrorMessage');
+    
+    // Si no existen, crearlos dinámicamente
+    if (!errorDiv || !errorMessage) {
+        const loginCard = document.querySelector('.login-card');
+        const title = loginCard ? loginCard.querySelector('.login-title') : null;
+        
+        if (!title) return;
+        
+        errorDiv = document.createElement('div');
+        errorDiv.id = 'loginError';
+        errorDiv.className = 'alert alert-danger mt-3';
+        errorDiv.role = 'alert';
+        
+        errorMessage = document.createElement('span');
+        errorMessage.id = 'loginErrorMessage';
+        errorDiv.appendChild(errorMessage);
+        
+        title.after(errorDiv);
+    }
+    
+    errorMessage.textContent = message;
+    errorDiv.style.display = 'block';
+    
+    // Auto-ocultar después de 5 segundos
+    setTimeout(function() {
+        errorDiv.style.display = 'none';
+    }, 5000);
+}
 
 function initLoginValidation() {
     const pwd = document.getElementById('password');

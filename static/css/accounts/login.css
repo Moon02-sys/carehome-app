@@ -7,7 +7,7 @@
 html,
 body {
     height: 100%;
-    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial
+    font-family: 'Roboto', sans-serif;
 }
 
 body {
@@ -24,10 +24,10 @@ body {
 }
 
 .login-title {
-    font-weight: 800;
+    font-weight: 600;
     font-size: 28px;
     margin-bottom: 18px;
-    text-align: center
+    text-align: center;
 }
 
 .form-label {

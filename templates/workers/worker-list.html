@@ -1,7 +1,13 @@
 {% extends "base.html" %}
 {% block title %}{{ STRINGS.WORKER_LIST_TITLE }}{% endblock %}
 
+{% load static %}
+{% block extra_js %}
+<script src="{% static 'js/management/worker-add.js' %}"></script>
+{% endblock %}
+
 {% block content %}
+{% csrf_token %}
 <div class="container-fluid py-4">
 <!-- Header -->
     <div class="row mb-4">
@@ -19,7 +25,7 @@
         </div>
         <div class="col-md-6 col-lg-8 text-end">
             <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addWorkerModal">
-                <i class="bi bi-plus-circle me-1"></i> Añadir Trabajador
+                <i class="bi bi-plus-circle me-1"></i> {{ STRINGS.BUTTON_ADD_WORKER }}
             </button>
         </div>
     </div>
@@ -39,11 +45,12 @@
                                 </tr>
                             </thead>
                             <tbody>
-                            <!-- Sample residents data -->
-                                <tr style="cursor: pointer;" onclick="window.location.href='{% url 'management:worker_detail' 1 %}'">
-                                    <td class="align-middle">María</td>
-                                    <td class="align-middle">García</td>
-                                    <td class="align-middle">López</td>
+                            {% if workers %}
+                                {% for worker in workers %}
+                                <tr style="cursor: pointer;" onclick="window.location.href='{% url 'management:worker_detail' worker.id %}'">
+                                    <td class="align-middle">{{ worker.name }}</td>
+                                    <td class="align-middle">{{ worker.first_surname }}</td>
+                                    <td class="align-middle">{{ worker.second_surname }}</td>
                                     <td class="text-center align-middle">
                                         <div class="btn-group" role="group">
                                             <button class="btn btn-sm btn-outline-primary" title="Editar" onclick="event.stopPropagation();">
@@ -55,141 +62,15 @@
                                         </div>
                                     </td>
                                 </tr>
-                                <tr style="cursor: pointer;" onclick="window.location.href='{% url 'management:worker_detail' 2 %}'">
-                                    <td class="align-middle">Juan</td>
-                                    <td class="align-middle">Martínez</td>
-                                    <td class="align-middle">Rodríguez</td>
-                                    <td class="text-center align-middle">
-                                        <div class="btn-group" role="group">
-                                            <button class="btn btn-sm btn-outline-primary" title="Editar" onclick="event.stopPropagation();">
-                                                <i class="bi bi-pencil"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-outline-danger" title="Eliminar" onclick="event.stopPropagation();">
-                                                <i class="bi bi-x-lg"></i>
-                                            </button>
-                                        </div>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="4" class="text-center py-4 text-muted">
+                                        <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                                        No hay trabajadores registrados
                                     </td>
                                 </tr>
-                                <tr style="cursor: pointer;" onclick="window.location.href='{% url 'management:worker_detail' 3 %}'">
-                                    <td class="align-middle">Ana</td>
-                                    <td class="align-middle">Fernández</td>
-                                    <td class="align-middle">González</td>
-                                    <td class="text-center align-middle">
-                                        <div class="btn-group" role="group">
-                                            <button class="btn btn-sm btn-outline-primary" title="Editar" onclick="event.stopPropagation();">
-                                                <i class="bi bi-pencil"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-outline-danger" title="Eliminar" onclick="event.stopPropagation();">
-                                                <i class="bi bi-x-lg"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr style="cursor: pointer;" onclick="window.location.href='{% url 'management:worker_detail' 4 %}'">
-                                    <td class="align-middle">Carlos</td>
-                                    <td class="align-middle">Jiménez</td>
-                                    <td class="align-middle">Ruiz</td>
-                                    <td class="text-center align-middle">
-                                        <div class="btn-group" role="group">
-                                            <button class="btn btn-sm btn-outline-primary" title="Editar" onclick="event.stopPropagation();">
-                                                <i class="bi bi-pencil"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-outline-danger" title="Eliminar" onclick="event.stopPropagation();">
-                                                <i class="bi bi-x-lg"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr style="cursor: pointer;" onclick="window.location.href='{% url 'management:worker_detail' 5 %}'">
-                                    <td class="align-middle">Isabel</td>
-                                    <td class="align-middle">Torres</td>
-                                    <td class="align-middle">Moreno</td>
-                                    <td class="text-center align-middle">
-                                        <div class="btn-group" role="group">
-                                            <button class="btn btn-sm btn-outline-primary" title="Editar" onclick="event.stopPropagation();">
-                                                <i class="bi bi-pencil"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-outline-danger" title="Eliminar" onclick="event.stopPropagation();">
-                                                <i class="bi bi-x-lg"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr style="cursor: pointer;" onclick="window.location.href='{% url 'management:worker_detail' 6 %}'">
-                                    <td class="align-middle">Pedro</td>
-                                    <td class="align-middle">Sánchez</td>
-                                    <td class="align-middle">Vázquez</td>
-                                    <td class="text-center align-middle">
-                                        <div class="btn-group" role="group">
-                                            <button class="btn btn-sm btn-outline-primary" title="Editar" onclick="event.stopPropagation();">
-                                                <i class="bi bi-pencil"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-outline-danger" title="Eliminar" onclick="event.stopPropagation();">
-                                                <i class="bi bi-x-lg"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr style="cursor: pointer;" onclick="window.location.href='{% url 'management:worker_detail' 7 %}'">
-                                    <td class="align-middle">Laura</td>
-                                    <td class="align-middle">Díaz</td>
-                                    <td class="align-middle">Herrera</td>
-                                    <td class="text-center align-middle">
-                                        <div class="btn-group" role="group">
-                                            <button class="btn btn-sm btn-outline-primary" title="Editar" onclick="event.stopPropagation();">
-                                                <i class="bi bi-pencil"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-outline-danger" title="Eliminar" onclick="event.stopPropagation();">
-                                                <i class="bi bi-x-lg"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr style="cursor: pointer;" onclick="window.location.href='{% url 'management:worker_detail' 8 %}'">
-                                    <td class="align-middle">Miguel</td>
-                                    <td class="align-middle">Romero</td>
-                                    <td class="align-middle">Gutiérrez</td>
-                                    <td class="text-center align-middle">
-                                        <div class="btn-group" role="group">
-                                            <button class="btn btn-sm btn-outline-primary" title="Editar" onclick="event.stopPropagation();">
-                                                <i class="bi bi-pencil"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-outline-danger" title="Eliminar" onclick="event.stopPropagation();">
-                                                <i class="bi bi-x-lg"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr style="cursor: pointer;" onclick="window.location.href='{% url 'management:worker_detail' 9 %}'">
-                                    <td class="align-middle">Carmen</td>
-                                    <td class="align-middle">Muñoz</td>
-                                    <td class="align-middle">Álvarez</td>
-                                    <td class="text-center align-middle">
-                                        <div class="btn-group" role="group">
-                                            <button class="btn btn-sm btn-outline-primary" title="Editar" onclick="event.stopPropagation();">
-                                                <i class="bi bi-pencil"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-outline-danger" title="Eliminar" onclick="event.stopPropagation();">
-                                                <i class="bi bi-x-lg"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr style="cursor: pointer;" onclick="window.location.href='{% url 'management:worker_detail' 10 %}'">
-                                    <td class="align-middle">Francisco</td>
-                                    <td class="align-middle">Iglesias</td>
-                                    <td class="align-middle">Castro</td>
-                                    <td class="text-center align-middle">
-                                        <div class="btn-group" role="group">
-                                            <button class="btn btn-sm btn-outline-primary" title="Editar" onclick="event.stopPropagation();">
-                                                <i class="bi bi-pencil"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-outline-danger" title="Eliminar" onclick="event.stopPropagation();">
-                                                <i class="bi bi-x-lg"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
+                            {% endif %}
                             </tbody>
                         </table>
                     </div>
@@ -204,39 +85,39 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title fw-bold" id="addWorkerModalLabel">Añadir Trabajador</h5>
+                <h5 class="modal-title fw-bold" id="addWorkerModalLabel">{{ STRINGS.BUTTON_ADD_WORKER }}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form id="addWorkerForm">
                     <!-- Datos Personales -->
-                    <h6 class="fw-bold mb-3 text-primary">Datos Personales</h6>
+                    <h6 class="fw-bold mb-3 text-primary">{{ STRINGS.WORKER_DETAIL_TITLE }}</h6>
                     <div class="row">
                         <div class="col-md-4 mb-3">
-                            <label for="name" class="form-label">Nombre<span class="text-danger">*</span></label>
+                            <label for="name" class="form-label">{{ STRINGS.NAME_LABEL }}<span class="text-danger">*</span></label>
                             <input type="text" class="form-control" id="name" required>
                         </div>
                         <div class="col-md-4 mb-3">
-                            <label for="first_surname" class="form-label">Primer Apellido<span class="text-danger">*</span></label>
+                            <label for="first_surname" class="form-label">{{ STRINGS.FIRST_SURNAME_LABEL }}<span class="text-danger">*</span></label>
                             <input type="text" class="form-control" id="first_surname" required>
                         </div>
                         <div class="col-md-4 mb-3">
-                            <label for="second_surname" class="form-label">Segundo Apellido</label>
+                            <label for="second_surname" class="form-label">{{ STRINGS.SECOND_SURNAME_LABEL }}</label>
                             <input type="text" class="form-control" id="second_surname">
                         </div>
                     </div>
 
                     <div class="row">
                         <div class="col-md-4 mb-3">
-                            <label for="nif_nie" class="form-label">NIF/NIE<span class="text-danger">*</span></label>
+                            <label for="nif_nie" class="form-label">{{ STRINGS.NIF_NIE_LABEL }}<span class="text-danger">*</span></label>
                             <input type="text" class="form-control" id="nif_nie" required>
                         </div>
                         <div class="col-md-4 mb-3">
-                            <label for="birthdate" class="form-label">Fecha de Nacimiento<span class="text-danger">*</span></label>
+                            <label for="birthdate" class="form-label">{{ STRINGS.BIRTHDATE_LABEL }}<span class="text-danger">*</span></label>
                             <input type="date" class="form-control" id="birthdate" required>
                         </div>
                         <div class="col-md-4 mb-3">
-                            <label for="gender" class="form-label">Género</label>
+                            <label for="gender" class="form-label">{{ STRINGS.GENDER_LABEL }}</label>
                             <select class="form-select" id="gender">
                                 <option selected disabled>Seleccione...</option>
                                 <option value="Hombre">Hombre</option>
@@ -246,21 +127,21 @@
                     </div>
 
                     <!-- Datos de Contacto -->
-                    <h6 class="fw-bold mb-3 text-primary mt-4">Datos de Contacto</h6>
+                    <h6 class="fw-bold mb-3 text-primary mt-4">{{ STRINGS.WORKER_DETAIL_CONTACT }}</h6>
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label for="address" class="form-label">Dirección</label>
+                            <label for="address" class="form-label">{{ STRINGS.ADDRESS_LABEL }}</label>
                             <input type="text" class="form-control" id="address">
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label for="locality" class="form-label">Localidad</label>
+                            <label for="locality" class="form-label">{{ STRINGS.LOCALITY_LABEL }}</label>
                             <input type="text" class="form-control" id="locality">
                         </div>
                     </div>
 
                     <div class="row">
                         <div class="col-md-4 mb-3">
-                            <label for="province" class="form-label">Provincia</label>
+                            <label for="province" class="form-label">{{ STRINGS.PROVINCE_LABEL }}</label>
                             <select class="form-select" id="province">
                                 <option selected disabled>Seleccione...</option>
                                 <option value="Huesca">Huesca</option>
@@ -269,39 +150,39 @@
                             </select>
                         </div>
                         <div class="col-md-4 mb-3">
-                            <label for="phone" class="form-label">Teléfono</label>
+                            <label for="phone" class="form-label">{{ STRINGS.PHONE_LABEL }}</label>
                             <input type="tel" class="form-control" id="phone">
                         </div>
                         <div class="col-md-4 mb-3">
-                            <label for="email" class="form-label">Email</label>
+                            <label for="email" class="form-label">{{ STRINGS.EMAIL_LABEL }}</label>
                             <input type="email" class="form-control" id="email">
                         </div>
                     </div>
 
                     <!-- Datos Laborales -->
-                    <h6 class="fw-bold mb-3 text-primary mt-4">Datos Laborales</h6>
+                    <h6 class="fw-bold mb-3 text-primary mt-4">{{ STRINGS.WORKER_DETAIL_EMPLOYMENT }}</h6>
                     <div class="row">
                         <div class="col-md-4 mb-3">
-                            <label for="social_security_number" class="form-label">NSS</label>
+                            <label for="social_security_number" class="form-label">{{ STRINGS.NUMBER_SECURITY_LABEL }}</label>
                             <input type="text" class="form-control" id="social_security_number">
                         </div>
                         <div class="col-md-4 mb-3">
-                            <label for="account_number" class="form-label">Número de Cuenta</label>
+                            <label for="account_number" class="form-label">{{ STRINGS.ACCOUNT_NUMBER_LABEL }}</label>
                             <input type="text" class="form-control" id="account_number">
                         </div>
                         <div class="col-md-4 mb-3">
-                            <label for="hire_date" class="form-label">Fecha de Contratación</label>
+                            <label for="hire_date" class="form-label">{{ STRINGS.HIRE_DATE_LABEL }}</label>
                             <input type="date" class="form-control" id="hire_date">
                         </div>
                     </div>
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label for="disability_percentage" class="form-label">Minusvalía (%)</label>
+                            <label for="disability_percentage" class="form-label">{{ STRINGS.DISABILITY_PERCENTAGE_LABEL }}</label>
                             <input type="number" class="form-control" id="disability_percentage" min="0" max="100" step="0.01">
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label for="profile_photo" class="form-label">Foto de Perfil</label>
+                            <label for="profile_photo" class="form-label">{{ STRINGS.PROFILE_PHOTO_LABEL }}</label>
                             <input type="file" class="form-control" id="profile_photo" accept="image/*">
                         </div>
                     </div>
@@ -309,10 +190,10 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                    <i class="bi bi-x-circle"></i> Cancelar
+                    <i class="bi bi-x-circle"></i> {{ STRINGS.BUTTON_CANCEL }}
                 </button>
                 <button type="button" class="btn btn-primary" id="saveWorkerBtn">
-                    <i class="bi bi-save"></i> Guardar
+                    <i class="bi bi-save"></i> {{ STRINGS.BUTTON_SAVE }}
                 </button>
             </div>
         </div>
