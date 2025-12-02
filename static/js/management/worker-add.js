@@ -25,6 +25,7 @@ document.addEventListener('DOMContentLoaded', function() {
             formData.append('email', document.getElementById('email').value.trim());
             
             // Datos laborales
+            formData.append('role', document.getElementById('role').value);
             formData.append('social_security_number', document.getElementById('social_security_number').value.trim());
             formData.append('account_number', document.getElementById('account_number').value.trim());
             formData.append('hire_date', document.getElementById('hire_date').value);

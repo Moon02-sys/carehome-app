@@ -106,6 +106,12 @@
                         <div class="col-7">{{ worker.gender }}</div>
                     </div>
                     {% endif %}
+                    {% if worker.role %}
+                    <div class="row mb-2">
+                        <div class="col-5 fw-bold">Rol:</div>
+                        <div class="col-7"><span class="badge bg-info">{{ worker.role }}</span></div>
+                    </div>
+                    {% endif %}
                 </div>
             </div>
 
@@ -304,6 +310,14 @@
                                 <option value="">Seleccione...</option>
                                 <option value="Hombre" {% if worker.gender == 'Hombre' %}selected{% endif %}>Hombre</option>
                                 <option value="Mujer" {% if worker.gender == 'Mujer' %}selected{% endif %}>Mujer</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="role" class="form-label">Rol</label>
+                            <select class="form-select" id="role">
+                                <option value="">Seleccione...</option>
+                                <option value="Coordinador" {% if worker.role == 'Coordinador' %}selected{% endif %}>Coordinador</option>
+                                <option value="Enfermero" {% if worker.role == 'Enfermero' %}selected{% endif %}>Enfermero</option>
                             </select>
                         </div>
                     </div>
