@@ -101,7 +101,7 @@
                     {% if worker.gender %}
                     <div class="row mb-2">
                         <div class="col-5 fw-bold">{{ STRINGS.GENDER_LABEL }}:</div>
-                        <div class="col-7">{{ worker.gender }}</div>
+                        <div class="col-7">{{ worker.get_gender_display }}</div>
                     </div>
                     {% endif %}
                     {% if worker.role %}
