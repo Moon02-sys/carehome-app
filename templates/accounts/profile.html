@@ -1,114 +1,256 @@
 {% extends "base.html" %}
+{% load static %}
+{% block extra_js %}
+<script src="{% static 'js/accounts/profile.js' %}"></script>
+{% endblock %}
+
 {% block title %}Perfil de Usuario{% endblock %}
 
 {% block content %}
-<main class="flex-fill">
-    <div class="container-fluid py-4">
-        <div class="row">
-            <div class="col-12 d-flex justify-content-between align-items-start mb-4">
-                <div class="d-flex align-items-start gap-4">
-                    <div class="bg-light d-flex align-items-center justify-content-center" style="width:140px;height:140px;">
-                        <span class="text-muted">img</span>
-                    </div>
-                    <div>
-                        <h3 class="mb-1">NOMBRE</h3>
+<div class="container-fluid p-4">
+    <!-- Header con foto y botón de cerrar sesión -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-auto">
+                            {% if worker.profile_photo %}
+                                <img src="{{ worker.profile_photo.url }}" alt="Foto de perfil" class="rounded-circle" style="width:120px;height:120px;object-fit:cover;">
+                            {% else %}
+                                <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center" style="width: 120px; height: 120px;">
+                                    <i class="bi bi-person-fill text-white" style="font-size: 3rem;"></i>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col">
+                            <h2 class="mb-1">{{ worker.get_full_name }}</h2>
+                            <p class="text-muted mb-2">
+                                <i class="bi bi-briefcase"></i> {{ worker.role }}
+                            </p>
+                            <p class="mb-0">
+                                <span class="badge bg-info">
+                                    <i class="bi bi-envelope"></i> {{ user.email }}
+                                </span>
+                            </p>
+                        </div>
+                        <div class="col-auto">
+                            <a href="{% url 'accounts:logout' %}" class="btn btn-danger">
+                                <i class="bi bi-box-arrow-right"></i> Cerrar sesión
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="row mb-3">
-            <div class="col-12">
-                <ul class="nav nav-tabs">
-                    <li class="nav-item"><a class="nav-link active" href="#">Información general</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Documentación laboral</a></li>
-                </ul>
-            </div>
-        </div>
-        <form>
-            <div class="row align-items-center mb-4">
-                <div class="col-auto">
-                    <label class="btn btn-outline-secondary"><i class="bi bi-upload me-2"></i> Subir foto <input type="file" class="d-none" accept="image/*"></label>
-                    <div class="small text-muted mt-2 fst-italic">Max. 5 Megabytes - Extensiones permitidas: 'jpeg', 'jpg', 'gif', 'png'</div>
-                </div>
-            </div>
-            <!-- Form fields laid out with Bootstrap grid -->
-            <div class="row g-3">
-                <div class="col-md-4">
-                    <label for="nombre" class="form-label">Nombre <span class="text-danger">*</span></label>
-                    <input id="nombre" class="form-control" required>
-                </div>
-                <div class="col-md-4">
-                    <label for="apellido1" class="form-label">Primer apellido <span class="text-danger">*</span></label>
-                    <input id="apellido1" class="form-control" required>
-                </div>
-                <div class="col-md-4">
-                    <label for="apellido2" class="form-label">Segundo apellido</label>
-                    <input id="apellido2" class="form-control">
-                </div>
-                <div class="col-md-4">
-                    <label for="nif" class="form-label">NIF/NIE <span class="text-danger">*</span></label>
-                    <input id="nif" class="form-control" required>
-                </div>
-                <div class="col-md-4">
-                    <label for="fechaNac" class="form-label">Fecha de nacimiento <span class="text-danger">*</span></label>
-                    <input id="fechaNac" type="date" class="form-control" required>
-                </div>
-                <div class="col-md-4">
-                    <label for="nss" class="form-label">NSS</label>
-                    <input id="nss" class="form-control">
-                </div>
-                <div class="col-md-12">
-                    <label for="direccion" class="form-label">Dirección</label>
-                    <input id="direccion" class="form-control">
-                </div>
-                <div class="col-md-4">
-                    <label for="localidad" class="form-label">Localidad</label>
-                    <input id="localidad" class="form-control">
-                </div>
-                <div class="col-md-4">
-                    <label for="provincia" class="form-label">Provincia</label>
-                    <select id="provincia" class="form-select">
-                        <option value="Selecciona">Selecciona</option>
-                        <option value="Huesca">Huesca</option>
-                        <option value="Teruel">Teruel</option>
-                        <option value="Zaragoza">Zaragoza</option>
-                    </select>
-                </div>
-                <div class="col-md-4">
-                    <label for="pais" class="form-label">País</label>
-                    <input id="pais" class="form-control">
-                </div>
-                <div class="col-md-4">
-                    <label for="genero" class="form-label">Género</label>
-                    <select id="genero" class="form-select">
-                        <option value="Selecciona">Selecciona</option>
-                        <option value="Hombre">Hombre</option>
-                        <option value="Mujer">Mujer</option>
-                    </select>
-                </div>
-                <div class="col-md-4">
-                    <label for="ncuenta" class="form-label">Número de cuenta</label>
-                    <input id="ncuenta" class="form-control">
-                </div>
-                <div class="col-md-4">
-                    <label for="minusvalia" class="form-label">Minusvalía(%)</label>
-                    <input id="minusvalia" class="form-control">
-                </div>
-                <div class="col-md-4">
-                    <label for="telefono" class="form-label">Teléfono</label>
-                    <input id="telefono" class="form-control">
-                </div>
-                <div class="col-md-4">
-                    <label for="email" class="form-label">Email</label>
-                    <input id="email" type="email" class="form-control">
-                </div>
-            </div>
-            <div class="row mt-4">
-                <div class="col-12 d-flex justify-content-end">
-                    <button type="submit" class="btn btn-primary">Guardar</button>
-                </div>
-            </div>
-        </form>
     </div>
-</main>
+
+    <!-- Tabs -->
+    <div class="row">
+        <div class="col-12">
+            <ul class="nav nav-tabs mb-3" id="profileTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="info-tab" data-bs-toggle="tab" data-bs-target="#info" type="button" role="tab">
+                        <i class="bi bi-person"></i> Información general
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="laboral-tab" data-bs-toggle="tab" data-bs-target="#laboral" type="button" role="tab">
+                        <i class="bi bi-briefcase"></i> {{ STRINGS.PROFILE_EMPLOYMENT_DATA }}
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="password-tab" data-bs-toggle="tab" data-bs-target="#password" type="button" role="tab">
+                        <i class="bi bi-shield-lock"></i> Cambiar contraseña
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="tab-content" id="profileTabsContent">
+        <!-- Tab: Información general -->
+        <div class="tab-pane fade show active" id="info" role="tabpanel">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-person-badge"></i> {{ STRINGS.PROFILE_PERSONAL_DATA }}</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <strong>Nombre:</strong>
+                            <p class="mb-0">{{ worker.name }}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <strong>Primer apellido:</strong>
+                            <p class="mb-0">{{ worker.first_surname }}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <strong>Segundo apellido:</strong>
+                            <p class="mb-0">{{ worker.second_surname|default:"-" }}</p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <strong>NIF/NIE:</strong>
+                            <p class="mb-0">{{ worker.nif_nie }}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <strong>Fecha de nacimiento:</strong>
+                            <p class="mb-0">{{ worker.birthdate|date:"d/m/Y" }}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <strong>Edad:</strong>
+                            <p class="mb-0">{{ worker.get_age }} años</p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <strong>Género:</strong>
+                            <p class="mb-0">{{ worker.gender|default:"-" }}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <strong>Teléfono:</strong>
+                            <p class="mb-0">{{ worker.phone|default:"-" }}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <strong>Email:</strong>
+                            <p class="mb-0">{{ user.email|default:"-" }}</p>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <strong>Dirección:</strong>
+                            <p class="mb-0">{{ worker.address|default:"-" }}</p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <strong>Localidad:</strong>
+                            <p class="mb-0">{{ worker.locality|default:"-" }}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <strong>Provincia:</strong>
+                            <p class="mb-0">{{ worker.province|default:"-" }}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <strong>País:</strong>
+                            <p class="mb-0">{{ worker.country|default:"-" }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Datos laborales -->
+        <div class="tab-pane fade" id="laboral" role="tabpanel">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="bi bi-briefcase"></i> {{ STRINGS.PROFILE_EMPLOYMENT_DATA }}</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <strong>Rol:</strong>
+                            <p class="mb-0"><span class="badge bg-primary">{{ worker.role }}</span></p>
+                        </div>
+                        <div class="col-md-6">
+                            <strong>Fecha de contratación:</strong>
+                            <p class="mb-0">{{ worker.hire_date|date:"d/m/Y"|default:"-" }}</p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <strong>Número de Seguridad Social:</strong>
+                            <p class="mb-0">{{ worker.social_security_number|default:"-" }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <strong>Número de cuenta:</strong>
+                            <p class="mb-0">{{ worker.account_number|default:"-" }}</p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <strong>Minusvalía (%):</strong>
+                            <p class="mb-0">{{ worker.disability_percentage|default:"-" }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <strong>Estado:</strong>
+                            <p class="mb-0">
+                                <span class="badge {% if worker.is_active %}bg-success{% else %}bg-danger{% endif %}">
+                                    {% if worker.is_active %}Activo{% else %}Inactivo{% endif %}
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    <div class="row">
+                        <div class="col-12">
+                            <strong>Currículum:</strong>
+                            <p class="mb-0">
+                                {% if worker.curriculum %}
+                                <a href="{{ worker.curriculum.url }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-file-earmark-pdf"></i> Ver currículum
+                                </a>
+                                {% else %}
+                                <span class="text-muted">No hay currículum cargado</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Cambiar contraseña -->
+        <div class="tab-pane fade" id="password" role="tabpanel">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-warning text-dark">
+                            <h5 class="mb-0"><i class="bi bi-shield-lock"></i> {{ STRINGS.PROFILE_CHANGE_PASSWORD_TITLE }}</h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="passwordMessage"></div>
+                            <form id="changePasswordForm">
+                                <div class="mb-3">
+                                    <label for="currentPassword" class="form-label">{{ STRINGS.PROFILE_CURRENT_PASSWORD }} <span class="text-danger">*</span></label>
+                                    <input type="password" class="form-control" id="currentPassword" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="newPassword" class="form-label">{{ STRINGS.PROFILE_NEW_PASSWORD }} <span class="text-danger">*</span></label>
+                                    <input type="password" class="form-control" id="newPassword" required>
+                                    <div class="form-text">{{ STRINGS.PROFILE_PASSWORD_MIN_LENGTH }}</div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="confirmPassword" class="form-label">{{ STRINGS.PROFILE_CONFIRM_PASSWORD }} <span class="text-danger">*</span></label>
+                                    <input type="password" class="form-control" id="confirmPassword" required>
+                                </div>
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-warning">
+                                        <i class="bi bi-check-circle"></i> {{ STRINGS.PROFILE_CHANGE_PASSWORD_BUTTON }}
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="alert alert-info">
+                        <h6><i class="bi bi-info-circle"></i> Requisitos de contraseña</h6>
+                        <ul class="mb-0">
+                            <li>Mínimo 8 caracteres</li>
+                            <li>Se recomienda usar letras, números y símbolos</li>
+                            <li>No usar contraseñas fáciles de adivinar</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

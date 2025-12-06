@@ -5,6 +5,7 @@
 {% block extra_js %}
 <script src="{% static 'js/management/resident-list.js' %}"></script>
 <script src="{% static 'js/management/resident-add.js' %}"></script>
+<script src="{% static 'js/management/table-sort.js' %}"></script>
 {% endblock %}
 
 {% block content %}
@@ -19,14 +20,16 @@
     <div class="row mb-4">
         <div class="col-md-6 col-lg-4">
             <div class="input-group">
-                <input type="text" class="form-control border-secondary" placeholder="Buscar residente..." aria-label="Buscar residente">
+                <input type="text" class="form-control border-secondary" placeholder="{{ STRINGS.PLACEHOLDER_SEARCH_RESIDENT }}" aria-label="{{ STRINGS.PLACEHOLDER_SEARCH_RESIDENT }}">
                 <button class="btn btn-secondary" onclick="clearSearch()">{{ STRINGS.BUTTON_CLEAR }}</button>
             </div>
         </div>
         <div class="col-md-6 col-lg-8 text-end">
+            {% if perms.management.add_resident %}
             <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addResidentModal">
-                <i class="bi bi-plus-circle me-1"></i> Añadir Residente
+                <i class="bi bi-plus-circle me-1"></i> {{ STRINGS.BUTTON_ADD_RESIDENT }}
             </button>
+            {% endif %}
         </div>
     </div>
     <!-- Table Section -->
@@ -35,24 +38,34 @@
             <div class="card shadow-sm">
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-striped table-hover mb-0">
+                        <table class="table table-striped table-hover mb-0" id="residentsTable">
                             <thead class="table-primary">
                                 <tr>
-                                    <th scope="col" class="fw-bold">{{ STRINGS.NAME_LABEL }}</th>
-                                    <th scope="col" class="fw-bold">{{ STRINGS.FIRST_SURNAME_LABEL }}</th>
-                                    <th scope="col" class="fw-bold">{{ STRINGS.SECOND_SURNAME_LABEL }}</th>
+                                    <th scope="col" class="fw-bold" style="cursor: pointer;" onclick="sortTable(0)">
+                                        {{ STRINGS.NAME_LABEL }}
+                                        <i class="bi bi-arrow-down-up ms-1"></i>
+                                    </th>
+                                    <th scope="col" class="fw-bold" style="cursor: pointer;" onclick="sortTable(1)">
+                                        {{ STRINGS.FIRST_SURNAME_LABEL }}
+                                        <i class="bi bi-arrow-down-up ms-1"></i>
+                                    </th>
+                                    <th scope="col" class="fw-bold" style="cursor: pointer;" onclick="sortTable(2)">
+                                        {{ STRINGS.SECOND_SURNAME_LABEL }}
+                                        <i class="bi bi-arrow-down-up ms-1"></i>
+                                    </th>
                                     <th scope="col" class="fw-bold text-center">{{ STRINGS.ACTIONS }}</th>
                                 </tr>
                             </thead>
                             <tbody>
-                            <!-- Sample residents data -->
-                                <tr onclick="window.location='{% url 'management:resident_detail' 1 %}'" style="cursor: pointer;">
-                                    <td class="align-middle">María</td>
-                                    <td class="align-middle">García</td>
-                                    <td class="align-middle">López</td>
+                            {% if residents %}
+                                {% for resident in residents %}
+                                <tr style="cursor: pointer;" onclick="window.location.href='{% url 'management:resident_detail' resident.pk %}'">
+                                    <td class="align-middle">{{ resident.name }}</td>
+                                    <td class="align-middle">{{ resident.first_surname }}</td>
+                                    <td class="align-middle">{{ resident.second_surname }}</td>
                                     <td class="text-center align-middle">
                                         <div class="btn-group" role="group">
-                                            <button class="btn btn-sm btn-outline-primary" title="{{ STRINGS.BUTTON_EDIT }}" onclick="event.stopPropagation();">
+                                            <button class="btn btn-sm btn-outline-primary" title="{{ STRINGS.BUTTON_EDIT }}" onclick="event.stopPropagation(); window.location.href='{% url 'management:resident_detail' resident.pk %}?edit=true';">
                                                 <i class="bi bi-pencil"></i>
                                             </button>
                                             <button class="btn btn-sm btn-outline-danger" title="{{ STRINGS.BUTTON_DELETE }}" onclick="event.stopPropagation();">
@@ -61,141 +74,14 @@
                                         </div>
                                     </td>
                                 </tr>
-                                <tr onclick="window.location='{% url 'management:resident_detail' 2 %}'" style="cursor: pointer;">
-                                    <td class="align-middle">Juan</td>
-                                    <td class="align-middle">Martínez</td>
-                                    <td class="align-middle">Rodríguez</td>
-                                    <td class="text-center align-middle">
-                                        <div class="btn-group" role="group">
-                                            <button class="btn btn-sm btn-outline-primary" title="{{ STRINGS.BUTTON_EDIT }}" onclick="event.stopPropagation();">
-                                                <i class="bi bi-pencil"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-outline-danger" title="{{ STRINGS.BUTTON_DELETE }}" onclick="event.stopPropagation();">
-                                                <i class="bi bi-x-lg"></i>
-                                            </button>
-                                        </div>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="4" class="text-center py-4 text-muted">
+                                        {{ STRINGS.NO_RESIDENTS_FOUND }}
                                     </td>
                                 </tr>
-                                <tr onclick="window.location='{% url 'management:resident_detail' 3 %}'" style="cursor: pointer;">
-                                    <td class="align-middle">Ana</td>
-                                    <td class="align-middle">Fernández</td>
-                                    <td class="align-middle">González</td>
-                                    <td class="text-center align-middle">
-                                        <div class="btn-group" role="group">
-                                            <button class="btn btn-sm btn-outline-primary" title="{{ STRINGS.BUTTON_EDIT }}" onclick="event.stopPropagation();">
-                                                <i class="bi bi-pencil"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-outline-danger" title="{{ STRINGS.BUTTON_DELETE }}" onclick="event.stopPropagation();">
-                                                <i class="bi bi-x-lg"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr onclick="window.location='{% url 'management:resident_detail' 4 %}'" style="cursor: pointer;">
-                                    <td class="align-middle">Carlos</td>
-                                    <td class="align-middle">Jiménez</td>
-                                    <td class="align-middle">Ruiz</td>
-                                    <td class="text-center align-middle">
-                                        <div class="btn-group" role="group">
-                                            <button class="btn btn-sm btn-outline-primary" title="{{ STRINGS.BUTTON_EDIT }}" onclick="event.stopPropagation();">
-                                                <i class="bi bi-pencil"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-outline-danger" title="{{ STRINGS.BUTTON_DELETE }}" onclick="event.stopPropagation();">
-                                                <i class="bi bi-x-lg"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr onclick="window.location='{% url 'management:resident_detail' 5 %}'" style="cursor: pointer;">
-                                    <td class="align-middle">Isabel</td>
-                                    <td class="align-middle">Torres</td>
-                                    <td class="align-middle">Moreno</td>
-                                    <td class="text-center align-middle">
-                                        <div class="btn-group" role="group">
-                                            <button class="btn btn-sm btn-outline-primary" title="{{ STRINGS.BUTTON_EDIT }}" onclick="event.stopPropagation();">
-                                                <i class="bi bi-pencil"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-outline-danger" title="{{ STRINGS.BUTTON_DELETE }}" onclick="event.stopPropagation();">
-                                                <i class="bi bi-x-lg"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr onclick="window.location='{% url 'management:resident_detail' 6 %}'" style="cursor: pointer;">
-                                    <td class="align-middle">Pedro</td>
-                                    <td class="align-middle">Sánchez</td>
-                                    <td class="align-middle">Vázquez</td>
-                                    <td class="text-center align-middle">
-                                        <div class="btn-group" role="group">
-                                            <button class="btn btn-sm btn-outline-primary" title="{{ STRINGS.BUTTON_EDIT }}" onclick="event.stopPropagation();">
-                                                <i class="bi bi-pencil"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-outline-danger" title="{{ STRINGS.BUTTON_DELETE }}" onclick="event.stopPropagation();">
-                                                <i class="bi bi-x-lg"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr onclick="window.location='{% url 'management:resident_detail' 7 %}'" style="cursor: pointer;">
-                                    <td class="align-middle">Laura</td>
-                                    <td class="align-middle">Díaz</td>
-                                    <td class="align-middle">Herrera</td>
-                                    <td class="text-center align-middle">
-                                        <div class="btn-group" role="group">
-                                            <button class="btn btn-sm btn-outline-primary" title="{{ STRINGS.BUTTON_EDIT }}" onclick="event.stopPropagation();">
-                                                <i class="bi bi-pencil"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-outline-danger" title="{{ STRINGS.BUTTON_DELETE }}" onclick="event.stopPropagation();">
-                                                <i class="bi bi-x-lg"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr onclick="window.location='{% url 'management:resident_detail' 8 %}'" style="cursor: pointer;">
-                                    <td class="align-middle">Miguel</td>
-                                    <td class="align-middle">Romero</td>
-                                    <td class="align-middle">Gutiérrez</td>
-                                    <td class="text-center align-middle">
-                                        <div class="btn-group" role="group">
-                                            <button class="btn btn-sm btn-outline-primary" title="{{ STRINGS.BUTTON_EDIT }}" onclick="event.stopPropagation();">
-                                                <i class="bi bi-pencil"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-outline-danger" title="{{ STRINGS.BUTTON_DELETE }}" onclick="event.stopPropagation();">
-                                                <i class="bi bi-x-lg"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr onclick="window.location='{% url 'management:resident_detail' 9 %}'" style="cursor: pointer;">
-                                    <td class="align-middle">Carmen</td>
-                                    <td class="align-middle">Muñoz</td>
-                                    <td class="align-middle">Álvarez</td>
-                                    <td class="text-center align-middle">
-                                        <div class="btn-group" role="group">
-                                            <button class="btn btn-sm btn-outline-primary" title="{{ STRINGS.BUTTON_EDIT }}" onclick="event.stopPropagation();">
-                                                <i class="bi bi-pencil"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-outline-danger" title="{{ STRINGS.BUTTON_DELETE }}" onclick="event.stopPropagation();">
-                                                <i class="bi bi-x-lg"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr onclick="window.location='{% url 'management:resident_detail' 10 %}'" style="cursor: pointer;">
-                                    <td class="align-middle">Francisco</td>
-                                    <td class="align-middle">Iglesias</td>
-                                    <td class="align-middle">Castro</td>
-                                    <td class="text-center align-middle">
-                                        <div class="btn-group" role="group">
-                                            <button class="btn btn-sm btn-outline-primary" title="{{ STRINGS.BUTTON_EDIT }}" onclick="event.stopPropagation();">
-                                                <i class="bi bi-pencil"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-outline-danger" title="{{ STRINGS.BUTTON_DELETE }}" onclick="event.stopPropagation();">
-                                                <i class="bi bi-x-lg"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
+                            {% endif %}
                             </tbody>
                         </table>
                     </div>
@@ -210,89 +96,207 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title fw-bold" id="addResidentModalLabel">Añadir Residente</h5>
+                <h5 class="modal-title fw-bold" id="addResidentModalLabel">{{ STRINGS.MODAL_ADD_RESIDENT_TITLE }}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form id="addResidentForm">
+                    {% csrf_token %}
                     <!-- Datos Personales -->
-                    <h6 class="fw-bold mb-3 text-primary">Datos Personales</h6>
+                    <h6 class="fw-bold mb-3 text-primary">{{ STRINGS.RESIDENT_SECTION_PERSONAL }}</h6>
                     <div class="row">
                         <div class="col-md-4 mb-3">
-                            <label for="name" class="form-label">Nombre<span class="text-danger">*</span></label>
+                            <label for="name" class="form-label">{{ STRINGS.NAME_LABEL }}<span class="text-danger">*</span></label>
                             <input type="text" class="form-control" id="name" required>
                         </div>
                         <div class="col-md-4 mb-3">
-                            <label for="first_surname" class="form-label">Primer Apellido<span class="text-danger">*</span></label>
+                            <label for="first_surname" class="form-label">{{ STRINGS.FIRST_SURNAME_LABEL }}<span class="text-danger">*</span></label>
                             <input type="text" class="form-control" id="first_surname" required>
                         </div>
                         <div class="col-md-4 mb-3">
-                            <label for="second_surname" class="form-label">Segundo Apellido</label>
+                            <label for="second_surname" class="form-label">{{ STRINGS.SECOND_SURNAME_LABEL }}</label>
                             <input type="text" class="form-control" id="second_surname">
                         </div>
                     </div>
 
                     <div class="row">
                         <div class="col-md-4 mb-3">
-                            <label for="nif_nie" class="form-label">NIF/NIE<span class="text-danger">*</span></label>
+                            <label for="nif_nie" class="form-label">{{ STRINGS.NIF_NIE_LABEL }}<span class="text-danger">*</span></label>
                             <input type="text" class="form-control" id="nif_nie" required>
                         </div>
                         <div class="col-md-4 mb-3">
-                            <label for="birthdate" class="form-label">Fecha de Nacimiento<span class="text-danger">*</span></label>
+                            <label for="birthdate" class="form-label">{{ STRINGS.BIRTHDATE_LABEL }}<span class="text-danger">*</span></label>
                             <input type="date" class="form-control" id="birthdate" required>
                         </div>
                         <div class="col-md-4 mb-3">
-                            <label for="gender" class="form-label">Género<span class="text-danger">*</span></label>
+                            <label for="gender" class="form-label">{{ STRINGS.GENDER_LABEL }}<span class="text-danger">*</span></label>
                             <select class="form-select" id="gender" required>
-                                <option selected disabled>Seleccione...</option>
-                                <option value="M">Masculino</option>
-                                <option value="F">Femenino</option>
+                                <option selected disabled>{{ STRINGS.SELECT_OPTION }}</option>
+                                <option value="M">{{ STRINGS.GENDER_MALE }}</option>
+                                <option value="F">{{ STRINGS.GENDER_FEMALE }}</option>
                             </select>
                         </div>
                     </div>
 
                     <!-- Datos de Contacto -->
-                    <h6 class="fw-bold mb-3 text-primary mt-4">Datos de Contacto</h6>
+                    <h6 class="fw-bold mb-3 text-primary mt-4">{{ STRINGS.RESIDENT_SECTION_CONTACT }}</h6>
                     <div class="row">
                         <div class="col-md-12 mb-3">
-                            <label for="address" class="form-label">Dirección</label>
+                            <label for="address" class="form-label">{{ STRINGS.ADDRESS_LABEL }}</label>
                             <input type="text" class="form-control" id="address">
                         </div>
                     </div>
 
                     <div class="row">
                         <div class="col-md-4 mb-3">
-                            <label for="locality" class="form-label">Localidad</label>
+                            <label for="locality" class="form-label">{{ STRINGS.LOCALITY_LABEL }}</label>
                             <input type="text" class="form-control" id="locality">
                         </div>
                         <div class="col-md-4 mb-3">
-                            <label for="province" class="form-label">Provincia</label>
+                            <label for="province" class="form-label">{{ STRINGS.PROVINCE_LABEL }}</label>
                             <input type="text" class="form-control" id="province">
                         </div>
                         <div class="col-md-4 mb-3">
-                            <label for="country" class="form-label">País</label>
+                            <label for="country" class="form-label">{{ STRINGS.COUNTRY_LABEL }}</label>
                             <input type="text" class="form-control" id="country" value="España">
                         </div>
                     </div>
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label for="phone" class="form-label">Teléfono</label>
+                            <label for="phone" class="form-label">{{ STRINGS.PHONE_LABEL }}</label>
                             <input type="tel" class="form-control" id="phone">
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label for="social_security_number" class="form-label">Número de Seguridad Social</label>
+                            <label for="social_security_number" class="form-label">{{ STRINGS.SOCIAL_SECURITY_NUMBER_LABEL }}</label>
                             <input type="text" class="form-control" id="social_security_number">
+                        </div>
+                    </div>
+
+                    <!-- Datos Médicos Básicos -->
+                    <h6 class="fw-bold mb-3 text-primary mt-4">{{ STRINGS.RESIDENT_SECTION_MEDICAL }}</h6>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="blood_type" class="form-label">{{ STRINGS.BLOOD_TYPE_LABEL }}</label>
+                            <select class="form-select" id="blood_type">
+                                <option selected value="">{{ STRINGS.SELECT_OPTION }}</option>
+                                <option value="A+">A+</option>
+                                <option value="A-">A-</option>
+                                <option value="B+">B+</option>
+                                <option value="B-">B-</option>
+                                <option value="AB+">AB+</option>
+                                <option value="AB-">AB-</option>
+                                <option value="O+">O+</option>
+                                <option value="O-">O-</option>
+                            </select>
+                        </div>
+                        <div class="col-md-8 mb-3">
+                            <label for="allergies" class="form-label">{{ STRINGS.ALLERGIES_LABEL }}</label>
+                            <textarea class="form-control" id="allergies" rows="2" placeholder="{{ STRINGS.PLACEHOLDER_ALLERGIES }}"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="chronic_diseases" class="form-label">{{ STRINGS.CHRONIC_DISEASES_LABEL }}</label>
+                            <textarea class="form-control" id="chronic_diseases" rows="2" placeholder="{{ STRINGS.PLACEHOLDER_CHRONIC_DISEASES }}"></textarea>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="current_medications" class="form-label">{{ STRINGS.CURRENT_MEDICATIONS_LABEL }}</label>
+                            <textarea class="form-control" id="current_medications" rows="2" placeholder="{{ STRINGS.PLACEHOLDER_MEDICATIONS }}"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Información Médica Adicional -->
+                    <h6 class="fw-bold mb-3 text-primary mt-4">{{ STRINGS.RESIDENT_SECTION_MEDICAL_INFO }}</h6>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="medical_insurance" class="form-label">{{ STRINGS.MEDICAL_INSURANCE_LABEL }}</label>
+                            <input type="text" class="form-control" id="medical_insurance" placeholder="{{ STRINGS.PLACEHOLDER_INSURANCE_COMPANY }}">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="insurance_number" class="form-label">{{ STRINGS.INSURANCE_NUMBER_LABEL }}</label>
+                            <input type="text" class="form-control" id="insurance_number">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="primary_doctor" class="form-label">{{ STRINGS.PRIMARY_DOCTOR_LABEL }}</label>
+                            <input type="text" class="form-control" id="primary_doctor">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="doctor_phone" class="form-label">{{ STRINGS.DOCTOR_PHONE_LABEL }}</label>
+                            <input type="tel" class="form-control" id="doctor_phone">
+                        </div>
+                    </div>
+
+                    <!-- Movilidad y Dependencia -->
+                    <h6 class="fw-bold mb-3 text-primary mt-4">{{ STRINGS.RESIDENT_SECTION_MOBILITY }}</h6>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="mobility_level" class="form-label">{{ STRINGS.MOBILITY_LEVEL_LABEL }}</label>
+                            <select class="form-select" id="mobility_level">
+                                <option selected value="">{{ STRINGS.SELECT_OPTION }}</option>
+                                <option value="autonomo">{{ STRINGS.MOBILITY_AUTONOMOUS }}</option>
+                                <option value="ayuda_parcial">{{ STRINGS.MOBILITY_PARTIAL_HELP }}</option>
+                                <option value="dependiente">{{ STRINGS.MOBILITY_DEPENDENT }}</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="dependency_degree" class="form-label">{{ STRINGS.DEPENDENCY_DEGREE_LABEL }}</label>
+                            <select class="form-select" id="dependency_degree">
+                                <option selected value="">{{ STRINGS.SELECT_OPTION }}</option>
+                                <option value="grado_I">{{ STRINGS.DEPENDENCY_GRADE_I }}</option>
+                                <option value="grado_II">{{ STRINGS.DEPENDENCY_GRADE_II }}</option>
+                                <option value="grado_III">{{ STRINGS.DEPENDENCY_GRADE_III }}</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <div class="form-check mt-4">
+                                <input class="form-check-input" type="checkbox" id="uses_wheelchair">
+                                <label class="form-check-label" for="uses_wheelchair">
+                                    {{ STRINGS.USES_WHEELCHAIR_LABEL }}
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="form-check mt-4">
+                                <input class="form-check-input" type="checkbox" id="uses_walker">
+                                <label class="form-check-label" for="uses_walker">
+                                    {{ STRINGS.USES_WALKER_LABEL }}
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contacto de Emergencia -->
+                    <h6 class="fw-bold mb-3 text-primary mt-4">{{ STRINGS.RESIDENT_SECTION_EMERGENCY }}</h6>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="emergency_contact_name" class="form-label">{{ STRINGS.EMERGENCY_CONTACT_NAME_LABEL }}</label>
+                            <input type="text" class="form-control" id="emergency_contact_name">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="emergency_contact_relationship" class="form-label">{{ STRINGS.EMERGENCY_CONTACT_RELATIONSHIP_LABEL }}</label>
+                            <input type="text" class="form-control" id="emergency_contact_relationship" placeholder="{{ STRINGS.PLACEHOLDER_RELATIONSHIP }}">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="emergency_contact_phone" class="form-label">{{ STRINGS.EMERGENCY_CONTACT_PHONE_LABEL }}</label>
+                            <input type="tel" class="form-control" id="emergency_contact_phone">
                         </div>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                    <i class="bi bi-x-circle"></i> Cancelar
+                    <i class="bi bi-x-circle"></i> {{ STRINGS.BUTTON_CANCEL }}
                 </button>
                 <button type="button" class="btn btn-primary" id="saveResidentBtn">
-                    <i class="bi bi-save"></i> Guardar
+                    <i class="bi bi-save"></i> {{ STRINGS.BUTTON_SAVE }}
                 </button>
             </div>
         </div>

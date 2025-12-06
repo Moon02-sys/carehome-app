@@ -31,6 +31,12 @@ document.addEventListener('DOMContentLoaded', function() {
             formData.append('hire_date', document.getElementById('hire_date').value);
             formData.append('disability_percentage', document.getElementById('disability_percentage').value);
             
+            // Currículum si existe
+            const curriculumInput = document.getElementById('curriculum');
+            if (curriculumInput && curriculumInput.files.length > 0) {
+                formData.append('curriculum', curriculumInput.files[0]);
+            }
+            
             // Foto de perfil si existe
             const photoInput = document.getElementById('profile_photo');
             if (photoInput.files.length > 0) {

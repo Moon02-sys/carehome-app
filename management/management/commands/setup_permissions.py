@@ -37,14 +37,16 @@ class Command(BaseCommand):
         
         self.stdout.write(self.style.SUCCESS(f'✓ Director: {len(director_permissions)} permisos asignados'))
         
-        # ========== PERMISOS COORDINADOR (Acceso total) ==========
+        # ========== PERMISOS COORDINADOR ==========
         coordinador_permissions = []
         
-        # Trabajadores - todos los permisos
-        coordinador_permissions.extend(Permission.objects.filter(content_type=worker_ct))
+        # Trabajadores - Ver solamente (NO añadir ni eliminar)
+        coordinador_permissions.append(Permission.objects.get(codename='view_worker', content_type=worker_ct))
+        coordinador_permissions.append(Permission.objects.get(codename='change_worker', content_type=worker_ct))
         
-        # Residentes - todos los permisos
-        coordinador_permissions.extend(Permission.objects.filter(content_type=resident_ct))
+        # Residentes - Ver y editar solamente (NO añadir ni eliminar)
+        coordinador_permissions.append(Permission.objects.get(codename='view_resident', content_type=resident_ct))
+        coordinador_permissions.append(Permission.objects.get(codename='change_resident', content_type=resident_ct))
         
         # Asignar permisos al coordinador
         for perm in coordinador_permissions:
@@ -52,16 +54,14 @@ class Command(BaseCommand):
         
         self.stdout.write(self.style.SUCCESS(f'✓ Coordinador: {len(coordinador_permissions)} permisos asignados'))
         
-        # ========== PERMISOS ENFERMERO (Solo lectura y edición de residentes) ==========
+        # ========== PERMISOS ENFERMERO ==========
         enfermero_permissions = []
         
-        # Residentes - ver, agregar y cambiar (NO eliminar)
+        # Residentes - Ver y editar solamente (NO añadir ni eliminar)
         enfermero_permissions.append(Permission.objects.get(codename='view_resident', content_type=resident_ct))
-        enfermero_permissions.append(Permission.objects.get(codename='add_resident', content_type=resident_ct))
         enfermero_permissions.append(Permission.objects.get(codename='change_resident', content_type=resident_ct))
         
-        # Trabajadores - solo ver (NO puede agregar, editar ni eliminar)
-        enfermero_permissions.append(Permission.objects.get(codename='view_worker', content_type=worker_ct))
+        # NO tiene acceso a trabajadores
         
         # Asignar permisos al enfermero
         for perm in enfermero_permissions:
@@ -76,11 +76,11 @@ class Command(BaseCommand):
         self.stdout.write('  - Residentes: Ver, Añadir, Editar, Eliminar')
         
         self.stdout.write(self.style.SUCCESS('\nCOORDINADOR:'))
-        self.stdout.write('  - Trabajadores: Ver, Añadir, Editar, Eliminar')
-        self.stdout.write('  - Residentes: Ver, Añadir, Editar, Eliminar')
+        self.stdout.write('  - Trabajadores: Ver, Editar (NO Añadir ni Eliminar)')
+        self.stdout.write('  - Residentes: Ver, Editar (NO Añadir ni Eliminar)')
         
         self.stdout.write(self.style.SUCCESS('\nENFERMERO:'))
-        self.stdout.write('  - Trabajadores: Solo Ver')
-        self.stdout.write('  - Residentes: Ver, Añadir, Editar (NO Eliminar)')
+        self.stdout.write('  - Trabajadores: Sin acceso')
+        self.stdout.write('  - Residentes: Ver, Editar (NO Añadir ni Eliminar)')
         
         self.stdout.write(self.style.SUCCESS('\n✓ Grupos y permisos configurados correctamente'))

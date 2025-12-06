@@ -21,20 +21,14 @@
                             <ul class="nav nav-pills nav-fill" role="tablist">
                                 <li class="nav-item" role="presentation">
                                     <button class="nav-link active" id="alimentacion-tab" data-bs-toggle="pill" data-bs-target="#alimentacion" type="button" role="tab">
-                                        <i class="bi bi-egg-fried"></i>
-                                        <div class="mt-2">Alimentación</div>
+                                        <i class="bi bi-fork-knife"></i><i class="bi bi-cup-straw"></i>
+                                        <div class="mt-2">Alimentación e Hidratación</div>
                                     </button>
                                 </li>
                                 <li class="nav-item" role="presentation">
                                     <button class="nav-link" id="medicacion-tab" data-bs-toggle="pill" data-bs-target="#medicacion" type="button" role="tab">
                                         <i class="bi bi-capsule"></i>
                                         <div class="mt-2">Medicación</div>
-                                    </button>
-                                </li>
-                                <li class="nav-item" role="presentation">
-                                    <button class="nav-link" id="hidratacion-tab" data-bs-toggle="pill" data-bs-target="#hidratacion" type="button" role="tab">
-                                        <i class="bi bi-droplet"></i>
-                                        <div class="mt-2">Hidratación</div>
                                     </button>
                                 </li>
                                 <li class="nav-item" role="presentation">
@@ -59,11 +53,10 @@
                                 {% include "registres/_medicacion.html" %}
                             </div>
                         </div>
-                        <div class="tab-pane fade" id="hidratacion" role="tabpanel">
-                            <div class="alert alert-info">Contenido de Hidratación</div>
-                        </div>
                         <div class="tab-pane fade" id="deposicion" role="tabpanel">
-                            <div class="alert alert-info">Contenido de Deposición</div>
+                            <div class="row">
+                                {% include "registres/_deposicion.html" %}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -71,4 +64,89 @@
         </div>
     </div>
 </div>
+
+<!-- Modal de Anotación -->
+<div class="modal fade" id="annotationModal" tabindex="-1" aria-labelledby="annotationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-warning">
+                <h5 class="modal-title fw-bold" id="annotationModalLabel">
+                    <i class="bi bi-file-text"></i> Nueva Anotación
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="annotationForm">
+                    <!-- Panel Informativo -->
+                    <div class="mb-3">
+                        <label for="annotationPanel" class="form-label fw-bold">Panel Informativo<span class="text-danger">*</span></label>
+                        <select class="form-select" id="annotationPanel" required>
+                            <option value="" selected disabled>Seleccione un panel</option>
+                            <option value="sanitario">Sanitario</option>
+                            <option value="general">General</option>
+                            <option value="incidencia">Incidencia</option>
+                        </select>
+                    </div>
+
+                    <!-- Tipo de anotación -->
+                    <div class="mb-3">
+                        <label for="annotationType" class="form-label fw-bold">Tipo de anotación<span class="text-danger">*</span></label>
+                        <select class="form-select" id="annotationType" required>
+                            <option value="" selected disabled>Seleccione un tipo</option>
+                            <option value="alimentacion">Alimentación</option>
+                            <option value="hidratacion">Hidratación</option>
+                            <option value="medicacion">Medicación</option>
+                            <option value="deposicion">Deposición</option>
+                        </select>
+                    </div>
+
+                    <!-- Descripción (auto-generada) -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Descripción</label>
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <div id="annotationDescription" class="small">
+                                    <em class="text-muted">La descripción se generará automáticamente con los datos del formulario</em>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Notas -->
+                    <div class="mb-3">
+                        <label for="annotationNotes" class="form-label fw-bold">Notas<span class="text-danger">*</span></label>
+                        <textarea class="form-control" id="annotationNotes" rows="4" placeholder="Escriba sus observaciones aquí..." required></textarea>
+                    </div>
+
+                    <!-- Estado -->
+                    <div class="mb-3">
+                        <label for="annotationStatus" class="form-label fw-bold">Estado<span class="text-danger">*</span></label>
+                        <select class="form-select" id="annotationStatus" required>
+                            <option value="" selected disabled>Seleccione un estado</option>
+                            <option value="abierto">Abierto</option>
+                            <option value="cerrado">Cerrado</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle"></i> Cancelar
+                </button>
+                <button type="button" class="btn btn-warning" id="saveAnnotationBtn">
+                    <i class="bi bi-save"></i> Guardar Anotación
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% load static %}
+<!-- Cargar load-registries.js primero para exportar las funciones globales -->
+<script src="{% static 'js/registry/load-registries.js' %}"></script>
+<!-- Luego cargar los scripts específicos de cada tipo de registro -->
+<script src="{% static 'js/registry/alimentacion.js' %}"></script>
+<script src="{% static 'js/registry/medicacion.js' %}"></script>
+<script src="{% static 'js/registry/deposicion.js' %}"></script>
+<script src="{% static 'js/registry/annotations.js' %}"></script>
 {% endblock %}

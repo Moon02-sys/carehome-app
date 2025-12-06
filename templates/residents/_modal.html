@@ -1,0 +1,246 @@
+<!-- Modal Editar Residente -->
+<div class="modal fade" id="editResidentModal" tabindex="-1" aria-labelledby="editResidentModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold" id="editResidentModalLabel">{{ STRINGS.MODAL_EDIT_RESIDENT_TITLE }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="closeModalBtn"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editResidentForm">
+                    {% csrf_token %}
+                    <!-- Datos Personales -->
+                    <h6 class="fw-bold mb-3 text-primary">{{ STRINGS.SECTION_PERSONAL_DATA }}</h6>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="name" class="form-label">{{ STRINGS.NAME_LABEL }}<span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="name" value="{{ resident.name }}" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="first_surname" class="form-label">{{ STRINGS.FIRST_SURNAME_LABEL }}<span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="first_surname" value="{{ resident.first_surname }}" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="second_surname" class="form-label">{{ STRINGS.SECOND_SURNAME_LABEL }}</label>
+                            <input type="text" class="form-control" id="second_surname" value="{{ resident.second_surname }}">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="nif_nie" class="form-label">{{ STRINGS.NIF_NIE_LABEL }}<span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="nif_nie" value="{{ resident.nif_nie }}" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="birthdate" class="form-label">{{ STRINGS.BIRTHDATE_LABEL }}<span class="text-danger">*</span></label>
+                            <input type="date" class="form-control" id="birthdate" value="{{ resident.birthdate|date:'Y-m-d' }}" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="gender" class="form-label">{{ STRINGS.GENDER_LABEL }}<span class="text-danger">*</span></label>
+                            <select class="form-select" id="gender" required>
+                                <option value="">{{ STRINGS.SELECT_OPTION }}</option>
+                                <option value="M" {% if resident.gender == 'M' %}selected{% endif %}>{{ STRINGS.GENDER_MALE }}</option>
+                                <option value="F" {% if resident.gender == 'F' %}selected{% endif %}>{{ STRINGS.GENDER_FEMALE }}</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Datos de Contacto -->
+                    <h6 class="fw-bold mb-3 text-primary mt-4">{{ STRINGS.SECTION_CONTACT_DATA }}</h6>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="address" class="form-label">{{ STRINGS.ADDRESS_LABEL }}</label>
+                            <input type="text" class="form-control" id="address" value="{{ resident.address }}">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="locality" class="form-label">{{ STRINGS.LOCALITY_LABEL }}</label>
+                            <input type="text" class="form-control" id="locality" value="{{ resident.locality }}">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="province" class="form-label">{{ STRINGS.PROVINCE_LABEL }}</label>
+                            <input type="text" class="form-control" id="province" value="{{ resident.province }}">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="country" class="form-label">{{ STRINGS.COUNTRY_LABEL }}</label>
+                            <input type="text" class="form-control" id="country" value="España" readonly>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="phone" class="form-label">{{ STRINGS.PHONE_LABEL }}</label>
+                            <input type="tel" class="form-control" id="phone" value="{{ resident.phone }}">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="social_security_number" class="form-label">{{ STRINGS.SOCIAL_SECURITY_NUMBER_LABEL }}</label>
+                            <input type="text" class="form-control" id="social_security_number" value="{{ resident.social_security_number }}">
+                        </div>
+                    </div>
+
+                    <!-- Datos Médicos -->
+                    <h6 class="fw-bold mb-3 text-primary mt-4">{{ STRINGS.SECTION_MEDICAL_DATA }}</h6>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="blood_type" class="form-label">{{ STRINGS.BLOOD_TYPE_LABEL }}</label>
+                            <select class="form-select" id="blood_type">
+                                <option value="">{{ STRINGS.SELECT_OPTION }}</option>
+                                <option value="A+" {% if resident.blood_type == 'A+' %}selected{% endif %}>A+</option>
+                                <option value="A-" {% if resident.blood_type == 'A-' %}selected{% endif %}>A-</option>
+                                <option value="B+" {% if resident.blood_type == 'B+' %}selected{% endif %}>B+</option>
+                                <option value="B-" {% if resident.blood_type == 'B-' %}selected{% endif %}>B-</option>
+                                <option value="AB+" {% if resident.blood_type == 'AB+' %}selected{% endif %}>AB+</option>
+                                <option value="AB-" {% if resident.blood_type == 'AB-' %}selected{% endif %}>AB-</option>
+                                <option value="O+" {% if resident.blood_type == 'O+' %}selected{% endif %}>O+</option>
+                                <option value="O-" {% if resident.blood_type == 'O-' %}selected{% endif %}>O-</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="medical_insurance" class="form-label">{{ STRINGS.MEDICAL_INSURANCE_LABEL }}</label>
+                            <input type="text" class="form-control" id="medical_insurance" value="{{ resident.medical_insurance }}">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="insurance_number" class="form-label">{{ STRINGS.INSURANCE_NUMBER_LABEL }}</label>
+                            <input type="text" class="form-control" id="insurance_number" value="{{ resident.insurance_number }}">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="primary_doctor" class="form-label">{{ STRINGS.PRIMARY_DOCTOR_LABEL }}</label>
+                            <input type="text" class="form-control" id="primary_doctor" value="{{ resident.primary_doctor }}">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="doctor_phone" class="form-label">{{ STRINGS.DOCTOR_PHONE_LABEL }}</label>
+                            <input type="tel" class="form-control" id="doctor_phone" value="{{ resident.doctor_phone }}">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label for="allergies" class="form-label">{{ STRINGS.ALLERGIES_LABEL }}</label>
+                            <textarea class="form-control" id="allergies" rows="2">{{ resident.allergies }}</textarea>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label for="chronic_diseases" class="form-label">{{ STRINGS.CHRONIC_DISEASES_LABEL }}</label>
+                            <textarea class="form-control" id="chronic_diseases" rows="2">{{ resident.chronic_diseases }}</textarea>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label for="current_medications" class="form-label">{{ STRINGS.CURRENT_MEDICATIONS_LABEL }}</label>
+                            <textarea class="form-control" id="current_medications" rows="2">{{ resident.current_medications }}</textarea>
+                        </div>
+                    </div>
+
+                    <!-- Movilidad y Dependencia -->
+                    <h6 class="fw-bold mb-3 text-primary mt-4">{{ STRINGS.SECTION_MOBILITY_DEPENDENCY }}</h6>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="mobility_level" class="form-label">{{ STRINGS.MOBILITY_LEVEL_LABEL }}</label>
+                            <select class="form-select" id="mobility_level">
+                                <option value="">{{ STRINGS.SELECT_OPTION }}</option>
+                                <option value="autonomo" {% if resident.mobility_level == 'autonomo' %}selected{% endif %}>Autónomo</option>
+                                <option value="ayuda_parcial" {% if resident.mobility_level == 'ayuda_parcial' %}selected{% endif %}>Ayuda Parcial</option>
+                                <option value="silla_ruedas" {% if resident.mobility_level == 'silla_ruedas' %}selected{% endif %}>Silla de Ruedas</option>
+                                <option value="encamado" {% if resident.mobility_level == 'encamado' %}selected{% endif %}>Encamado</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="dependency_degree" class="form-label">{{ STRINGS.DEPENDENCY_DEGREE_LABEL }}</label>
+                            <select class="form-select" id="dependency_degree">
+                                <option value="">{{ STRINGS.SELECT_OPTION }}</option>
+                                <option value="grado_I" {% if resident.dependency_degree == 'grado_I' %}selected{% endif %}>Grado I - Dependencia Moderada</option>
+                                <option value="grado_II" {% if resident.dependency_degree == 'grado_II' %}selected{% endif %}>Grado II - Dependencia Severa</option>
+                                <option value="grado_III" {% if resident.dependency_degree == 'grado_III' %}selected{% endif %}>Grado III - Gran Dependencia</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="uses_wheelchair" {% if resident.uses_wheelchair %}checked{% endif %}>
+                                <label class="form-check-label" for="uses_wheelchair">
+                                    {{ STRINGS.USES_WHEELCHAIR_LABEL }}
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="uses_walker" {% if resident.uses_walker %}checked{% endif %}>
+                                <label class="form-check-label" for="uses_walker">
+                                    {{ STRINGS.USES_WALKER_LABEL }}
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contacto de Emergencia -->
+                    <h6 class="fw-bold mb-3 text-primary mt-4">{{ STRINGS.SECTION_EMERGENCY_CONTACT }}</h6>
+                    <div class="row">
+                        <div class="col mb-3">
+                            <label for="emergency_contact_name" class="form-label">{{ STRINGS.EMERGENCY_CONTACT_NAME_LABEL }}</label>
+                            <input type="text" class="form-control" id="emergency_contact_name" value="{{ resident.emergency_contact_name }}">
+                        </div>
+                        <div class="col mb-3">
+                            <label for="emergency_contact_relationship" class="form-label">{{ STRINGS.EMERGENCY_CONTACT_RELATIONSHIP_LABEL }}</label>
+                            <input type="text" class="form-control" id="emergency_contact_relationship" value="{{ resident.emergency_contact_relationship }}">
+                        </div>
+                        <div class="col mb-3">
+                            <label for="emergency_contact_phone" class="form-label">{{ STRINGS.EMERGENCY_CONTACT_PHONE_LABEL }}</label>
+                            <input type="tel" class="form-control" id="emergency_contact_phone" value="{{ resident.emergency_contact_phone }}">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="cancelModalBtn">
+                    <i class="bi bi-x-circle"></i> {{ STRINGS.BUTTON_CANCEL }}
+                </button>
+                <button type="button" class="btn btn-primary" id="saveEditResidentBtn">
+                    <i class="bi bi-save"></i> {{ STRINGS.BUTTON_SAVE_CHANGES }}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Confirmar Eliminación -->
+<div class="modal fade" id="deleteResidentModal" tabindex="-1" aria-labelledby="deleteResidentModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="deleteResidentModalLabel">
+                    <i class="bi bi-exclamation-triangle me-2"></i>{{ STRINGS.MODAL_TITLE_CONFIRM_DELETE }}
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="mb-3">{{ STRINGS.MODAL_DELETE_QUESTION_RESIDENT }}</p>
+                <div class="alert alert-warning">
+                    <strong>{{ resident.get_full_name }}</strong><br>
+                    <small>{{ resident.nif_nie }}</small>
+                </div>
+                <p class="text-muted small mb-0">
+                    <i class="bi bi-info-circle me-1"></i>
+                    {{ STRINGS.MODAL_DELETE_INFO }}
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle"></i> {{ STRINGS.BUTTON_CANCEL }}
+                </button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">
+                    <i class="bi bi-trash"></i> {{ STRINGS.BUTTON_DELETE }}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

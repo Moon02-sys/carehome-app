@@ -6,11 +6,18 @@
         </div>
         <div class="card-body p-0">
             <div class="list-group list-group-flush" style="max-height: 500px; overflow-y: auto;">
-                <button class="list-group-item list-group-item-action">Residente 1</button>
-                <button class="list-group-item list-group-item-action">Residente 2</button>
-                <button class="list-group-item list-group-item-action">Residente 3</button>
-                <button class="list-group-item list-group-item-action">Residente 4</button>
-                <button class="list-group-item list-group-item-action">Residente 5</button>
+                {% if residents_food %}
+                    {% for resident in residents_food %}
+                        <button class="list-group-item list-group-item-action" data-resident-id="{{ resident.id }}" data-resident-name="{{ resident.get_full_name }}">
+                            {{ resident.get_full_name }}
+                        </button>
+                    {% endfor %}
+                {% else %}
+                    <div class="list-group-item text-muted text-center">
+                        <i class="bi bi-inbox fs-4 d-block mb-2"></i>
+                        No hay residentes con registro de alimentación habilitado
+                    </div>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -19,66 +26,145 @@
 <!-- Right Column - Form -->
 <div class="col-md-8 col-lg-9">
     <div class="card">
-        <div class="card-header bg-primary text-white">
-            <h6 class="mb-0">Fecha</h6>
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h6 class="mb-0">Registro de Alimentación e Hidratación</h6>
+            <input type="date" class="form-control form-control-sm" id="dateInput" style="width: auto;" value="{% now 'Y-m-d' %}">
         </div>
         <div class="card-body">
-            <!-- Time Input -->
-            <div class="mb-4">
-                <label class="form-label fw-bold">
-                    <i class="bi bi-clock"></i> Hora
-                </label>
-                <div class="row g-2">
-                    <div class="col-auto">
-                        <input type="number" class="form-control" value="10" min="0" max="23" style="width: 70px;">
-                    </div>
-                    <div class="col-auto align-self-center">
-                        <span class="fw-bold">:</span>
-                    </div>
-                    <div class="col-auto">
-                        <input type="number" class="form-control" value="00" min="0" max="59" style="width: 70px;">
-                    </div>
+            <!-- Container for entries -->
+            <div id="alimentacionEntriesContainer">
+                <!-- Mensaje cuando no hay residente seleccionado -->
+                <div class="alert alert-info text-center" id="noResidentMessageFood">
+                    <i class="bi bi-info-circle me-2"></i>
+                    {{ STRINGS.REGISTRY_SELECT_RESIDENT }}
                 </div>
             </div>
-
-            <!-- Food Items -->
-            <div class="mb-3">
-                <label class="form-label fw-bold">Ingesta de sólidos</label>
-                <select class="form-select" aria-label="Descripción de sólidos">
-                    <option selected>Seleccione una opción</option>
-                    <option value="1">Descripción 1</option>
-                    <option value="2">Descripción 2</option>
-                    <option value="3">Descripción 3</option>
-                </select>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label fw-bold">1 Plato</label>
-                <select class="form-select" aria-label="Descripción del primer plato"></select>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label fw-bold">2 Plato</label>
-                <select class="form-select" aria-label="Descripción del segundo plato"></select>
-            </div>
-
-            <div class="mb-4">
-                <label class="form-label fw-bold">Postre</label>
-                <select class="form-select" aria-label="Descripción del postre"></select>
-            </div>
-
-            <!-- Action Buttons -->
-            <div class="d-flex gap-2 justify-content-start">
-                <button type="button" class="btn btn-primary">
-                    <i class="bi bi-save"></i> Guardar
-                </button>
-                <button type="button" class="btn btn-info text-white">
-                    <i class="bi bi-plus-circle"></i> Anotar
-                </button>
-                <button type="button" class="btn btn-danger">
-                    <i class="bi bi-trash"></i> Borrar
-                </button>
-            </div>
+            
+            <!-- Botón para añadir nuevo registro (oculto por defecto) -->
+            <button type="button" class="btn btn-success w-100 mt-3" id="addFoodEntry" style="display: none;">
+                <i class="bi bi-plus-circle"></i> {{ STRINGS.REGISTRY_NEW_ENTRY }}
+            </button>
         </div>
     </div>
 </div>
+
+<!-- Template para nueva entrada en modo edición -->
+<template id="alimentacionEntryTemplate">
+    <div class="entry-item mb-3">
+        <!-- Vista compacta (cuando está guardado) -->
+        <div class="entry-compact card border-success" style="display: none;">
+            <div class="card-body p-2 d-flex justify-content-between align-items-center">
+                <div>
+                    <i class="bi bi-clock text-success me-2"></i>
+                    <strong class="entry-time"></strong>
+                    <small class="text-muted ms-2 entry-summary"></small>
+                </div>
+                <div>
+                    <button type="button" class="btn btn-sm btn-outline-primary edit-entry me-1">
+                        <i class="bi bi-pencil"></i>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-danger delete-entry">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Vista expandida (formulario) -->
+        <div class="entry-form card border-secondary">
+            <div class="card-header bg-light py-2">
+                <div class="d-flex align-items-center">
+                    <label class="form-label mb-0 me-2 fw-bold">
+                        <i class="bi bi-clock"></i> Hora:
+                    </label>
+                    <input type="number" class="form-control form-control-sm hour-input me-1" min="0" max="23" style="width: 60px;" placeholder="HH">
+                    <span class="fw-bold">:</span>
+                    <input type="number" class="form-control form-control-sm minute-input ms-1" min="0" max="59" style="width: 60px;" placeholder="MM">
+                </div>
+            </div>
+            <div class="card-body">
+                <!-- Solid Intake -->
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Ingesta de sólidos</label>
+                    <select class="form-select meal-type-select">
+                        <option selected value="">Seleccione una opción</option>
+                        <option value="desayuno">Desayuno</option>
+                        <option value="comida">Comida</option>
+                        <option value="merienda">Merienda</option>
+                        <option value="cena">Cena</option>
+                    </select>
+                </div>
+
+                <!-- First Course -->
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Primer plato</label>
+                    <select class="form-select first-course-select">
+                        <option selected value="">Seleccione una opción</option>
+                        <option value="todo">Todo</option>
+                        <option value="poco">Poco</option>
+                        <option value="nada">Nada</option>
+                    </select>
+                </div>
+
+                <!-- Second Course -->
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Segundo plato</label>
+                    <select class="form-select second-course-select">
+                        <option selected value="">Seleccione una opción</option>
+                        <option value="todo">Todo</option>
+                        <option value="poco">Poco</option>
+                        <option value="nada">Nada</option>
+                    </select>
+                </div>
+
+                <!-- Dessert -->
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Postre</label>
+                    <select class="form-select dessert-select">
+                        <option selected value="">Seleccione una opción</option>
+                        <option value="todo">Todo</option>
+                        <option value="poco">Poco</option>
+                        <option value="nada">Nada</option>
+                    </select>
+                </div>
+
+                <!-- Liquid Intake -->
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Ingesta de líquidos</label>
+                    <select class="form-select liquid-intake-select">
+                        <option selected value="">Seleccione una opción</option>
+                        <option value="desayuno">Desayuno</option>
+                        <option value="comida">Comida</option>
+                        <option value="merienda">Merienda</option>
+                        <option value="cena">Cena</option>
+                    </select>
+                </div>
+
+                <!-- Quantity -->
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Cantidad</label>
+                    <input type="text" class="form-control quantity-input" placeholder="Ej: 250ml, 1 vaso">
+                </div>
+
+                <!-- Notes -->
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Observaciones</label>
+                    <textarea class="form-control notes-textarea" rows="2" placeholder="Observaciones adicionales..."></textarea>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-secondary flex-fill cancel-entry">
+                        <i class="bi bi-x-circle"></i> Cancelar
+                    </button>
+                    <button type="button" class="btn btn-warning flex-fill annotation-entry">
+                        <i class="bi bi-file-text"></i> Anotación
+                    </button>
+                    <button type="button" class="btn btn-primary flex-fill save-entry">
+                        <i class="bi bi-save"></i> Guardar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

@@ -3,6 +3,10 @@
 
 {% block title %}{{ STRINGS.HOME_TITLE }}{% endblock %}
 
+{% block extra_js %}
+<script src="{% static 'js/home/panel.js' %}"></script>
+<script src="{% static 'js/home/home.js' %}?v=3"></script>
+{% endblock %}
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/home/home.css' %}">
 {% endblock %}
@@ -108,6 +112,11 @@
                 <button class="btn btn-outline-secondary" type="button" id="clearBtn">Limpiar</button>
             </div>
         </div>
+        <div class="col-md-6 text-end">
+            <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#nuevaAnotacionModal">
+                <i class="bi bi-plus-circle"></i> Nueva Anotación
+            </button>
+        </div>
     </div>
 
     <!-- Data Table -->
@@ -117,10 +126,10 @@
                 <table class="table table-hover">
                     <thead class="table-light">
                         <tr>
-                            <th class="sortable" data-column="0">Panel <i class="bi bi-arrow-down-up"></i></th>
-                            <th class="sortable" data-column="1">Fecha - hora <i class="bi bi-arrow-down-up"></i></th>
-                            <th class="sortable" data-column="2">Tipo <i class="bi bi-arrow-down-up"></i></th>
-                            <th>Descripción</th>
+                            <th class="sortable" data-column="0" style="width: 80px;">Panel <i class="bi bi-arrow-down-up"></i></th>
+                            <th class="sortable" data-column="1" style="width: 100px;">Fecha - hora <i class="bi bi-arrow-down-up"></i></th>
+                            <th class="sortable" data-column="2" style="width: 120px;">Tipo <i class="bi bi-arrow-down-up"></i></th>
+                            <th style="width: 700px;">Descripción</th>
                             <th class="sortable" data-column="4">Residente <i class="bi bi-arrow-down-up"></i></th>
                             <th class="sortable" data-column="5">De <i class="bi bi-arrow-down-up"></i></th>
                             <th class="sortable" data-column="6">Estado <i class="bi bi-arrow-down-up"></i></th>
@@ -128,65 +137,12 @@
                         </tr>
                     </thead>
                     <tbody>
+                        <!-- Las anotaciones se cargarán aquí dinámicamente -->
                         <tr>
-                            <td>JS</td>
-                            <td>17/11/25 - 07:30</td>
-                            <td>Alimentación</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td><span class="badge bg-success">Abierto</span></td>
-                            <td><button class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i></button></td>
-                        </tr>
-                        <tr>
-                            <td>MA</td>
-                            <td>16/11/25 - 20:12</td>
-                            <td>Deposición</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td><span class="badge bg-danger">Cerrado</span></td>
-                            <td><button class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i></button></td>
-                        </tr>
-                        <tr>
-                            <td>CR</td>
-                            <td>18:01 13/11/25</td>
-                            <td>Hidratación</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td><span class="badge bg-success">Abierto</span></td>
-                            <td><button class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i></button></td>
-                        </tr>
-                        <tr>
-                            <td>RE</td>
-                            <td>09:45 12/11/25</td>
-                            <td>Medicación</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td><span class="badge bg-danger">Cerrado</span></td>
-                            <td><button class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i></button></td>
-                        </tr>
-                        <tr>
-                            <td>EN</td>
-                            <td>19:29 10/11/25</td>
-                            <td>Cita médica</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td><span class="badge bg-success">Abierto</span></td>
-                            <td><button class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i></button></td>
-                        </tr>
-                        <tr>
-                            <td>SA</td>
-                            <td>5/11/25 -08:33</td>
-                            <td>Mantenimiento</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td><span class="badge bg-danger">Cerrado</span></td>
-                            <td><button class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i></button></td>
+                            <td colspan="8" class="text-center text-muted py-4">
+                                <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                                Cargando anotaciones...
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -272,8 +228,80 @@
     </div>
 </div>
 
-{% endblock %}
+<!-- Modal Nueva Anotación -->
+<div class="modal fade" id="nuevaAnotacionModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="nuevaAnotacionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="nuevaAnotacionModalLabel"><i class="bi bi-file-text"></i> Nueva Anotación</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="nuevaAnotacionForm">
+                    <!-- Fecha -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="anotacionFecha" class="form-label">Fecha <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control" id="anotacionFecha" required value="{% now 'Y-m-d' %}">
+                        </div>
+                    </div>
+                    <!-- Panel Informativo -->
+                    <div class="row">
+                        <div class="col mb-3">
+                            <label for="anotacionPanel" class="form-label">Panel informativo <span class="text-danger">*</span></label>
+                            <select class="form-select" id="anotacionPanel" required>
+                                <option value="" selected disabled>Seleccione un panel</option>
+                                <option value="sanitario">Sanitario</option>
+                                <option value="direccion">Dirección</option>
+                            </select>
+                        </div>
+                        <!-- Tipo de Anotación -->
+                        <div class="col mb-3">
+                            <label for="anotacionTipo" class="form-label">Tipo de anotación <span class="text-danger">*</span></label>
+                            <select class="form-select" id="anotacionTipo" required>
+                                <option value="" selected disabled>Seleccione un tipo</option>
+                                <option value="alimentacion">Alimentación</option>
+                                <option value="salida">Salida</option>
+                                <option value="cita_medica">Cita médica</option>
+                            </select>
+                        </div>
+                    </div>
 
-{% block extra_js %}
-<script src="{% static 'js/home/home.js' %}?v=3"></script>
+                    <div class="row">
+                        <!-- Residente -->
+                        <div class="col mb-3">
+                            <label for="anotacionResidente" class="form-label">Residente <span class="text-danger">*</span></label>
+                            <select class="form-select" id="anotacionResidente" required>
+                                <option value="" selected disabled>Seleccione un residente</option>
+                                {% for resident in residents %}
+                                    <option value="{{ resident.id }}">{{ resident.get_full_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <!-- Estado -->
+                        <div class="col mb-3">
+                            <label for="anotacionEstado" class="form-label">Estado <span class="text-danger">*</span></label>
+                            <select class="form-select" id="anotacionEstado" required>
+                                <option value="" selected disabled>Seleccione un estado</option>
+                                <option value="abierto">Abierto</option>
+                                <option value="en_espera">En espera</option>
+                                <option value="cerrado">Cerrado</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Descripción -->
+                    <div class="mb-3">
+                        <label for="anotacionDescripcion" class="form-label">Descripción</label>
+                        <textarea class="form-control" id="anotacionDescripcion" rows="2" placeholder="Describa los detalles de la anotación..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bi bi-x-circle"></i> Cancelar</button>
+                <button type="button" class="btn btn-primary" id="guardarAnotacionBtn"><i class="bi bi-save"></i> Guardar Anotación</button>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

@@ -13,4 +13,9 @@ urlpatterns = [
     path('residents/', views.residents_list, name='residents_list'),
     path('residents/add/', views.add_resident, name='add_resident'),
     path('residents/<int:pk>/', views.resident_detail, name='resident_detail'),
+    path('residents/<int:pk>/edit/', views.edit_resident, name='edit_resident'),
+    path('residents/<int:pk>/delete/', views.delete_resident, name='delete_resident'),
+    
+    # API endpoints
+    path('api/residents/<int:pk>/registry-settings/', views.update_registry_settings, name='update_registry_settings'),
 ]

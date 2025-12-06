@@ -1,19 +1,13 @@
 {% extends 'base.html' %}
 {% load static %}
-
+{% block extra_js %}
+<script src="{% static 'js/management/worker-edit.js' %}"></script>
+<script src="{% static 'js/management/worker-delete.js' %}"></script>
+{% endblock %}
 {% block title %}Perfil de {{ worker.get_full_name }}{% endblock %}
 
 {% block content %}
 <div class="container-fluid p-4">
-    <!-- Breadcrumb -->
-    <nav aria-label="breadcrumb" class="mb-3">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{% url 'home:home' %}">{{ STRINGS.NAV_HOME }}</a></li>
-            <li class="breadcrumb-item"><a href="{% url 'management:workers_list' %}">{{ STRINGS.NAV_WORKERS }}</a></li>
-            <li class="breadcrumb-item active" aria-current="page">{{ worker.get_full_name }}</li>
-        </ol>
-    </nav>
-
     <!-- Header con foto y nombre -->
     <div class="row mb-4">
         <div class="col-12">
@@ -51,12 +45,16 @@
                             <button class="btn btn-primary" onclick="window.location.href='{% url 'management:workers_list' %}'">
                                 <i class="bi bi-arrow-left"></i> Volver
                             </button>
+                            {% if perms.management.change_worker %}
                             <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editWorkerModal">
                                 <i class="bi bi-pencil"></i> {{ STRINGS.BUTTON_EDIT }}
                             </button>
+                            {% endif %}
+                            {% if perms.management.delete_worker %}
                             <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteWorkerModal">
                                 <i class="bi bi-trash"></i> {{ STRINGS.BUTTON_DELETE }}
                             </button>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -71,7 +69,7 @@
             <!-- Datos Personales -->
             <div class="card shadow-sm mb-3">
                 <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0"><i class="bi bi-person"></i> {{ STRINGS.WORKER_DETAIL_TITLE }}</h5>
+                    <h5 class="mb-0"><i class="bi bi-person"></i> {{ STRINGS.WORKER_SECTION_PERSONAL }}</h5>
                 </div>
                 <div class="card-body">
                     <div class="row mb-2">
@@ -108,7 +106,7 @@
                     {% endif %}
                     {% if worker.role %}
                     <div class="row mb-2">
-                        <div class="col-5 fw-bold">Rol:</div>
+                        <div class="col-5 fw-bold">{{ STRINGS.ROLE_LABEL }}:</div>
                         <div class="col-7"><span class="badge bg-info">{{ worker.role }}</span></div>
                     </div>
                     {% endif %}
@@ -118,7 +116,7 @@
             <!-- Datos de Contacto -->
             <div class="card shadow-sm mb-3">
                 <div class="card-header bg-success text-white">
-                    <h5 class="mb-0"><i class="bi bi-telephone"></i> {{ STRINGS.WORKER_DETAIL_CONTACT }}</h5>
+                    <h5 class="mb-0"><i class="bi bi-telephone"></i> {{ STRINGS.WORKER_SECTION_CONTACT }}</h5>
                 </div>
                 <div class="card-body">
                     {% if worker.address %}
@@ -148,9 +146,7 @@
                     {% if worker.phone %}
                     <div class="row mb-2">
                         <div class="col-5 fw-bold">{{ STRINGS.PHONE_LABEL }}:</div>
-                        <div class="col-7">
-                            <a href="tel:{{ worker.phone }}">{{ worker.phone }}</a>
-                        </div>
+                        <div class="col-7">{{ worker.phone }}</div>
                     </div>
                     {% endif %}
                     {% if worker.email %}
@@ -170,7 +166,7 @@
             <!-- Datos Laborales -->
             <div class="card shadow-sm mb-3">
                 <div class="card-header bg-warning text-dark">
-                    <h5 class="mb-0"><i class="bi bi-briefcase"></i> {{ STRINGS.WORKER_DETAIL_EMPLOYMENT }}</h5>
+                    <h5 class="mb-0"><i class="bi bi-briefcase"></i> {{ STRINGS.WORKER_SECTION_EMPLOYMENT }}</h5>
                 </div>
                 <div class="card-body">
                     {% if worker.hire_date %}
@@ -181,7 +177,7 @@
                     {% endif %}
                     {% if worker.social_security_number %}
                     <div class="row mb-2">
-                        <div class="col-5 fw-bold">{{ STRINGS.NUMBER_SECURITY_LABEL }}:</div>
+                        <div class="col-5 fw-bold">{{ STRINGS.SOCIAL_SECURITY_NUMBER_LABEL }}:</div>
                         <div class="col-7">{{ worker.social_security_number }}</div>
                     </div>
                     {% endif %}
@@ -195,6 +191,16 @@
                     <div class="row mb-2">
                         <div class="col-5 fw-bold">{{ STRINGS.DISABILITY_LABEL }}:</div>
                         <div class="col-7">{{ worker.disability_percentage }}%</div>
+                    </div>
+                    {% endif %}
+                    {% if worker.curriculum %}
+                    <div class="row mb-2">
+                        <div class="col-5 fw-bold">{{ STRINGS.CURRICULUM_LABEL }}:</div>
+                        <div class="col-7">
+                            <a href="{{ worker.curriculum.url }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-file-pdf"></i> Ver Currículum
+                            </a>
+                        </div>
                     </div>
                     {% endif %}
                     <div class="row mb-2">
@@ -257,7 +263,7 @@
                         <div class="col-5 fw-bold">Creado:</div>
                         <div class="col-7">{{ worker.created_at|date:"d/m/Y H:i" }}</div>
                     </div>
-                    <div class="row mb-2">
+                    <div class="row mb-2">  
                         <div class="col-5 fw-bold">Última actualización:</div>
                         <div class="col-7">{{ worker.updated_at|date:"d/m/Y H:i" }}</div>
                     </div>
@@ -266,189 +272,5 @@
         </div>
     </div>
 </div>
-
-<!-- Modal Editar Trabajador -->
-<div class="modal fade" id="editWorkerModal" tabindex="-1" aria-labelledby="editWorkerModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title fw-bold" id="editWorkerModalLabel">Editar Trabajador</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="editWorkerForm">
-                    {% csrf_token %}
-                    <!-- Datos Personales -->
-                    <h6 class="fw-bold mb-3 text-primary">Datos Personales</h6>
-                    <div class="row">
-                        <div class="col-md-4 mb-3">
-                            <label for="name" class="form-label">Nombre<span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="name" value="{{ worker.name }}" required>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label for="first_surname" class="form-label">Primer Apellido<span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="first_surname" value="{{ worker.first_surname }}" required>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label for="second_surname" class="form-label">Segundo Apellido</label>
-                            <input type="text" class="form-control" id="second_surname" value="{{ worker.second_surname }}">
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-4 mb-3">
-                            <label for="nif_nie" class="form-label">NIF/NIE<span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="nif_nie" value="{{ worker.nif_nie }}" required>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label for="birthdate" class="form-label">Fecha de Nacimiento<span class="text-danger">*</span></label>
-                            <input type="date" class="form-control" id="birthdate" value="{{ worker.birthdate|date:'Y-m-d' }}" required>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label for="gender" class="form-label">Género</label>
-                            <select class="form-select" id="gender">
-                                <option value="">Seleccione...</option>
-                                <option value="Hombre" {% if worker.gender == 'Hombre' %}selected{% endif %}>Hombre</option>
-                                <option value="Mujer" {% if worker.gender == 'Mujer' %}selected{% endif %}>Mujer</option>
-                            </select>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label for="role" class="form-label">Rol</label>
-                            <select class="form-select" id="role">
-                                <option value="">Seleccione...</option>
-                                <option value="Coordinador" {% if worker.role == 'Coordinador' %}selected{% endif %}>Coordinador</option>
-                                <option value="Enfermero" {% if worker.role == 'Enfermero' %}selected{% endif %}>Enfermero</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- Datos de Contacto -->
-                    <h6 class="fw-bold mb-3 text-primary mt-4">Datos de Contacto</h6>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="address" class="form-label">Dirección</label>
-                            <input type="text" class="form-control" id="address" value="{{ worker.address }}">
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="locality" class="form-label">Localidad</label>
-                            <input type="text" class="form-control" id="locality" value="{{ worker.locality }}">
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-4 mb-3">
-                            <label for="province" class="form-label">Provincia</label>
-                            <select class="form-select" id="province">
-                                <option value="">Seleccione...</option>
-                                <option value="Huesca" {% if worker.province == 'Huesca' %}selected{% endif %}>Huesca</option>
-                                <option value="Teruel" {% if worker.province == 'Teruel' %}selected{% endif %}>Teruel</option>
-                                <option value="Zaragoza" {% if worker.province == 'Zaragoza' %}selected{% endif %}>Zaragoza</option>
-                            </select>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label for="phone" class="form-label">Teléfono</label>
-                            <input type="tel" class="form-control" id="phone" value="{{ worker.phone }}">
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label for="email" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="email" value="{{ worker.email }}">
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-12 mb-3">
-                            <label for="country" class="form-label">País</label>
-                            <input type="text" class="form-control" id="country" value="{{ worker.country }}">
-                        </div>
-                    </div>
-
-                    <!-- Datos Laborales -->
-                    <h6 class="fw-bold mb-3 text-primary mt-4">Datos Laborales</h6>
-                    <div class="row">
-                        <div class="col-md-4 mb-3">
-                            <label for="social_security_number" class="form-label">NSS</label>
-                            <input type="text" class="form-control" id="social_security_number" value="{{ worker.social_security_number }}">
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label for="account_number" class="form-label">Número de Cuenta</label>
-                            <input type="text" class="form-control" id="account_number" value="{{ worker.account_number }}">
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label for="hire_date" class="form-label">Fecha de Contratación</label>
-                            <input type="date" class="form-control" id="hire_date" value="{% if worker.hire_date %}{{ worker.hire_date|date:'Y-m-d' }}{% endif %}">
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="disability_percentage" class="form-label">Minusvalía (%)</label>
-                            <input type="number" class="form-control" id="disability_percentage" min="0" max="100" step="0.01" value="{% if worker.disability_percentage %}{{ worker.disability_percentage }}{% endif %}">
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="profile_photo" class="form-label">Foto de Perfil</label>
-                            <input type="file" class="form-control" id="profile_photo" accept="image/*">
-                            {% if worker.profile_photo %}
-                                <small class="text-muted">Foto actual: {{ worker.profile_photo.name }}</small>
-                            {% endif %}
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                    <i class="bi bi-x-circle"></i> {{ STRINGS.BUTTON_CANCEL }}
-                </button>
-                <button type="button" class="btn btn-primary" id="saveEditWorkerBtn">
-                    <i class="bi bi-save"></i> Guardar Cambios
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Modal Confirmar Eliminación -->
-<div class="modal fade" id="deleteWorkerModal" tabindex="-1" aria-labelledby="deleteWorkerModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title" id="deleteWorkerModalLabel">
-                    <i class="bi bi-exclamation-triangle me-2"></i>Confirmar Eliminación
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p class="mb-3">¿Está seguro de que desea eliminar al trabajador?</p>
-                <div class="alert alert-warning">
-                    <strong>{{ worker.get_full_name }}</strong><br>
-                    <small>{{ worker.nif_nie }}</small>
-                </div>
-                <p class="text-muted small mb-0">
-                    <i class="bi bi-info-circle me-1"></i>
-                    El trabajador será marcado como inactivo y no aparecerá en la lista principal.
-                </p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                    <i class="bi bi-x-circle"></i> {{ STRINGS.BUTTON_CANCEL }}
-                </button>
-                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">
-                    <i class="bi bi-trash"></i> {{ STRINGS.BUTTON_DELETE }}
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
-{% block extra_js %}
-{% load static %}
-<script src="{% static 'js/management/worker-edit.js' %}"></script>
-<script src="{% static 'js/management/worker-delete.js' %}"></script>
-{% endblock %}
-
-<script>
-function editWorker(workerId) {
-    // Por ahora solo muestra un mensaje, implementaremos esto después
-    alert('Función de edición en desarrollo');
-}
-</script>
+{% include 'workers/_modal.html' %}
 {% endblock %}

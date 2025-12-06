@@ -1,10 +1,68 @@
 document.addEventListener('DOMContentLoaded', function() {
+    // Abrir modal de edición automáticamente si viene del parámetro ?edit=true
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('edit') === 'true') {
+        const editModalElement = document.getElementById('editWorkerModal');
+        const editModal = new bootstrap.Modal(editModalElement);
+        editModal.show();
+        
+        // Función para limpiar la URL
+        function cleanURL() {
+            const url = new URL(window.location);
+            url.searchParams.delete('edit');
+            window.history.replaceState({}, '', url);
+        }
+        
+        // Limpiar el parámetro cuando se cierra el modal
+        editModalElement.addEventListener('hidden.bs.modal', cleanURL);
+        
+        // También agregar listeners a los botones de cerrar por si acaso
+        const closeBtn = document.getElementById('closeModalBtn');
+        const cancelBtn = document.getElementById('cancelModalBtn');
+        
+        if (closeBtn) {
+            closeBtn.addEventListener('click', function() {
+                editModal.hide();
+            });
+        }
+        
+        if (cancelBtn) {
+            cancelBtn.addEventListener('click', function() {
+                editModal.hide();
+            });
+        }
+    }
+
     const saveBtn = document.getElementById('saveEditWorkerBtn');
     const editWorkerForm = document.getElementById('editWorkerForm');
+    const removePhotoBtn = document.getElementById('removePhotoBtn');
+    const removeCurriculumBtn = document.getElementById('removeCurriculumBtn');
     
     if (saveBtn) {
         saveBtn.addEventListener('click', function() {
             submitEditWorkerForm();
+        });
+    }
+    
+    // Manejar botón de quitar foto
+    if (removePhotoBtn) {
+        removePhotoBtn.addEventListener('click', function() {
+            document.getElementById('remove_photo').value = 'true';
+            removePhotoBtn.disabled = true;
+            removePhotoBtn.innerHTML = '<i class="bi bi-check"></i> Foto marcada para eliminar';
+            removePhotoBtn.classList.remove('btn-outline-danger');
+            removePhotoBtn.classList.add('btn-success');
+        });
+    }
+    
+    // Manejar botón de quitar currículum
+    if (removeCurriculumBtn) {
+        removeCurriculumBtn.addEventListener('click', function() {
+            document.getElementById('remove_curriculum').value = 'true';
+            removeCurriculumBtn.disabled = true;
+            removeCurriculumBtn.innerHTML = '<i class="bi bi-check"></i> Currículum marcado para eliminar';
+            removeCurriculumBtn.classList.remove('btn-outline-danger');
+            removeCurriculumBtn.classList.add('btn-success');
         });
     }
 });
@@ -56,6 +114,24 @@ function submitEditWorkerForm() {
     const photoInput = document.getElementById('profile_photo');
     if (photoInput.files.length > 0) {
         formData.append('profile_photo', photoInput.files[0]);
+    }
+    
+    // Añadir currículum si se seleccionó uno nuevo
+    const curriculumInput = document.getElementById('curriculum');
+    if (curriculumInput && curriculumInput.files.length > 0) {
+        formData.append('curriculum', curriculumInput.files[0]);
+    }
+    
+    // Añadir indicador de eliminar foto
+    const removePhoto = document.getElementById('remove_photo');
+    if (removePhoto && removePhoto.value === 'true') {
+        formData.append('remove_photo', 'true');
+    }
+    
+    // Añadir indicador de eliminar currículum
+    const removeCurriculum = document.getElementById('remove_curriculum');
+    if (removeCurriculum && removeCurriculum.value === 'true') {
+        formData.append('remove_curriculum', 'true');
     }
     
     // Obtener el token CSRF

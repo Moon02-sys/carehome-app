@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 {% block title %}{{ STRINGS.WORKER_LIST_TITLE }}{% endblock %}
-
 {% load static %}
 {% block extra_js %}
 <script src="{% static 'js/management/worker-add.js' %}"></script>
+<script src="{% static 'js/management/table-sort.js' %}"></script>
 {% endblock %}
 
 {% block content %}
@@ -19,14 +19,16 @@
     <div class="row mb-4">
         <div class="col-md-6 col-lg-4">
             <div class="input-group">
-                <input type="text" class="form-control border-secondary" placeholder="Buscar trabajador..." aria-label="Buscar trabajador">
+                <input type="text" class="form-control border-secondary" placeholder="{{ STRINGS.PLACEHOLDER_SEARCH_WORKER }}" aria-label="{{ STRINGS.PLACEHOLDER_SEARCH_WORKER }}">
                 <button class="btn btn-secondary" onclick="clearSearch()">{{ STRINGS.BUTTON_CLEAR }}</button>
             </div>
         </div>
         <div class="col-md-6 col-lg-8 text-end">
+            {% if perms.management.add_worker %}
             <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addWorkerModal">
                 <i class="bi bi-plus-circle me-1"></i> {{ STRINGS.BUTTON_ADD_WORKER }}
             </button>
+            {% endif %}
         </div>
     </div>
     <!-- Table Section -->
@@ -35,12 +37,21 @@
             <div class="card shadow-sm">
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-striped table-hover mb-0">
+                        <table class="table table-striped table-hover mb-0" id="workersTable">
                             <thead class="table-primary">
                                 <tr>
-                                    <th scope="col" class="fw-bold">{{ STRINGS.NAME_LABEL }}</th>
-                                    <th scope="col" class="fw-bold">{{ STRINGS.FIRST_SURNAME_LABEL }}</th>
-                                    <th scope="col" class="fw-bold">{{ STRINGS.SECOND_SURNAME_LABEL }}</th>
+                                    <th scope="col" class="fw-bold" style="cursor: pointer;" onclick="sortTable(0)">
+                                        {{ STRINGS.NAME_LABEL }}
+                                        <i class="bi bi-arrow-down-up ms-1"></i>
+                                    </th>
+                                    <th scope="col" class="fw-bold" style="cursor: pointer;" onclick="sortTable(1)">
+                                        {{ STRINGS.FIRST_SURNAME_LABEL }}
+                                        <i class="bi bi-arrow-down-up ms-1"></i>
+                                    </th>
+                                    <th scope="col" class="fw-bold" style="cursor: pointer;" onclick="sortTable(2)">
+                                        {{ STRINGS.SECOND_SURNAME_LABEL }}
+                                        <i class="bi bi-arrow-down-up ms-1"></i>
+                                    </th>
                                     <th scope="col" class="fw-bold text-center">{{ STRINGS.ACTIONS }}</th>
                                 </tr>
                             </thead>
@@ -53,7 +64,7 @@
                                     <td class="align-middle">{{ worker.second_surname }}</td>
                                     <td class="text-center align-middle">
                                         <div class="btn-group" role="group">
-                                            <button class="btn btn-sm btn-outline-primary" title="Editar" onclick="event.stopPropagation();">
+                                            <button class="btn btn-sm btn-outline-primary" title="Editar" onclick="event.stopPropagation(); window.location.href='{% url 'management:worker_detail' worker.id %}?edit=true';">
                                                 <i class="bi bi-pencil"></i>
                                             </button>
                                             <button class="btn btn-sm btn-outline-danger" title="Eliminar" onclick="event.stopPropagation();">
@@ -67,7 +78,7 @@
                                 <tr>
                                     <td colspan="4" class="text-center py-4 text-muted">
                                         <i class="bi bi-inbox fs-1 d-block mb-2"></i>
-                                        No hay trabajadores registrados
+                                        {{ STRINGS.NO_WORKERS_FOUND }}
                                     </td>
                                 </tr>
                             {% endif %}
@@ -85,13 +96,13 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title fw-bold" id="addWorkerModalLabel">{{ STRINGS.BUTTON_ADD_WORKER }}</h5>
+                <h5 class="modal-title fw-bold" id="addWorkerModalLabel">{{ STRINGS.MODAL_ADD_WORKER_TITLE }}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form id="addWorkerForm">
                     <!-- Datos Personales -->
-                    <h6 class="fw-bold mb-3 text-primary">{{ STRINGS.WORKER_DETAIL_TITLE }}</h6>
+                    <h6 class="fw-bold mb-3 text-primary">{{ STRINGS.WORKER_SECTION_PERSONAL }}</h6>
                     <div class="row">
                         <div class="col-md-4 mb-3">
                             <label for="name" class="form-label">{{ STRINGS.NAME_LABEL }}<span class="text-danger">*</span></label>
@@ -119,23 +130,24 @@
                         <div class="col-md-4 mb-3">
                             <label for="gender" class="form-label">{{ STRINGS.GENDER_LABEL }}</label>
                             <select class="form-select" id="gender">
-                                <option selected disabled>Seleccione...</option>
-                                <option value="Hombre">Hombre</option>
-                                <option value="Mujer">Mujer</option>
+                                <option selected disabled>{{ STRINGS.SELECT_OPTION }}</option>
+                                <option value="H">{{ STRINGS.GENDER_MAN }}</option>
+                                <option value="M">{{ STRINGS.GENDER_WOMAN }}</option>
                             </select>
                         </div>
                         <div class="col-md-4 mb-3">
-                            <label for="role" class="form-label">Rol</label>
+                            <label for="role" class="form-label">{{ STRINGS.ROLE_LABEL }}</label>
                             <select class="form-select" id="role">
-                                <option selected disabled>Seleccione...</option>
-                                <option value="Coordinador">Coordinador</option>
-                                <option value="Enfermero">Enfermero</option>
+                                <option selected disabled>{{ STRINGS.SELECT_OPTION }}</option>
+                                <option value="Director">{{ STRINGS.ROLE_DIRECTOR }}</option>
+                                <option value="Coordinador">{{ STRINGS.ROLE_COORDINATOR }}</option>
+                                <option value="Enfermero">{{ STRINGS.ROLE_NURSE }}</option>
                             </select>
                         </div>
                     </div>
 
                     <!-- Datos de Contacto -->
-                    <h6 class="fw-bold mb-3 text-primary mt-4">{{ STRINGS.WORKER_DETAIL_CONTACT }}</h6>
+                    <h6 class="fw-bold mb-3 text-primary mt-4">{{ STRINGS.WORKER_SECTION_CONTACT }}</h6>
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="address" class="form-label">{{ STRINGS.ADDRESS_LABEL }}</label>
@@ -151,7 +163,7 @@
                         <div class="col-md-4 mb-3">
                             <label for="province" class="form-label">{{ STRINGS.PROVINCE_LABEL }}</label>
                             <select class="form-select" id="province">
-                                <option selected disabled>Seleccione...</option>
+                                <option selected disabled>{{ STRINGS.SELECT_OPTION }}</option>
                                 <option value="Huesca">Huesca</option>
                                 <option value="Teruel">Teruel</option>
                                 <option value="Zaragoza">Zaragoza</option>
@@ -168,10 +180,10 @@
                     </div>
 
                     <!-- Datos Laborales -->
-                    <h6 class="fw-bold mb-3 text-primary mt-4">{{ STRINGS.WORKER_DETAIL_EMPLOYMENT }}</h6>
+                    <h6 class="fw-bold mb-3 text-primary mt-4">{{ STRINGS.WORKER_SECTION_EMPLOYMENT }}</h6>
                     <div class="row">
                         <div class="col-md-4 mb-3">
-                            <label for="social_security_number" class="form-label">{{ STRINGS.NUMBER_SECURITY_LABEL }}</label>
+                            <label for="social_security_number" class="form-label">{{ STRINGS.SOCIAL_SECURITY_NUMBER_LABEL }}</label>
                             <input type="text" class="form-control" id="social_security_number">
                         </div>
                         <div class="col-md-4 mb-3">
@@ -190,8 +202,17 @@
                             <input type="number" class="form-control" id="disability_percentage" min="0" max="100" step="0.01">
                         </div>
                         <div class="col-md-6 mb-3">
+                            <label for="curriculum" class="form-label">{{ STRINGS.CURRICULUM_LABEL }}</label>
+                            <input type="file" class="form-control" id="curriculum" accept=".pdf">
+                            <small class="text-muted d-block mt-1">Opcional</small>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
                             <label for="profile_photo" class="form-label">{{ STRINGS.PROFILE_PHOTO_LABEL }}</label>
                             <input type="file" class="form-control" id="profile_photo" accept="image/*">
+                            <small class="text-muted d-block mt-1">Opcional</small>
                         </div>
                     </div>
                 </form>

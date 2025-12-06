@@ -1,0 +1,154 @@
+<!-- Left Column - Residents List -->
+<div class="col-md-4 col-lg-3">
+    <div class="card bg-light">
+        <div class="card-header bg-secondary text-white">
+            <h6 class="mb-0">Residentes</h6>
+        </div>
+        <div class="card-body p-0">
+            <div class="list-group list-group-flush" style="max-height: 500px; overflow-y: auto;">
+                {% if residents_bowel %}
+                    {% for resident in residents_bowel %}
+                        <button class="list-group-item list-group-item-action" data-resident-id="{{ resident.id }}" data-resident-name="{{ resident.get_full_name }}">
+                            {{ resident.get_full_name }}
+                        </button>
+                    {% endfor %}
+                {% else %}
+                    <div class="list-group-item text-muted text-center">
+                        <i class="bi bi-inbox fs-4 d-block mb-2"></i>
+                        No hay residentes con registro de deposición habilitado
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Right Column - Form -->
+<div class="col-md-8 col-lg-9">
+    <div class="card">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h6 class="mb-0">Registro de Deposición</h6>
+            <input type="date" class="form-control form-control-sm" id="dateInput" style="width: auto;" value="{% now 'Y-m-d' %}">
+        </div>
+        <div class="card-body">
+            <!-- Container for entries -->
+            <div id="deposicionEntriesContainer">
+                <!-- Mensaje cuando no hay residente seleccionado -->
+                <div class="alert alert-info text-center" id="noResidentMessageBowel">
+                    <i class="bi bi-info-circle me-2"></i>
+                    {{ STRINGS.REGISTRY_SELECT_RESIDENT }}
+                </div>
+            </div>
+            
+            <!-- Botón para añadir nuevo registro (oculto por defecto) -->
+            <button type="button" class="btn btn-success w-100 mt-3" id="addBowelEntry" style="display: none;">
+                <i class="bi bi-plus-circle"></i> {{ STRINGS.REGISTRY_NEW_ENTRY }}
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Template para nueva entrada en modo edición -->
+<template id="deposicionEntryTemplate">
+    <div class="entry-item mb-3">
+        <!-- Vista compacta (cuando está guardado) -->
+        <div class="entry-compact card border-success" style="display: none;">
+            <div class="card-body p-2 d-flex justify-content-between align-items-center">
+                <div>
+                    <i class="bi bi-clock text-success me-2"></i>
+                    <strong class="entry-time"></strong>
+                    <small class="text-muted ms-2 entry-summary"></small>
+                </div>
+                <div>
+                    <button type="button" class="btn btn-sm btn-outline-primary edit-entry me-1">
+                        <i class="bi bi-pencil"></i>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-danger delete-entry">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Vista expandida (formulario) -->
+        <div class="entry-form card border-secondary">
+            <div class="card-header bg-light py-2">
+                <div class="d-flex align-items-center">
+                    <label class="form-label mb-0 me-2 fw-bold">
+                        <i class="bi bi-clock"></i> Hora:
+                    </label>
+                    <input type="number" class="form-control form-control-sm hour-input me-1" min="0" max="23" style="width: 60px;" placeholder="HH">
+                    <span class="fw-bold">:</span>
+                    <input type="number" class="form-control form-control-sm minute-input ms-1" min="0" max="59" style="width: 60px;" placeholder="MM">
+                </div>
+            </div>
+            <div class="card-body">
+                <!-- Stool Type -->
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Tipo de deposición</label>
+                    <select class="form-select type-select">
+                        <option selected value="">Seleccione una opción</option>
+                        <option value="normal">Normal</option>
+                        <option value="diarrea">Diarrea</option>
+                        <option value="estreñimiento">Estreñimiento</option>
+                        <option value="sangre">Con sangre</option>
+                    </select>
+                </div>
+
+                <!-- Consistency (Escala de Bristol) -->
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Consistencia</label>
+                    <select class="form-select consistency-select">
+                        <option selected value="">Seleccione una opción</option>
+                        <option value="dura">Dura</option>
+                        <option value="normal">Normal</option>
+                        <option value="liquida">Líquida</option>
+                    </select>
+                </div>
+
+                <!-- Color -->
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Color</label>
+                    <select class="form-select color-select">
+                        <option selected value="">Seleccione una opción</option>
+                        <option value="marron">Marrón</option>
+                        <option value="verde">Verde</option>
+                        <option value="amarillo">Amarillo</option>
+                        <option value="negro">Negro</option>
+                        <option value="rojo">Rojo</option>
+                    </select>
+                </div>
+                
+                <!-- Quantity -->
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Cantidad</label>
+                    <select class="form-select quantity-select">
+                        <option selected value="">Seleccione una opción</option>
+                        <option value="escasa">Escasa</option>
+                        <option value="moderada">Moderada</option>
+                        <option value="abundante">Abundante</option>
+                    </select>
+                </div>
+
+                <!-- Notes -->
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Observaciones</label>
+                    <textarea class="form-control notes-textarea" rows="2" placeholder="Observaciones adicionales..."></textarea>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-secondary flex-fill cancel-entry">
+                        <i class="bi bi-x-circle"></i> Cancelar
+                    </button>
+                    <button type="button" class="btn btn-warning flex-fill annotation-entry">
+                        <i class="bi bi-file-text"></i> Anotación
+                    </button>
+                    <button type="button" class="btn btn-primary flex-fill save-entry">
+                        <i class="bi bi-save"></i> Guardar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
