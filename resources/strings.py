@@ -211,9 +211,9 @@
     "MODAL_TITLE_EDIT": "Editar",
     "MODAL_TITLE_DELETE": "Eliminar",
     "MODAL_TITLE_CONFIRM_DELETE": "Confirmar Eliminacion",
-    "MODAL_DELETE_QUESTION_WORKER": "Â¿EstÃ¡ seguro de que desea eliminar al trabajador?",
-    "MODAL_DELETE_QUESTION_RESIDENT": "Â¿EstÃ¡ seguro de que desea eliminar al residente?",
-    "MODAL_DELETE_INFO": "SerÃ¡ marcado como inactivo y no aparecerÃ¡ en la lista principal.",
+    "MODAL_DELETE_QUESTION_WORKER": "¿Está seguro de que desea eliminar al trabajador?",
+    "MODAL_DELETE_QUESTION_RESIDENT": "¿Está seguro de que desea eliminar al residente?",
+    "MODAL_DELETE_INFO": "Será marcado como inactivo y no aparecerá en la lista principal.",
     
     # File actions
     "REMOVE_CURRICULUM": "Quitar Currículum",
