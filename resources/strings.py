@@ -17,7 +17,7 @@
     # ============================================
     # HOME
     # ============================================
-    "HOME_TITLE": "PÃ¡gina principal",
+    "HOME_TITLE": "Página principal",
 
     # ============================================
     # AUTHENTICATION
@@ -196,8 +196,8 @@
     # ============================================
     "RESIDENTS": "Residentes",
     "WORKERS": "Trabajadores",
-    "GENDER_MALE": "Masculino",
-    "GENDER_FEMALE": "Femenino",
+    "GENDER_MALE": "Hombre",
+    "GENDER_FEMALE": "Mujer",
     
     # Section titles
     "SECTION_PERSONAL_DATA": "Datos Personales",
