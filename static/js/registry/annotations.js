@@ -61,11 +61,12 @@ document.addEventListener('DOMContentLoaded', function() {
             const minVal = formElement.querySelector('.minute-input').value;
             data.hora = (hourVal && minVal) ? `${hourVal}:${minVal}` : '';
             
-            data.nombreMedicamento = formElement.querySelector('.medication-name-input').value || '';
+            const medSelect = formElement.querySelector('.medication-name-select');
+            data.nombreMedicamento = (medSelect && medSelect.value) ? medSelect.selectedOptions[0].text : '';
             data.dosis = formElement.querySelector('.dosage-input').value || '';
-            
+
             const routeSelect = formElement.querySelector('.route-select');
-            data.via = (routeSelect.value) ? routeSelect.selectedOptions[0].text : '';
+            data.via = (routeSelect && routeSelect.value) ? routeSelect.selectedOptions[0].text : '';
             
             data.observaciones = formElement.querySelector('.notes-textarea').value || '';
         } else if (section === 'deposicion') {
