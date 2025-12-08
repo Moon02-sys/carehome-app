@@ -1,5 +1,17 @@
 // Esperar a que el DOM esté completamente cargado
 document.addEventListener('DOMContentLoaded', function() {
+    // Establecer fecha actual en el modal de caída cuando se abra
+    const nuevaCaidaModal = document.getElementById('nuevaCaidaModal');
+    if (nuevaCaidaModal) {
+        nuevaCaidaModal.addEventListener('show.bs.modal', function() {
+            const fechaInput = document.getElementById('fecha');
+            if (fechaInput && !fechaInput.value) {
+                const today = new Date().toISOString().split('T')[0];
+                fechaInput.value = today;
+            }
+        });
+    }
+
     // Guardar el orden original de las filas al cargar la página
     const table = document.querySelector('.table tbody');
     const rows = Array.from(table.getElementsByTagName('tr'));
@@ -130,14 +142,78 @@ function clearSearch() {
     filterTable();
 }
 
-function registrarCaida() {
+async function registrarCaida() {
     const form = document.getElementById('nuevaCaidaForm');
     if (form.checkValidity()) {
-        alert('Caída registrada correctamente');
-        var modal = bootstrap.Modal.getInstance(document.getElementById('nuevaCaidaModal'));
-        modal.hide();
-        form.reset();
+        const fecha = document.getElementById('fecha').value;
+        const residenteId = document.getElementById('residente').value;
+        const lugar = document.getElementById('lugar').value;
+        const familiarInformado = document.getElementById('familiarInformado').value;
+        const causa = document.getElementById('causa').value;
+        const consecuencias = document.getElementById('consecuencias').value;
+        const observaciones = document.getElementById('observaciones').value;
+
+        // Preparar los datos de la caída como anotación
+        const formData = {
+            fecha: fecha,
+            lugar: lugar,
+            familiarInformado: familiarInformado,
+            causa: causa,
+            consecuencias: consecuencias
+        };
+
+        const annotationData = {
+            resident_id: residenteId,
+            panel: 'incidencia',
+            type: 'caida',
+            status: 'abierto',
+            form_data: formData,
+            notes: observaciones
+        };
+
+        try {
+            const response = await fetch('/registry/api/annotations/save/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify(annotationData)
+            });
+
+            const result = await response.json();
+            
+            if (result.success) {
+                alert('Caída registrada correctamente como anotación');
+                var modal = bootstrap.Modal.getInstance(document.getElementById('nuevaCaidaModal'));
+                modal.hide();
+                form.reset();
+                // Recargar la página para mostrar la nueva anotación en el panel
+                location.reload();
+            } else {
+                alert('Error al registrar: ' + result.message);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error al registrar la caída');
+        }
     } else {
         form.reportValidity();
     }
+}
+
+// Función auxiliar para obtener el CSRF token
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
 }

@@ -5,7 +5,7 @@
 
 {% block extra_js %}
 <script src="{% static 'js/home/panel.js' %}"></script>
-<script src="{% static 'js/home/home.js' %}?v=3"></script>
+<script src="{% static 'js/home/home.js' %}?v=4"></script>
 {% endblock %}
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/home/home.css' %}">
@@ -174,10 +174,10 @@
                         <div class="col-md-6 mb-3">
                             <label for="residente" class="form-label">Residente<span class="text-danger">*</span></label>
                             <select class="form-select" id="residente" required>
-                                <option selected disabled>Nadie seleccionado</option>
-                                <option value="1">Residente 1</option>
-                                <option value="2">Residente 2</option>
-                                <option value="3">Residente 3</option>
+                                <option value="" selected disabled>Nadie seleccionado</option>
+                                {% for resident in residents %}
+                                    <option value="{{ resident.id }}">{{ resident.get_full_name }}</option>
+                                {% endfor %}
                             </select>
                         </div>
                         <div class="col-md-6 mb-3">

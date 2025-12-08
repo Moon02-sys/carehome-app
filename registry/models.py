@@ -131,6 +131,7 @@ class Annotation(models.Model):
         ('alimentacion', 'Alimentación'),
         ('medicacion', 'Medicación'),
         ('deposicion', 'Deposición'),
+        ('caida', 'Caída'),
     ]
     
     resident = models.ForeignKey(Resident, on_delete=models.CASCADE, related_name='annotations', verbose_name="Residente")
