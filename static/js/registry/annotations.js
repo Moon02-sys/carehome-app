@@ -150,12 +150,12 @@ document.addEventListener('DOMContentLoaded', function() {
         const status = document.getElementById('annotationStatus').value;
         
         if (!panel || !type || !notes || !status) {
-            alert('Por favor, complete todos los campos obligatorios');
+            showAlert('Por favor, complete todos los campos obligatorios', 'warning');
             return;
         }
         
         if (!currentResident) {
-            alert('No se ha seleccionado un residente');
+            showAlert('No se ha seleccionado un residente', 'warning');
             return;
         }
         
@@ -193,13 +193,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.getElementById('annotationDescription').innerHTML = '<em class="text-muted">La descripción se generará automáticamente con los datos del formulario</em>';
                 
                 // Mostrar mensaje de éxito
-                alert('Anotación guardada correctamente en el Panel Principal');
+                showAlert('Anotación guardada correctamente en el Panel Principal', 'success');
             } else {
-                alert('Error al guardar: ' + result.message);
+                showAlert('Error al guardar: ' + result.message, 'danger');
             }
         } catch (error) {
             console.error('Error:', error);
-            alert('Error al guardar la anotación. Por favor, intente nuevamente.');
+            showAlert('Error al guardar la anotación. Por favor, intente nuevamente.', 'danger');
         }
     });
 });

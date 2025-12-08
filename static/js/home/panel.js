@@ -4,6 +4,34 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Recargar cada 30 segundos (DESACTIVADO TEMPORALMENTE)
     // setInterval(loadAnnotations, 30000);
+
+    // Manejar foco del modal de anotaciones
+    const nuevaAnotacionModal = document.getElementById('nuevaAnotacionModal');
+    let triggerButtonAnnotation = null;
+    
+    if (nuevaAnotacionModal) {
+        // Capturar cuál botón abrió el modal
+        document.addEventListener('click', function(e) {
+            if (e.target.getAttribute('data-bs-target') === '#nuevaAnotacionModal' || 
+                e.target.closest('[data-bs-target="#nuevaAnotacionModal"]')) {
+                triggerButtonAnnotation = e.target.closest('button');
+            }
+        });
+
+        // Restaurar foco al botón que abrió el modal cuando se cierra
+        nuevaAnotacionModal.addEventListener('hidden.bs.modal', function() {
+            if (triggerButtonAnnotation && triggerButtonAnnotation !== document.activeElement) {
+                // Usar requestAnimationFrame para asegurar que se ejecute después de que Bootstrap finalice
+                requestAnimationFrame(() => {
+                    try {
+                        triggerButtonAnnotation.focus();
+                    } catch (e) {
+                        console.warn('No se pudo restaurar foco:', e);
+                    }
+                });
+            }
+        });
+    }
     
     // Manejar guardado de nueva anotación
     document.getElementById('guardarAnotacionBtn')?.addEventListener('click', async function() {
@@ -17,7 +45,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Validar campos obligatorios
         if (!fecha || !panel || !tipo || !estado || !residenteId) {
-            alert('Por favor, complete todos los campos obligatorios (*)');
+            showAlert('Por favor, complete todos los campos obligatorios (*)', 'warning');
             return;
         }
         
@@ -66,36 +94,38 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Recargar anotaciones
                 loadAnnotations();
                 
-                alert(editingId ? 'Anotación actualizada correctamente' : 'Anotación guardada correctamente');
+                showAlert(editingId ? 'Anotación actualizada correctamente' : 'Anotación guardada correctamente', 'success');
             } else {
-                alert('Error al guardar: ' + result.message);
+                showAlert('Error al guardar: ' + result.message, 'danger');
             }
         } catch (error) {
-            console.error('Error:', error);
-            alert('Error al guardar la anotación. Por favor, intente nuevamente.');
+            showAlert('Error al guardar la anotación. Por favor, intente nuevamente.', 'danger');
         }
     });
 });
 
 async function loadAnnotations() {
+    console.log('loadAnnotations() iniciada');
     try {
         const response = await fetch('/registry/api/annotations/');
         const result = await response.json();
         
+        console.log('Respuesta API:', result);
+        
         if (!result.success) {
-            console.error('Error al cargar anotaciones:', result.message);
+            console.warn('API retornó success: false');
             return;
         }
         
         const annotations = result.annotations;
+        console.log('Cantidad de anotaciones:', annotations.length);
+        
         const tbody = document.querySelector('.table tbody');
-    
-    console.log('=== PANEL.JS DEBUG ===');
-    console.log('Anotaciones encontradas:', annotations.length);
-    console.log('Datos:', annotations);
-    console.log('tbody encontrado:', tbody);
-    
-    if (!tbody) return;
+            
+    if (!tbody) {
+        console.warn('tbody no encontrado');
+        return;
+    }
     
     if (annotations.length === 0) {
         tbody.innerHTML = `
@@ -115,6 +145,10 @@ async function loadAnnotations() {
     let html = '';
     
     annotations.forEach((annotation, index) => {
+        // DEBUG: mostrar form_data y notes para cada anotación (especialmente caida)
+        if (annotation.type === 'caida') {
+            console.log('DEBUG - annotation', annotation.id, 'form_data:', annotation.form_data, 'notes:', annotation.notes);
+        }
         const panelBadge = getPanelBadge(annotation.panel);
         const statusBadge = getStatusBadge(annotation.status);
         const date = new Date(annotation.timestamp);
@@ -227,6 +261,22 @@ async function loadAnnotations() {
     });
     
     tbody.innerHTML = html;
+    
+    // Actualizar los contadores después de cargar las anotaciones
+    if (typeof updateFallsCounter === 'function') {
+        console.log('Actualizando contador de caídas...');
+        updateFallsCounter();
+    } else {
+        console.warn('updateFallsCounter no está disponible');
+    }
+    
+    if (typeof updateResidentsCounter === 'function') {
+        console.log('Actualizando contador de residentes...');
+        updateResidentsCounter();
+    } else {
+        console.warn('updateResidentsCounter no está disponible');
+    }
+    // header filters removed
     } catch (error) {
         console.error('Error al cargar anotaciones:', error);
     }
@@ -301,16 +351,44 @@ function generateDescriptionFromFormData(annotation) {
 
     // Descripción para caídas (guardadas desde el panel principal)
     else if (annotation.type === 'caida') {
-        if (data.fecha) parts.push(`Fecha: ${data.fecha}`);
+        // Formatear fecha/hora a DD/MM/YYYY HH:MM
+        if (data.fecha) {
+            let fechaStr = data.fecha;
+            try {
+                // Manejar formatos como 'YYYY-MM-DDTHH:MM' o ISO
+                const dt = new Date(data.fecha);
+                if (!isNaN(dt)) {
+                    const pad = (n) => String(n).padStart(2, '0');
+                    const day = pad(dt.getDate());
+                    const month = pad(dt.getMonth() + 1);
+                    const year = dt.getFullYear();
+                    const hours = pad(dt.getHours());
+                    const minutes = pad(dt.getMinutes());
+                    fechaStr = `${day}/${month}/${year} ${hours}:${minutes}`;
+                } else {
+                    // Fallback: intentar reemplazar T por espacio
+                    fechaStr = data.fecha.replace('T', ' ');
+                }
+            } catch (e) {
+                // si falla, usar el valor crudo
+                fechaStr = data.fecha;
+            }
+            parts.push(`Fecha: ${fechaStr}`);
+        }
         if (data.lugar) parts.push(`Lugar: ${data.lugar}`);
         if (data.familiarInformado) parts.push(`Familiar informado: ${data.familiarInformado}`);
         if (data.causa) parts.push(`Causa: ${data.causa}`);
         if (data.consecuencias) parts.push(`Consecuencias: ${data.consecuencias}`);
-        // notas generales (annotation.notes) se añadirán al final
+        // Observaciones (vienen en annotation.notes)
+        if (annotation.notes) parts.push(`Observaciones: ${annotation.notes}`);
     }
-    // Agregar las notas de la anotación al final
-    if (annotation.notes) {
-        parts.push(annotation.notes);
+    // Para caida: mostrar observaciones con etiqueta; para otros tipos, añadir notas sin etiqueta
+    if (annotation.type === 'caida') {
+        // ya se añadió annotation.notes dentro del bloque 'caida' como Observaciones
+    } else {
+        if (annotation.notes) {
+            parts.push(annotation.notes);
+        }
     }
     
     // Unir con saltos de línea HTML para mejor visualización
@@ -324,7 +402,8 @@ function getTypeLabel(type) {
         'deposicion': 'Deposición',
         'hidratacion': 'Hidratación',
         'salida': 'Salida',
-        'cita_medica': 'Cita médica'
+        'cita_medica': 'Cita médica',
+        'caida': 'Caída'
     };
     // Si no está en el diccionario, capitalizar la primera letra
     if (labels[type]) {
@@ -466,7 +545,7 @@ async function saveFollowUp(annotationId) {
     const newStatus = document.getElementById(`followup-status-${annotationId}`).value;
     
     if (!followupNotes.trim()) {
-        alert('Por favor, agregue observaciones para el seguimiento');
+        showAlert('Por favor, agregue observaciones para el seguimiento', 'warning');
         return;
     }
     
@@ -499,39 +578,60 @@ async function saveFollowUp(annotationId) {
             // Recargar anotaciones
             loadAnnotations();
             
-            alert('Seguimiento guardado correctamente');
+            showAlert('Seguimiento guardado correctamente', 'success');
         } else {
-            alert('Error al guardar: ' + result.message);
+            showAlert('Error al guardar: ' + result.message, 'danger');
         }
     } catch (error) {
         console.error('Error:', error);
-        alert('Error al guardar el seguimiento');
+        showAlert('Error al guardar el seguimiento', 'danger');
     }
 }
 
 async function deleteAnnotation(annotationId) {
-    if (confirm('¿Está seguro de eliminar esta anotación?')) {
-        try {
-            const response = await fetch(`/registry/api/annotations/${annotationId}/delete/`, {
-                method: 'DELETE',
-                headers: {
-                    'X-CSRFToken': getCookie('csrftoken')
-                }
-            });
-            
-            const result = await response.json();
-            
-            if (result.success) {
-                loadAnnotations();
-            } else {
-                alert('Error al eliminar: ' + result.message);
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Error al eliminar la anotación');
-        }
-    }
+    // Guardar el ID de la anotación a eliminar
+    window.pendingDeleteId = annotationId;
+    
+    // Mostrar el modal de confirmación
+    const deleteConfirmModal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
+    deleteConfirmModal.show();
 }
+
+// Manejador del botón de confirmación de eliminación
+document.getElementById('confirmDeleteBtn')?.addEventListener('click', async function() {
+    const annotationId = window.pendingDeleteId;
+    if (!annotationId) return;
+    
+    try {
+        const response = await fetch(`/registry/api/annotations/${annotationId}/delete/`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            }
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            // Cerrar el modal de confirmación
+            const deleteConfirmModal = bootstrap.Modal.getInstance(document.getElementById('deleteConfirmModal'));
+            deleteConfirmModal.hide();
+            
+            // Recargar anotaciones
+            loadAnnotations();
+            
+            showAlert('Anotación eliminada correctamente', 'success');
+        } else {
+            showAlert('Error al eliminar: ' + result.message, 'danger');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showAlert('Error al eliminar la anotación', 'danger');
+    }
+    
+    // Limpiar variable temporal
+    window.pendingDeleteId = null;
+});
 
 function getCookie(name) {
     let cookieValue = null;

@@ -208,13 +208,13 @@ async function updateRegistrySettings(type, enabled) {
         if (result.success) {
             console.log('Configuración actualizada correctamente');
         } else {
-            alert('Error al actualizar: ' + result.message);
+            showAlert('Error al actualizar: ' + result.message, 'danger');
             // Revertir el checkbox
             document.getElementById(`enable${type.charAt(0).toUpperCase() + type.slice(1)}`).checked = !enabled;
         }
     } catch (error) {
         console.error('Error:', error);
-        alert('Error al actualizar la configuración');
+        showAlert('Error al actualizar la configuración', 'danger');
         // Revertir el checkbox
         document.getElementById(`enable${type.charAt(0).toUpperCase() + type.slice(1)}`).checked = !enabled;
     }

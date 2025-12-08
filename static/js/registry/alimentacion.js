@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     function addNewEntry() {
         if (!selectedResident) {
-            alert('Por favor, seleccione un residente');
+            showAlert('Por favor, seleccione un residente', 'warning');
             return;
         }
         

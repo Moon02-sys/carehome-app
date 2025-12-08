@@ -2,7 +2,17 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Establecer fecha actual en el modal de caída cuando se abra
     const nuevaCaidaModal = document.getElementById('nuevaCaidaModal');
+    let triggerButton = null; // Guardar referencia al botón que abrió el modal
+    
     if (nuevaCaidaModal) {
+        // Capturar cuál botón abrió el modal
+        document.addEventListener('click', function(e) {
+            if (e.target.getAttribute('data-bs-target') === '#nuevaCaidaModal' || 
+                e.target.closest('[data-bs-target="#nuevaCaidaModal"]')) {
+                triggerButton = e.target.closest('button');
+            }
+        });
+
         nuevaCaidaModal.addEventListener('show.bs.modal', function() {
             const fechaInput = document.getElementById('fecha');
             if (fechaInput && !fechaInput.value) {
@@ -16,6 +26,20 @@ document.addEventListener('DOMContentLoaded', function() {
                     const today = new Date().toISOString().split('T')[0];
                     fechaInput.value = today;
                 }
+            }
+        });
+
+        // Restaurar foco al botón que abrió el modal cuando se cierra
+        nuevaCaidaModal.addEventListener('hidden.bs.modal', function() {
+            if (triggerButton && triggerButton !== document.activeElement) {
+                // Usar requestAnimationFrame para asegurar que se ejecute después de que Bootstrap finalice
+                requestAnimationFrame(() => {
+                    try {
+                        triggerButton.focus();
+                    } catch (e) {
+                        console.warn('No se pudo restaurar foco:', e);
+                    }
+                });
             }
         });
     }
@@ -39,18 +63,21 @@ document.addEventListener('DOMContentLoaded', function() {
         searchInput.addEventListener('keyup', filterTable);
     }
 
+    // header filters removed
+
     // Agregar evento al botón limpiar
     const clearBtn = document.getElementById('clearBtn');
     if (clearBtn) {
         clearBtn.addEventListener('click', clearSearch);
     }
 
-    // Agregar eventos de ordenamiento a las columnas
-    const sortableHeaders = document.querySelectorAll('.sortable');
+    // Agregar eventos de ordenamiento a las columnas (solo en la primera fila del thead)
+    const sortableHeaders = document.querySelectorAll('thead tr:first-child .sortable');
     sortableHeaders.forEach(header => {
         header.style.cursor = 'pointer';
         header.addEventListener('click', function() {
-            sortTable(this.dataset.column);
+            const colIndex = parseInt(this.dataset.column, 10);
+            if (!isNaN(colIndex)) sortTable(colIndex);
         });
     });
 
@@ -59,13 +86,84 @@ document.addEventListener('DOMContentLoaded', function() {
     if (registrarBtn) {
         registrarBtn.addEventListener('click', registrarCaida);
     }
+
+    // Actualizar contador de caídas al cargar la página
+    updateFallsCounter();
+    updateResidentsCounter();
 });
+
+// Función para actualizar el contador de caídas
+function updateFallsCounter() {
+    const table = document.querySelector('.table tbody');
+    if (!table) {
+        console.warn('Table no encontrada para contar caídas');
+        return;
+    }
+
+    // Contar las filas que tengan tipo "Caída" (con acento)
+    const rows = table.getElementsByTagName('tr');
+    let fallsCount = 0;
+
+    for (let row of rows) {
+        const typeCell = row.querySelector('td:nth-child(3)'); // Columna de Tipo
+        if (typeCell) {
+            const cellText = typeCell.textContent.trim();
+            // Buscar "Caída" (con acento) o "caida" (sin acento, por si acaso)
+            if (cellText === 'Caída' || cellText === 'caida') {
+                fallsCount++;
+            }
+        }
+    }
+
+    // Actualizar el contador en el card
+    const fallsCounter = document.getElementById('fallsCounterCard');
+    if (fallsCounter) {
+        console.log('Contador de caídas actualizado a:', fallsCount);
+        fallsCounter.textContent = fallsCount;
+    } else {
+        console.warn('Elemento fallsCounterCard no encontrado');
+    }
+}
+
+// Función para actualizar el contador de residentes
+function updateResidentsCounter() {
+    const table = document.querySelector('.table tbody');
+    if (!table) {
+        console.warn('Table no encontrada para contar residentes');
+        return;
+    }
+
+    // Contar residentes únicos en la columna Residente (5ta columna)
+    const rows = table.getElementsByTagName('tr');
+    const uniqueResidents = new Set();
+
+    for (let row of rows) {
+        const residentCell = row.querySelector('td:nth-child(5)'); // Columna de Residente
+        if (residentCell) {
+            const residentName = residentCell.textContent.trim();
+            if (residentName && residentName !== '-') {
+                uniqueResidents.add(residentName);
+            }
+        }
+    }
+
+    // Actualizar el contador en el card
+    const residentsCounter = document.getElementById('residentsCounterCard');
+    if (residentsCounter) {
+        console.log('Contador de residentes actualizado a:', uniqueResidents.size);
+        residentsCounter.textContent = uniqueResidents.size;
+    } else {
+        console.warn('Elemento residentsCounterCard no encontrado');
+    }
+}
 
 let sortDirection = {};
 
+
 function sortTable(column) {
     const table = document.querySelector('.table tbody');
-    const rows = Array.from(table.getElementsByTagName('tr'));
+    // Excluir filas de placeholder que usan colspan
+    const rows = Array.from(table.querySelectorAll('tr')).filter(r => !r.querySelector('td[colspan]'));
     
     // Determinar dirección de ordenamiento (alternar entre asc y desc)
     if (!sortDirection[column]) {
@@ -76,11 +174,20 @@ function sortTable(column) {
     
     const direction = sortDirection[column];
     
-    // Ordenar las filas alfabéticamente
+    // Ordenar las filas
     rows.sort((a, b) => {
-        const aValue = a.getElementsByTagName('td')[column].textContent.trim().toLowerCase();
-        const bValue = b.getElementsByTagName('td')[column].textContent.trim().toLowerCase();
-        
+        const aCell = a.getElementsByTagName('td')[column];
+        const bCell = b.getElementsByTagName('td')[column];
+        const aValue = aCell ? aCell.textContent.trim().toLowerCase() : '';
+        const bValue = bCell ? bCell.textContent.trim().toLowerCase() : '';
+
+        // Si es la columna de fecha (1), intentar comparar como fecha/datetime
+        if (column === 1) {
+            const aDate = Date.parse(aValue.replace(/-/g, '/')) || 0;
+            const bDate = Date.parse(bValue.replace(/-/g, '/')) || 0;
+            return direction === 'asc' ? aDate - bDate : bDate - aDate;
+        }
+
         if (direction === 'asc') {
             return aValue.localeCompare(bValue, 'es');
         } else {
@@ -97,7 +204,8 @@ function filterTable() {
     const filter = searchInput.value.toLowerCase();
     const table = document.querySelector('.table tbody');
     const rows = table.getElementsByTagName('tr');
-    
+    // header filters removed
+
     for (let i = 0; i < rows.length; i++) {
         const row = rows[i];
         const cells = row.getElementsByTagName('td');
@@ -122,6 +230,8 @@ function filterTable() {
             row.style.display = 'none';
         }
     }
+    // Actualizar el contador cuando se filtra
+    updateFallsCounter();
 }
 
 function clearSearch() {
@@ -192,18 +302,22 @@ async function registrarCaida() {
             const result = await response.json();
             
             if (result.success) {
-                alert('Caída registrada correctamente como anotación');
+                showAlert('Caída registrada correctamente como anotación', 'success');
                 var modal = bootstrap.Modal.getInstance(document.getElementById('nuevaCaidaModal'));
                 modal.hide();
                 form.reset();
-                // Recargar la página para mostrar la nueva anotación en el panel
-                location.reload();
+                // Recargar las anotaciones para mostrar la nueva caída
+                if (typeof loadAnnotations === 'function') {
+                    console.log('Llamando loadAnnotations después de registrar caída');
+                    loadAnnotations();
+                } else {
+                    console.warn('loadAnnotations no está disponible');
+                }
             } else {
-                alert('Error al registrar: ' + result.message);
+                showAlert('Error al registrar: ' + result.message, 'danger');
             }
         } catch (error) {
-            console.error('Error:', error);
-            alert('Error al registrar la caída');
+            showAlert('Error al registrar la caída', 'danger');
         }
     } else {
         form.reportValidity();

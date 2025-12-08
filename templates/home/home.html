@@ -4,8 +4,8 @@
 {% block title %}{{ STRINGS.HOME_TITLE }}{% endblock %}
 
 {% block extra_js %}
-<script src="{% static 'js/home/panel.js' %}"></script>
 <script src="{% static 'js/home/home.js' %}?v=4"></script>
+<script src="{% static 'js/home/panel.js' %}"></script>
 {% endblock %}
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/home/home.css' %}">
@@ -30,7 +30,7 @@
                             <i class="bi bi-house-fill" style="font-size: 2.5rem;"></i>
                         </div>
                         <div class="text-end">
-                            <h2 class="mb-0 fs-2">0</h2>
+                            <h2 class="mb-0 fs-2" id="residentsCounterCard">0</h2>
                             <small class="fs-6">{{ STRINGS.RESIDENTS }}</small>
                         </div>
                     </div>
@@ -92,7 +92,7 @@
                             <i class="bi bi-truck" style="font-size: 2.5rem;"></i>
                         </div>
                         <div class="text-end">
-                            <h2 class="mb-0 fs-2">0</h2>
+                            <h2 class="mb-0 fs-2" id="fallsCounterCard">0</h2>
                             <small class="fs-6">Últimos días</small>
                         </div>
                     </div>
@@ -135,6 +135,7 @@
                             <th class="sortable" data-column="6">Estado <i class="bi bi-arrow-down-up"></i></th>
                             <th>Acción</th>
                         </tr>
+                        <!-- filters removed -->
                     </thead>
                     <tbody>
                         <!-- Las anotaciones se cargarán aquí dinámicamente -->
@@ -300,6 +301,26 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bi bi-x-circle"></i> Cancelar</button>
                 <button type="button" class="btn btn-primary" id="guardarAnotacionBtn"><i class="bi bi-save"></i> Guardar Anotación</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Confirmación para Eliminar -->
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="deleteConfirmLabel"><i class="bi bi-exclamation-triangle"></i> Confirmar Eliminación</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>¿Está seguro de que desea eliminar esta anotación?</p>
+                <p class="text-muted small">Esta acción no se puede deshacer.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn"><i class="bi bi-trash"></i> Eliminar</button>
             </div>
         </div>
     </div>

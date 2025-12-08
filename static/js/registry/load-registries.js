@@ -268,7 +268,7 @@ function setupEntryButtons(entryItem, type, residentId = null) {
         const minute = formView.querySelector('.minute-input').value;
         
         if (!hour || !minute) {
-            alert('Por favor, ingrese la hora');
+            showAlert('Por favor, ingrese la hora', 'warning');
             return;
         }
         
@@ -276,7 +276,7 @@ function setupEntryButtons(entryItem, type, residentId = null) {
         const finalResidentId = item.dataset.residentId || residentId;
         
         if (!finalResidentId) {
-            alert('Por favor, seleccione un residente');
+            showAlert('Por favor, seleccione un residente', 'warning');
             return;
         }
         
