@@ -5,12 +5,12 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentResident = null;
 
     // Función para abrir el modal de anotación con los datos del formulario
-    function openAnnotationModal(formElement, section) {
+    function openAnnotationModal(formElement, section) {        
         currentFormData = extractFormData(formElement, section);
         currentSection = section;
         
         // Obtener el residente seleccionado
-        const activeResidentBtn = document.querySelector(`#${section} [data-resident-id].active`);
+        const activeResidentBtn = document.querySelector(`#${section} [data-resident-id].active`);       
         if (activeResidentBtn) {
             currentResident = {
                 id: activeResidentBtn.dataset.residentId,
@@ -26,8 +26,14 @@ document.addEventListener('DOMContentLoaded', function() {
         generateDescription(currentFormData, section);
         
         // Abrir el modal
-        const modal = new bootstrap.Modal(document.getElementById('annotationModal'));
-        modal.show();
+        const modalElement = document.getElementById('annotationModal');
+        
+        if (modalElement) {
+            const modal = new bootstrap.Modal(modalElement);
+            modal.show();
+        } else {
+            console.error('No se encontró el elemento annotationModal');
+        }
     }
 
     // Extraer datos del formulario según la sección
@@ -137,6 +143,8 @@ document.addEventListener('DOMContentLoaded', function() {
             
             if (section && formElement) {
                 openAnnotationModal(formElement, section);
+            } else {
+                console.error('No se pudo determinar la sección o no hay formulario');
             }
         }
     });
