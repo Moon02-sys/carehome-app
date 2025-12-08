@@ -6,8 +6,16 @@ document.addEventListener('DOMContentLoaded', function() {
         nuevaCaidaModal.addEventListener('show.bs.modal', function() {
             const fechaInput = document.getElementById('fecha');
             if (fechaInput && !fechaInput.value) {
-                const today = new Date().toISOString().split('T')[0];
-                fechaInput.value = today;
+                // Si el input es datetime-local, asignar fecha y hora local
+                if (fechaInput.type === 'datetime-local') {
+                    const d = new Date();
+                    const pad = (n) => String(n).padStart(2, '0');
+                    const local = `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+                    fechaInput.value = local;
+                } else {
+                    const today = new Date().toISOString().split('T')[0];
+                    fechaInput.value = today;
+                }
             }
         });
     }

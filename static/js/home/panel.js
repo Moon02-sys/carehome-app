@@ -298,6 +298,16 @@ function generateDescriptionFromFormData(annotation) {
         if (data.cantidad) parts.push(`Cant: ${data.cantidad}`);
         if (data.observaciones) parts.push(`Obs: ${data.observaciones}`);
     }
+
+    // Descripción para caídas (guardadas desde el panel principal)
+    else if (annotation.type === 'caida') {
+        if (data.fecha) parts.push(`Fecha: ${data.fecha}`);
+        if (data.lugar) parts.push(`Lugar: ${data.lugar}`);
+        if (data.familiarInformado) parts.push(`Familiar informado: ${data.familiarInformado}`);
+        if (data.causa) parts.push(`Causa: ${data.causa}`);
+        if (data.consecuencias) parts.push(`Consecuencias: ${data.consecuencias}`);
+        // notas generales (annotation.notes) se añadirán al final
+    }
     // Agregar las notas de la anotación al final
     if (annotation.notes) {
         parts.push(annotation.notes);
