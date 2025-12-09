@@ -5,6 +5,7 @@ from django.contrib import messages
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 import json
+from django.contrib.auth.models import User
 
 def login_view(request):
     if request.method == 'POST':
@@ -97,3 +98,28 @@ def change_password(request):
             'success': False,
             'message': str(e)
         }, status=500)
+
+
+@require_http_methods(["POST"])
+def recover_password(request):
+    """Recover password by username (no email). This will set the password for the user if username exists."""
+    try:
+        data = json.loads(request.body)
+        username = data.get('username')
+        new_password = data.get('new_password')
+
+        if not username or not new_password:
+            return JsonResponse({'success': False, 'message': 'Username and new_password required'}, status=400)
+
+        user = User.objects.filter(username=username).first()
+        if not user:
+            return JsonResponse({'success': False, 'message': 'Usuario no encontrado'}, status=404)
+
+        if len(new_password) < 8:
+            return JsonResponse({'success': False, 'message': 'La nueva contraseña debe tener al menos 8 caracteres'}, status=400)
+
+        user.set_password(new_password)
+        user.save()
+        return JsonResponse({'success': True, 'message': 'Contraseña cambiada con éxito'})
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': str(e)}, status=500)

@@ -169,7 +169,7 @@ function initRecoveryValidation() {
     const recReqLower = document.getElementById('rec-req-lower');
     const recReqNumber = document.getElementById('rec-req-number');
     const recReqLength = document.getElementById('rec-req-length');
-    const recoveryEmail = document.getElementById('recoveryEmail');
+    const recoveryUsername = document.getElementById('recoveryUsername');
     const recoveryModal = document.getElementById('recoveryModal');
     const recoveryForm = document.getElementById('recoveryForm');
 
@@ -218,13 +218,13 @@ function initRecoveryValidation() {
             }
         }
 
-        const canSubmit = allOk && match && recoveryEmail && recoveryEmail.value.trim().length > 0;
+        const canSubmit = allOk && match && recoveryUsername && recoveryUsername.value.trim().length > 0;
         if (btnSubmit) btnSubmit.disabled = !canSubmit;
     }
 
     newPwd.addEventListener('input', updateUI);
     if (confirmPwd) confirmPwd.addEventListener('input', updateUI);
-    if (recoveryEmail) recoveryEmail.addEventListener('input', updateUI);
+    if (recoveryUsername) recoveryUsername.addEventListener('input', updateUI);
 
     if (recoveryRequirements) {
         newPwd.addEventListener('focus', function () { recoveryRequirements.style.display = 'block'; });
@@ -236,6 +236,39 @@ function initRecoveryValidation() {
             recoveryForm.reset();
             if (recoveryRequirements) recoveryRequirements.style.display = 'none';
             updateUI();
+        });
+    }
+
+    // Handle recover submit click: send username + new password to backend
+    if (btnSubmit) {
+        btnSubmit.addEventListener('click', async function () {
+            if (btnSubmit.disabled) return;
+            const username = recoveryUsername ? recoveryUsername.value.trim() : '';
+            const newPasswordVal = newPwd ? newPwd.value : '';
+            try {
+                const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+                const resp = await fetch('/accounts/recover/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrftoken || ''
+                    },
+                    body: JSON.stringify({ username: username, new_password: newPasswordVal })
+                });
+                const data = await resp.json();
+                if (data.success) {
+                    // close modal and show success (simple alert)
+                    const modalEl = document.getElementById('recoveryModal');
+                    const bsModal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+                    bsModal.hide();
+                    alert('Contraseña actualizada correctamente. Inicia sesión con tu nueva contraseña.');
+                } else {
+                    alert(data.message || 'Error al recuperar contraseña');
+                }
+            } catch (e) {
+                console.error(e);
+                alert('Error al recuperar contraseña');
+            }
         });
     }
 
