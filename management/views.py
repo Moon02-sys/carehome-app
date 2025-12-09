@@ -5,6 +5,7 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 from resources.strings import content as STRINGS
 from .models import Resident, Worker
+from registry.models import FoodRegistry, MedicationRegistry, BowelMovementRegistry
 from .forms import ResidentForm, WorkerForm
 from .permissions import has_permission
 import json
@@ -235,9 +236,62 @@ def delete_resident(request, pk):
 
 def resident_detail(request, pk):
     resident = get_object_or_404(Resident, pk=pk)
+
+    def user_display(u):
+        if not u:
+            return '-'
+        full = f"{u.first_name} {u.last_name}".strip()
+        return full if full else u.username
+
+    food = FoodRegistry.objects.filter(resident=resident).order_by('-date', '-time')[:50]
+    food_history = [{
+        'date': r.date,
+        'time': r.time,
+        'description': ', '.join(filter(None, [
+            f"Ingesta: {r.solid_intake}" if r.solid_intake else '',
+            f"1er: {r.first_course}" if r.first_course else '',
+            f"2º: {r.second_course}" if r.second_course else '',
+            f"Postre: {r.dessert}" if r.dessert else '',
+            f"Líquidos: {r.liquid_intake}" if r.liquid_intake else '',
+            f"Cant.: {r.quantity}" if r.quantity else '',
+            r.notes
+        ])) or 'Sin detalle',
+        'user': user_display(r.registered_by)
+    } for r in food]
+
+    meds = MedicationRegistry.objects.filter(resident=resident).order_by('-date', '-time')[:50]
+    medication_history = [{
+        'date': r.date,
+        'time': r.time,
+        'description': ', '.join(filter(None, [
+            r.medication_name,
+            f"Dosis: {r.dosage}" if r.dosage else '',
+            f"Vía: {r.route}" if r.route else '',
+            r.notes
+        ])) or 'Sin detalle',
+        'user': user_display(r.administered_by)
+    } for r in meds]
+
+    bowels = BowelMovementRegistry.objects.filter(resident=resident).order_by('-date', '-time')[:50]
+    bowel_history = [{
+        'date': r.date,
+        'time': r.time,
+        'description': ', '.join(filter(None, [
+            f"Tipo: {r.type}" if r.type else '',
+            f"Consistencia: {r.consistency}" if r.consistency else '',
+            f"Color: {r.color}" if r.color else '',
+            f"Cantidad: {r.quantity}" if r.quantity else '',
+            r.notes
+        ])) or 'Sin detalle',
+        'user': user_display(r.registered_by)
+    } for r in bowels]
+
     context = {
         'resident': resident,
-        'STRINGS': STRINGS
+        'STRINGS': STRINGS,
+        'food_history': food_history,
+        'medication_history': medication_history,
+        'bowel_history': bowel_history
     }
     return render(request, 'residents/resident-detail.html', context)
 

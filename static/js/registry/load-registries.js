@@ -1,20 +1,33 @@
 // Cargar registros guardados cuando se selecciona un residente
-document.addEventListener('DOMContentLoaded', function() {
-    // Escuchar cuando se selecciona un residente en cualquier tab
-    document.querySelectorAll('[data-resident-id]').forEach(button => {
-        button.addEventListener('click', function() {
-            const residentId = this.dataset.residentId;
-            const residentName = this.dataset.residentName;
-            
-            // Determinar en qué tab estamos
-            const tabId = this.closest('.tab-pane').id;
-            
-            // Cargar los registros de este residente
-            loadResidentRegistries(residentId, residentName, tabId);
-        });
-    });
-});
-
+ document.addEventListener('DOMContentLoaded', function() {
+     // Escuchar cuando se selecciona un residente en cualquier tab
+     document.querySelectorAll('[data-resident-id]').forEach(button => {
+         button.addEventListener('click', function() {
+             const residentId = this.dataset.residentId;
+             const residentName = this.dataset.residentName;
+             
+             // Determinar en qué tab estamos
+             const tabId = this.closest('.tab-pane').id;
+             
+             // Cargar los registros de este residente
+             loadResidentRegistries(residentId, residentName, tabId);
+         });
+     });
+ 
+     // Escuchar cambios de fecha para recargar solo los registros de ese día
+     document.querySelectorAll('.tab-pane #dateInput').forEach(input => {
+         input.addEventListener('change', function() {
+             const tab = this.closest('.tab-pane');
+             if (!tab) return;
+             const tabId = tab.id;
+             const activeBtn = tab.querySelector('[data-resident-id].active') || tab.querySelector('[data-resident-id].list-group-item-action.active');
+             if (!activeBtn) return;
+             const residentId = activeBtn.dataset.residentId;
+             const residentName = activeBtn.dataset.residentName;
+             loadResidentRegistries(residentId, residentName, tabId);
+         });
+     });
+ });
 async function loadResidentRegistries(residentId, residentName, tabId) {
     console.log('=== CARGANDO REGISTROS ===');
     console.log('Residente ID:', residentId);
@@ -27,14 +40,25 @@ async function loadResidentRegistries(residentId, residentName, tabId) {
         console.log('Respuesta del servidor:', result);
         
         if (result.success) {
+            const dateInput = document.querySelector(`#${tabId} #dateInput`);
+            const selectedDate = dateInput ? dateInput.value : null;
+
             // Cargar según el tab activo
             if (tabId === 'alimentacion') {
-                console.log('Cargando registros de alimentación:', result.registries.alimentacion.length);
-                loadFoodRegistries(result.registries.alimentacion);
+                const filtered = selectedDate
+                    ? result.registries.alimentacion.filter(r => r.date === selectedDate)
+                    : result.registries.alimentacion;
+                loadFoodRegistries(filtered);
             } else if (tabId === 'medicacion') {
-                loadMedicationRegistries(result.registries.medicacion);
+                const filtered = selectedDate
+                    ? result.registries.medicacion.filter(r => r.date === selectedDate)
+                    : result.registries.medicacion;
+                loadMedicationRegistries(filtered);
             } else if (tabId === 'deposicion') {
-                loadBowelRegistries(result.registries.deposicion);
+                const filtered = selectedDate
+                    ? result.registries.deposicion.filter(r => r.date === selectedDate)
+                    : result.registries.deposicion;
+                loadBowelRegistries(filtered);
             }
         } else {
             console.error('Error en la respuesta:', result.message);

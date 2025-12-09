@@ -56,282 +56,145 @@
         </div>
     </div>
 
-    <!-- Información del residente -->
-    <div class="row">
-        <!-- Columna izquierda -->
-        <div class="col-md-6">
-            <!-- Datos Personales -->
-            <div class="card shadow-sm mb-3">
+    <!-- Información del residente reorganizada -->
+    <div class="row g-3">
+        <div class="col-12">
+            <h4 class="fw-bold">Datos personales</h4>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card shadow-sm h-100">
                 <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0"><i class="bi bi-person"></i> {{ STRINGS.RESIDENT_SECTION_PERSONAL }}</h5>
+                    <h5 class="mb-0"><i class="bi bi-person"></i> Datos personales</h5>
                 </div>
                 <div class="card-body">
-                    <div class="row mb-2">
-                        <div class="col-5 fw-bold">{{ STRINGS.NAME_LABEL }}:</div>
-                        <div class="col-7">{{ resident.name }}</div>
-                    </div>
-                    <div class="row mb-2">
-                        <div class="col-5 fw-bold">{{ STRINGS.FIRST_SURNAME_LABEL }}:</div>
-                        <div class="col-7">{{ resident.first_surname }}</div>
-                    </div>
-                    {% if resident.second_surname %}
-                    <div class="row mb-2">
-                        <div class="col-5 fw-bold">{{ STRINGS.SECOND_SURNAME_LABEL }}:</div>
-                        <div class="col-7">{{ resident.second_surname }}</div>
-                    </div>
-                    {% endif %}
-                    <div class="row mb-2">
-                        <div class="col-5 fw-bold">{{ STRINGS.NIF_NIE_LABEL }}:</div>
-                        <div class="col-7">{{ resident.nif_nie }}</div>
-                    </div>
-                    <div class="row mb-2">
-                        <div class="col-5 fw-bold">{{ STRINGS.BIRTHDATE_LABEL }}:</div>
-                        <div class="col-7">{{ resident.birthdate|date:"d/m/Y" }}</div>
-                    </div>
-                    <div class="row mb-2">
-                        <div class="col-5 fw-bold">{{ STRINGS.AGE_LABEL }}:</div>
-                        <div class="col-7">{{ resident.get_age }} años</div>
-                    </div>
-                    {% if resident.gender %}
-                    <div class="row mb-2">
-                        <div class="col-5 fw-bold">{{ STRINGS.GENDER_LABEL }}:</div>
-                        <div class="col-7">{{ resident.get_gender_display }}</div>
-                    </div>
-                    {% endif %}
-                </div>
-            </div>
-
-            <!-- Datos de Contacto -->
-            <div class="card shadow-sm mb-3">
-                <div class="card-header bg-success text-white">
-                    <h5 class="mb-0"><i class="bi bi-telephone"></i> {{ STRINGS.RESIDENT_SECTION_CONTACT }}</h5>
-                </div>
-                <div class="card-body">
-                    {% if resident.address %}
-                    <div class="row mb-2">
-                        <div class="col-5 fw-bold">{{ STRINGS.ADDRESS_LABEL }}:</div>
-                        <div class="col-7">{{ resident.address }}</div>
-                    </div>
-                    {% endif %}
-                    {% if resident.locality %}
-                    <div class="row mb-2">
-                        <div class="col-5 fw-bold">{{ STRINGS.LOCALITY_LABEL }}:</div>
-                        <div class="col-7">{{ resident.locality }}</div>
-                    </div>
-                    {% endif %}
-                    {% if resident.province %}
-                    <div class="row mb-2">
-                        <div class="col-5 fw-bold">{{ STRINGS.PROVINCE_LABEL }}:</div>
-                        <div class="col-7">{{ resident.province }}</div>
-                    </div>
-                    {% endif %}
-                    {% if resident.country %}
-                    <div class="row mb-2">
-                        <div class="col-5 fw-bold">{{ STRINGS.COUNTRY_LABEL }}:</div>
-                        <div class="col-7">{{ resident.country }}</div>
-                    </div>
-                    {% endif %}
-                    {% if resident.phone %}
-                    <div class="row mb-2">
-                        <div class="col-5 fw-bold">{{ STRINGS.PHONE_LABEL }}:</div>
-                        <div class="col-7">{{ resident.phone }}</div>
-                    </div>
-                    {% endif %}
-                    {% if resident.social_security_number %}
-                    <div class="row mb-2">
-                        <div class="col-5 fw-bold">{{ STRINGS.SOCIAL_SECURITY_NUMBER_LABEL }}:</div>
-                        <div class="col-7">{{ resident.social_security_number }}</div>
-                    </div>
-                    {% endif %}
-                </div>
-            </div>
-
-            <!-- Datos Médicos Básicos -->
-            <div class="card shadow-sm mb-3">
-                <div class="card-header bg-danger text-white">
-                    <h5 class="mb-0"><i class="bi bi-heart-pulse"></i> {{ STRINGS.RESIDENT_SECTION_MEDICAL }}</h5>
-                </div>
-                <div class="card-body">
-                    {% if resident.blood_type %}
-                    <div class="row mb-2">
-                        <div class="col-5 fw-bold">{{ STRINGS.BLOOD_TYPE_LABEL }}:</div>
-                        <div class="col-7"><span class="badge bg-danger">{{ resident.blood_type }}</span></div>
-                    </div>
-                    {% endif %}
-                    {% if resident.allergies %}
-                    <div class="row mb-2">
-                        <div class="col-5 fw-bold align-self-start">{{ STRINGS.ALLERGIES_LABEL }}:</div>
-                        <div class="col-7">
-                            {% for allergy in resident.allergies.splitlines %}
-                                <div>{{ allergy }}</div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                    {% endif %}
-                    {% if resident.chronic_diseases %}
-                    <div class="row mb-2">
-                        <div class="col-5 fw-bold align-self-start">{{ STRINGS.CHRONIC_DISEASES_LABEL }}:</div>
-                        <div class="col-7">
-                            {% for disease in resident.chronic_diseases.splitlines %}
-                                <div>{{ disease }}</div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                    {% endif %}
-                    {% if resident.current_medications %}
-                    <div class="row mb-2">
-                        <div class="col-5 fw-bold align-self-start">{{ STRINGS.CURRENT_MEDICATIONS_LABEL }}:</div>
-                        <div class="col-7">
-                            {% for medication in resident.current_medications.splitlines %}
-                                <div>{{ medication }}</div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                    {% endif %}
+                    <div class="row mb-2"><div class="col-5 fw-bold">{{ STRINGS.NAME_LABEL }}:</div><div class="col-7">{{ resident.name }}</div></div>
+                    <div class="row mb-2"><div class="col-5 fw-bold">{{ STRINGS.FIRST_SURNAME_LABEL }}:</div><div class="col-7">{{ resident.first_surname }}</div></div>
+                    {% if resident.second_surname %}<div class="row mb-2"><div class="col-5 fw-bold">{{ STRINGS.SECOND_SURNAME_LABEL }}:</div><div class="col-7">{{ resident.second_surname }}</div></div>{% endif %}
+                    <div class="row mb-2"><div class="col-5 fw-bold">{{ STRINGS.NIF_NIE_LABEL }}:</div><div class="col-7">{{ resident.nif_nie }}</div></div>
+                    <div class="row mb-2"><div class="col-5 fw-bold">{{ STRINGS.BIRTHDATE_LABEL }}:</div><div class="col-7">{{ resident.birthdate|date:"d/m/Y" }}</div></div>
+                    <div class="row mb-2"><div class="col-5 fw-bold">{{ STRINGS.AGE_LABEL }}:</div><div class="col-7">{{ resident.get_age }} años</div></div>
+                    {% if resident.gender %}<div class="row mb-2"><div class="col-5 fw-bold">{{ STRINGS.GENDER_LABEL }}:</div><div class="col-7">{{ resident.get_gender_display }}</div></div>{% endif %}
                 </div>
             </div>
         </div>
 
-        <!-- Columna derecha -->
-        <div class="col-md-6">
-            <!-- Información Médica Adicional -->
-            <div class="card shadow-sm mb-3">
-                <div class="card-header bg-info text-white">
-                    <h5 class="mb-0"><i class="bi bi-hospital"></i> {{ STRINGS.RESIDENT_SECTION_MEDICAL_INFO }}</h5>
-                </div>
-                <div class="card-body">
-                    {% if resident.medical_insurance %}
-                    <div class="row mb-2">
-                        <div class="col-5 fw-bold">{{ STRINGS.MEDICAL_INSURANCE_LABEL }}:</div>
-                        <div class="col-7">{{ resident.medical_insurance }}</div>
-                    </div>
-                    {% endif %}
-                    {% if resident.insurance_number %}
-                    <div class="row mb-2">
-                        <div class="col-5 fw-bold">{{ STRINGS.INSURANCE_NUMBER_LABEL }}:</div>
-                        <div class="col-7">{{ resident.insurance_number }}</div>
-                    </div>
-                    {% endif %}
-                    {% if resident.primary_doctor %}
-                    <div class="row mb-2">
-                        <div class="col-5 fw-bold">{{ STRINGS.PRIMARY_DOCTOR_LABEL }}:</div>
-                        <div class="col-7">{{ resident.primary_doctor }}</div>
-                    </div>
-                    {% endif %}
-                    {% if resident.doctor_phone %}
-                    <div class="row mb-2">
-                        <div class="col-5 fw-bold">{{ STRINGS.DOCTOR_PHONE_LABEL }}:</div>
-                        <div class="col-7">{{ resident.doctor_phone }}</div>
-                    </div>
-                    {% endif %}
-                </div>
-            </div>
-
-            <!-- Movilidad y Dependencia -->
-            <div class="card shadow-sm mb-3">
-                <div class="card-header bg-warning text-dark">
-                    <h5 class="mb-0"><i class="bi bi-person-walking"></i> {{ STRINGS.RESIDENT_SECTION_MOBILITY }}</h5>
-                </div>
-                <div class="card-body">
-                    {% if resident.mobility_level %}
-                    <div class="row mb-2">
-                        <div class="col-5 fw-bold">{{ STRINGS.MOBILITY_LEVEL_LABEL }}:</div>
-                        <div class="col-7">{{ resident.get_mobility_level_display }}</div>
-                    </div>
-                    {% endif %}
-                    {% if resident.dependency_degree %}
-                    <div class="row mb-2">
-                        <div class="col-5 fw-bold">{{ STRINGS.DEPENDENCY_DEGREE_LABEL }}:</div>
-                        <div class="col-7">{{ resident.get_dependency_degree_display }}</div>
-                    </div>
-                    {% endif %}
-                    <div class="row mb-2">
-                        <div class="col-5 fw-bold">{{ STRINGS.USES_WHEELCHAIR_LABEL }}:</div>
-                        <div class="col-7">
-                            {% if resident.uses_wheelchair %}
-                                <span class="badge bg-primary">Sí</span>
-                            {% else %}
-                                <span class="badge bg-secondary">No</span>
-                            {% endif %}
-                        </div>
-                    </div>
-                    <div class="row mb-2">
-                        <div class="col-5 fw-bold">{{ STRINGS.USES_WALKER_LABEL }}:</div>
-                        <div class="col-7">
-                            {% if resident.uses_walker %}
-                                <span class="badge bg-primary">Sí</span>
-                            {% else %}
-                                <span class="badge bg-secondary">No</span>
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Contacto de Emergencia -->
-            <div class="card shadow-sm mb-3">
-                <div class="card-header bg-dark text-white">
-                    <h5 class="mb-0"><i class="bi bi-telephone-forward"></i> {{ STRINGS.RESIDENT_SECTION_EMERGENCY }}</h5>
-                </div>
-                <div class="card-body">
-                    {% if resident.emergency_contact_name %}
-                    <div class="row mb-2">
-                        <div class="col-5 fw-bold">{{ STRINGS.EMERGENCY_CONTACT_NAME_LABEL }}:</div>
-                        <div class="col-7">{{ resident.emergency_contact_name }}</div>
-                    </div>
-                    {% endif %}
-                    {% if resident.emergency_contact_relationship %}
-                    <div class="row mb-2">
-                        <div class="col-5 fw-bold">{{ STRINGS.EMERGENCY_CONTACT_RELATIONSHIP_LABEL }}:</div>
-                        <div class="col-7">{{ resident.emergency_contact_relationship }}</div>
-                    </div>
-                    {% endif %}
-                    {% if resident.emergency_contact_phone %}
-                    <div class="row mb-2">
-                        <div class="col-5 fw-bold">{{ STRINGS.EMERGENCY_CONTACT_PHONE_LABEL }}:</div>
-                        <div class="col-7">{{ resident.emergency_contact_phone }}</div>
-                    </div>
-                    {% endif %}
-                </div>
-            </div>
-
-            <!-- Hoja de Registro -->
-            <div class="card shadow-sm mb-3">
+        <div class="col-lg-4">
+            <div class="card shadow-sm h-100">
                 <div class="card-header bg-success text-white">
-                    <h5 class="mb-0"><i class="bi bi-clipboard-check"></i> Hoja de Registro</h5>
+                    <h5 class="mb-0"><i class="bi bi-telephone"></i> Contacto</h5>
                 </div>
                 <div class="card-body">
-                    <p class="text-muted mb-3">
-                        <small>Seleccione los registros que deben aparecer para este residente en las secciones correspondientes.</small>
-                    </p>
-                    <div class="row px-3">
-                        <div class="col form-check">
-                            <input class="form-check-input" type="checkbox" id="enableFood" 
-                                {% if resident.enable_food_registry %}checked{% endif %}
-                                onchange="updateRegistrySettings('food', this.checked)">
-                            <label class="form-check-label fw-bold" for="enableFood">
-                                <i class="bi bi-egg-fried"></i> Alimentación e Hidratación
-                            </label>
+                    {% if resident.address %}<div class="row mb-2"><div class="col-5 fw-bold">{{ STRINGS.ADDRESS_LABEL }}:</div><div class="col-7">{{ resident.address }}</div></div>{% endif %}
+                    {% if resident.locality %}<div class="row mb-2"><div class="col-5 fw-bold">{{ STRINGS.LOCALITY_LABEL }}:</div><div class="col-7">{{ resident.locality }}</div></div>{% endif %}
+                    {% if resident.province %}<div class="row mb-2"><div class="col-5 fw-bold">{{ STRINGS.PROVINCE_LABEL }}:</div><div class="col-7">{{ resident.province }}</div></div>{% endif %}
+                    {% if resident.country %}<div class="row mb-2"><div class="col-5 fw-bold">{{ STRINGS.COUNTRY_LABEL }}:</div><div class="col-7">{{ resident.country }}</div></div>{% endif %}
+                    {% if resident.phone %}<div class="row mb-2"><div class="col-5 fw-bold">{{ STRINGS.PHONE_LABEL }}:</div><div class="col-7">{{ resident.phone }}</div></div>{% endif %}
+                    {% if resident.social_security_number %}<div class="row mb-2"><div class="col-5 fw-bold">{{ STRINGS.SOCIAL_SECURITY_NUMBER_LABEL }}:</div><div class="col-7">{{ resident.social_security_number }}</div></div>{% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0"><i class="bi bi-telephone-forward"></i> Emergencia y movilidad</h5>
+                </div>
+                <div class="card-body">
+                    {% if resident.emergency_contact_name %}<div class="row mb-2"><div class="col-5 fw-bold">{{ STRINGS.EMERGENCY_CONTACT_NAME_LABEL }}:</div><div class="col-7">{{ resident.emergency_contact_name }}</div></div>{% endif %}
+                    {% if resident.emergency_contact_relationship %}<div class="row mb-2"><div class="col-5 fw-bold">{{ STRINGS.EMERGENCY_CONTACT_RELATIONSHIP_LABEL }}:</div><div class="col-7">{{ resident.emergency_contact_relationship }}</div></div>{% endif %}
+                    {% if resident.emergency_contact_phone %}<div class="row mb-2"><div class="col-5 fw-bold">{{ STRINGS.EMERGENCY_CONTACT_PHONE_LABEL }}:</div><div class="col-7">{{ resident.emergency_contact_phone }}</div></div>{% endif %}
+                    {% if resident.mobility_level %}<div class="row mb-2"><div class="col-5 fw-bold">{{ STRINGS.MOBILITY_LEVEL_LABEL }}:</div><div class="col-7">{{ resident.get_mobility_level_display }}</div></div>{% endif %}
+                    {% if resident.dependency_degree %}<div class="row mb-2"><div class="col-5 fw-bold">{{ STRINGS.DEPENDENCY_DEGREE_LABEL }}:</div><div class="col-7">{{ resident.get_dependency_degree_display }}</div></div>{% endif %}
+                    <div class="row mb-2"><div class="col-5 fw-bold">{{ STRINGS.USES_WHEELCHAIR_LABEL }}:</div><div class="col-7">{% if resident.uses_wheelchair %}<span class="badge bg-primary">Sí</span>{% else %}<span class="badge bg-secondary">No</span>{% endif %}</div></div>
+                    <div class="row mb-2"><div class="col-5 fw-bold">{{ STRINGS.USES_WALKER_LABEL }}:</div><div class="col-7">{% if resident.uses_walker %}<span class="badge bg-primary">Sí</span>{% else %}<span class="badge bg-secondary">No</span>{% endif %}</div></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0"><i class="bi bi-heart-pulse"></i> Datos médicos</h5>
+                </div>
+                <div class="card-body">
+                    {% if resident.blood_type %}<div class="row mb-2"><div class="col-5 fw-bold">{{ STRINGS.BLOOD_TYPE_LABEL }}:</div><div class="col-7"><span class="badge bg-danger">{{ resident.blood_type }}</span></div></div>{% endif %}
+                    {% if resident.allergies %}<div class="row mb-2"><div class="col-5 fw-bold align-self-start">{{ STRINGS.ALLERGIES_LABEL }}:</div><div class="col-7">{% for allergy in resident.allergies.splitlines %}<div>{{ allergy }}</div>{% endfor %}</div></div>{% endif %}
+                    {% if resident.chronic_diseases %}<div class="row mb-2"><div class="col-5 fw-bold align-self-start">{{ STRINGS.CHRONIC_DISEASES_LABEL }}:</div><div class="col-7">{% for disease in resident.chronic_diseases.splitlines %}<div>{{ disease }}</div>{% endfor %}</div></div>{% endif %}
+                    {% if resident.current_medications %}<div class="row mb-2"><div class="col-5 fw-bold align-self-start">{{ STRINGS.CURRENT_MEDICATIONS_LABEL }}:</div><div class="col-7">{% for medication in resident.current_medications.splitlines %}<div>{{ medication }}</div>{% endfor %}</div></div>{% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="bi bi-hospital"></i> Información adicional</h5>
+                </div>
+                <div class="card-body">
+                    {% if resident.medical_insurance %}<div class="row mb-2"><div class="col-5 fw-bold">{{ STRINGS.MEDICAL_INSURANCE_LABEL }}:</div><div class="col-7">{{ resident.medical_insurance }}</div></div>{% endif %}
+                    {% if resident.insurance_number %}<div class="row mb-2"><div class="col-5 fw-bold">{{ STRINGS.INSURANCE_NUMBER_LABEL }}:</div><div class="col-7">{{ resident.insurance_number }}</div></div>{% endif %}
+                    {% if resident.primary_doctor %}<div class="row mb-2"><div class="col-5 fw-bold">{{ STRINGS.PRIMARY_DOCTOR_LABEL }}:</div><div class="col-7">{{ resident.primary_doctor }}</div></div>{% endif %}
+                    {% if resident.doctor_phone %}<div class="row mb-2"><div class="col-5 fw-bold">{{ STRINGS.DOCTOR_PHONE_LABEL }}:</div><div class="col-7">{{ resident.doctor_phone }}</div></div>{% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 mt-2">
+            <h4 class="fw-bold">Hoja de registro</h4>
+        </div>
+
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <ul class="nav nav-pills mb-3" role="tablist">
+                        <li class="nav-item" role="presentation"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tabFood" type="button" role="tab">Alimentación</button></li>
+                        <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tabMedication" type="button" role="tab">Medicación</button></li>
+                        <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tabBowel" type="button" role="tab">Deposición</button></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane fade show active" id="tabFood" role="tabpanel">
+                            {% if food_history %}
+                            <div class="table-responsive">
+                                <table class="table table-sm align-middle">
+                                    <thead><tr><th>Fecha</th><th>Hora</th><th>Descripción</th><th>Usuario</th></tr></thead>
+                                    <tbody>
+                                        {% for r in food_history %}
+                                        <tr><td>{{ r.date|date:"d/m/Y" }}</td><td>{{ r.time|time:"H:i" }}</td><td class="text-muted">{{ r.description }}</td><td>{{ r.user }}</td></tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            {% else %}<div class="alert alert-light">Sin registros de alimentación.</div>{% endif %}
                         </div>
-                        <div class="col-sm-3 form-check">
-                            <input class="form-check-input" type="checkbox" id="enableMedication" 
-                                {% if resident.enable_medication_registry %}checked{% endif %}
-                                onchange="updateRegistrySettings('medication', this.checked)">
-                            <label class="form-check-label fw-bold" for="enableMedication">
-                                <i class="bi bi-capsule"></i> Medicación
-                            </label>
+                        <div class="tab-pane fade" id="tabMedication" role="tabpanel">
+                            {% if medication_history %}
+                            <div class="table-responsive">
+                                <table class="table table-sm align-middle">
+                                    <thead><tr><th>Fecha</th><th>Hora</th><th>Descripción</th><th>Usuario</th></tr></thead>
+                                    <tbody>
+                                        {% for r in medication_history %}
+                                        <tr><td>{{ r.date|date:"d/m/Y" }}</td><td>{{ r.time|time:"H:i" }}</td><td class="text-muted">{{ r.description }}</td><td>{{ r.user }}</td></tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            {% else %}<div class="alert alert-light">Sin registros de medicación.</div>{% endif %}
                         </div>
-                        <div class="col-sm-4 form-check">
-                            <input class="form-check-input" type="checkbox" id="enableBowel" 
-                                {% if resident.enable_bowel_registry %}checked{% endif %}
-                                onchange="updateRegistrySettings('bowel', this.checked)">
-                            <label class="form-check-label fw-bold" for="enableBowel">
-                                <i class="bi bi-droplet"></i> Deposición
-                            </label>
+                        <div class="tab-pane fade" id="tabBowel" role="tabpanel">
+                            {% if bowel_history %}
+                            <div class="table-responsive">
+                                <table class="table table-sm align-middle">
+                                    <thead><tr><th>Fecha</th><th>Hora</th><th>Descripción</th><th>Usuario</th></tr></thead>
+                                    <tbody>
+                                        {% for r in bowel_history %}
+                                        <tr><td>{{ r.date|date:"d/m/Y" }}</td><td>{{ r.time|time:"H:i" }}</td><td class="text-muted">{{ r.description }}</td><td>{{ r.user }}</td></tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            {% else %}<div class="alert alert-light">Sin registros de deposición.</div>{% endif %}
                         </div>
-                    </div>
-                    <div class="alert alert-info mt-3 mb-0">
-                        <small><i class="bi bi-info-circle"></i> Los cambios se guardan automáticamente</small>
                     </div>
                 </div>
             </div>
