@@ -71,13 +71,6 @@ button.btn-toggle[aria-expanded="true"]::before {
     background-color: rgba(255, 255, 255, 0.1);
 }
 
-/* Logo styling */
-.navbar-brand {
-    font-weight: 600;
-    color: white !important;
-    text-decoration: none;
-}
-
 .navbar-brand:hover {
     color: rgba(255, 255, 255, 0.85) !important;
 }
@@ -171,11 +164,17 @@ button.btn-toggle[aria-expanded="true"]::before {
         display: block;
         color: white;
         font-size: 1.5rem;
+        border: none;
+        background: transparent;
+        padding: 0.25rem 0.5rem;
     }
 
     .mobile-header span {
         font-weight: 600;
-        font-size: 1.1rem;
+        font-size: clamp(1rem, 4vw, 1.25rem);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 }
 
@@ -216,6 +215,9 @@ button.btn-toggle[aria-expanded="true"]::before {
     .sidebar {
         width: 160px;
     }
+    .navbar-brand .fs-4 {
+        font-size: 1.3rem !important;
+    }
 }
 
 @media (min-width: 992px) and (max-width: 1199.98px) {
@@ -225,7 +227,13 @@ button.btn-toggle[aria-expanded="true"]::before {
     }
     .btn-toggle,
     .btn-toggle-nav a {
-        font-size: 0.9rem;
+        font-size: 0.5rem;
+    }
+    .navbar-brand .fs-4 {
+        font-size: 1.25rem !important;
+    }
+    .navbar-brand svg {
+        display: none;
     }
 }
 
@@ -236,10 +244,12 @@ button.btn-toggle[aria-expanded="true"]::before {
     }
     .btn-toggle,
     .btn-toggle-nav a {
-        font-size: 0.85rem;
         padding: 0.2rem 0.4rem;
     }
     .sidebar i {
         width: 1.2em;
+    }
+    .navbar-brand svg {
+        display: none;
     }
 }
