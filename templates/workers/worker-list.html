@@ -4,6 +4,7 @@
 {% block extra_js %}
 <script src="{% static 'js/management/worker-add.js' %}"></script>
 <script src="{% static 'js/management/table-sort.js' %}"></script>
+<script src="{% static 'js/management/worker-list-delete.js' %}"></script>
 {% endblock %}
 
 {% block content %}
@@ -67,9 +68,11 @@
                                             <button class="btn btn-sm btn-outline-primary" title="Editar" onclick="event.stopPropagation(); window.location.href='{% url 'management:worker_detail' worker.id %}?edit=true';">
                                                 <i class="bi bi-pencil"></i>
                                             </button>
-                                            <button class="btn btn-sm btn-outline-danger" title="Eliminar" onclick="event.stopPropagation();">
+                                            {% if perms.management.delete_worker %}
+                                            <button class="btn btn-sm btn-outline-danger" title="Eliminar" onclick="event.stopPropagation(); openDeleteModal({{ worker.id }}, '{{ worker.get_full_name }}');">
                                                 <i class="bi bi-x-lg"></i>
                                             </button>
+                                            {% endif %}
                                         </div>
                                     </td>
                                 </tr>
@@ -223,6 +226,38 @@
                 </button>
                 <button type="button" class="btn btn-primary" id="saveWorkerBtn">
                     <i class="bi bi-save"></i> {{ STRINGS.BUTTON_SAVE }}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Confirmar Eliminación -->
+<div class="modal fade" id="deleteWorkerListModal" tabindex="-1" aria-labelledby="deleteWorkerListModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="deleteWorkerListModalLabel">
+                    <i class="bi bi-exclamation-triangle me-2"></i>Confirmar eliminación
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="mb-3">¿Está seguro de que desea eliminar este trabajador?</p>
+                <div class="alert alert-warning">
+                    <strong id="deleteWorkerName"></strong>
+                </div>
+                <p class="text-muted small mb-0">
+                    <i class="bi bi-info-circle me-1"></i>
+                    Esta acción marcará al trabajador como inactivo.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle"></i> Cancelar
+                </button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteWorkerListBtn">
+                    <i class="bi bi-trash"></i> Eliminar
                 </button>
             </div>
         </div>

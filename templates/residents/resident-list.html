@@ -6,9 +6,11 @@
 <script src="{% static 'js/management/resident-list.js' %}"></script>
 <script src="{% static 'js/management/resident-add.js' %}"></script>
 <script src="{% static 'js/management/table-sort.js' %}"></script>
+<script src="{% static 'js/management/resident-list-delete.js' %}"></script>
 {% endblock %}
 
 {% block content %}
+{% csrf_token %}
 <div class="container-fluid py-4">
 <!-- Header -->
     <div class="row mb-4">
@@ -68,9 +70,11 @@
                                             <button class="btn btn-sm btn-outline-primary" title="{{ STRINGS.BUTTON_EDIT }}" onclick="event.stopPropagation(); window.location.href='{% url 'management:resident_detail' resident.pk %}?edit=true';">
                                                 <i class="bi bi-pencil"></i>
                                             </button>
-                                            <button class="btn btn-sm btn-outline-danger" title="{{ STRINGS.BUTTON_DELETE }}" onclick="event.stopPropagation();">
+                                            {% if perms.management.delete_resident %}
+                                            <button class="btn btn-sm btn-outline-danger" title="{{ STRINGS.BUTTON_DELETE }}" onclick="event.stopPropagation(); openDeleteResidentModal({{ resident.pk }}, '{{ resident.get_full_name }}');">
                                                 <i class="bi bi-x-lg"></i>
                                             </button>
+                                            {% endif %}
                                         </div>
                                     </td>
                                 </tr>
@@ -297,6 +301,38 @@
                 </button>
                 <button type="button" class="btn btn-primary" id="saveResidentBtn">
                     <i class="bi bi-save"></i> {{ STRINGS.BUTTON_SAVE }}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Confirmar Eliminación -->
+<div class="modal fade" id="deleteResidentListModal" tabindex="-1" aria-labelledby="deleteResidentListModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="deleteResidentListModalLabel">
+                    <i class="bi bi-exclamation-triangle me-2"></i>Confirmar eliminación
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="mb-3">¿Está seguro de que desea eliminar este residente?</p>
+                <div class="alert alert-warning">
+                    <strong id="deleteResidentName"></strong>
+                </div>
+                <p class="text-muted small mb-0">
+                    <i class="bi bi-info-circle me-1"></i>
+                    Esta acción marcará al residente como inactivo.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle"></i> Cancelar
+                </button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteResidentListBtn">
+                    <i class="bi bi-trash"></i> Eliminar
                 </button>
             </div>
         </div>
