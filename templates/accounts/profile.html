@@ -111,7 +111,7 @@
                         <div class="row mb-3">
                             <div class="col-md-4">
                                 <strong>Género:</strong>
-                                <p class="mb-0">{{ worker.gender|default:"-" }}</p>
+                                <p class="mb-0">{% if worker.gender == 'H' %}Hombre{% elif worker.gender == 'M' %}Mujer{% else %}-{% endif %}</p>
                             </div>
                             <div class="col-md-4">
                                 <strong>Teléfono:</strong>
