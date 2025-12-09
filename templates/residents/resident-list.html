@@ -158,7 +158,12 @@
                         </div>
                         <div class="col-md-4 mb-3">
                             <label for="province" class="form-label">{{ STRINGS.PROVINCE_LABEL }}</label>
-                            <input type="text" class="form-control" id="province">
+                            <select class="form-select" id="province">
+                                <option value="">{{ STRINGS.SELECT_OPTION }}</option>
+                                <option value="Huesca">Huesca</option>
+                                <option value="Teruel">Teruel</option>
+                                <option value="Zaragoza">Zaragoza</option>
+                            </select>
                         </div>
                         <div class="col-md-4 mb-3">
                             <label for="country" class="form-label">{{ STRINGS.COUNTRY_LABEL }}</label>

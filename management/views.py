@@ -9,6 +9,7 @@ from registry.models import FoodRegistry, MedicationRegistry, BowelMovementRegis
 from .forms import ResidentForm, WorkerForm
 from .permissions import has_permission
 import json
+from datetime import date
 
 def management_dashboard(request):
     return render(request, 'management/dashboard.html')
@@ -255,6 +256,7 @@ def delete_resident(request, pk):
 
 def resident_detail(request, pk):
     resident = get_object_or_404(Resident, pk=pk)
+    today = date.today()
 
     def user_display(u):
         if not u:
@@ -262,7 +264,7 @@ def resident_detail(request, pk):
         full = f"{u.first_name} {u.last_name}".strip()
         return full if full else u.username
 
-    food = FoodRegistry.objects.filter(resident=resident).order_by('-date', '-time')[:50]
+    food = FoodRegistry.objects.filter(resident=resident, date=today).order_by('-time')
     food_history = [{
         'date': r.date,
         'time': r.time,
@@ -278,7 +280,7 @@ def resident_detail(request, pk):
         'user': user_display(r.registered_by)
     } for r in food]
 
-    meds = MedicationRegistry.objects.filter(resident=resident).order_by('-date', '-time')[:50]
+    meds = MedicationRegistry.objects.filter(resident=resident, date=today).order_by('-time')
     medication_history = [{
         'date': r.date,
         'time': r.time,
@@ -291,7 +293,7 @@ def resident_detail(request, pk):
         'user': user_display(r.administered_by)
     } for r in meds]
 
-    bowels = BowelMovementRegistry.objects.filter(resident=resident).order_by('-date', '-time')[:50]
+    bowels = BowelMovementRegistry.objects.filter(resident=resident, date=today).order_by('-time')
     bowel_history = [{
         'date': r.date,
         'time': r.time,
