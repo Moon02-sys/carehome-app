@@ -28,9 +28,7 @@
                             <h2 class="mb-1">
                                 {{ worker.get_full_name }}
                                 {% if worker.user %}
-                                    <span class="badge bg-primary ms-2">
-                                        <i class="bi bi-person-circle"></i> @{{ worker.user.username }}
-                                    </span>
+                                    <span class="ms-2 fs-5"> {{ worker.user.username }} </span>
                                 {% else %}
                                     <span class="badge bg-secondary ms-2">Sin usuario</span>
                                 {% endif %}
