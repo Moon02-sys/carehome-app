@@ -17,8 +17,7 @@ function initLoginFormSubmit() {
         const btnLogin = document.getElementById('btnLogin');
         const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
         
-        // Deshabilitar botón durante el envío
-        btnLogin.disabled = true;
+        // Mostrar estado de envío sin deshabilitar el botón
         btnLogin.textContent = 'Iniciando...';
         
         fetch('/accounts/login/', {
@@ -46,13 +45,11 @@ function initLoginFormSubmit() {
                 window.location.href = data.redirect_url;
             } else {
                 showLoginError(data.error || 'Error al iniciar sesión');
-                btnLogin.disabled = false;
                 btnLogin.textContent = 'Iniciar sesión';
             }
         })
         .catch(error => {
             showLoginError(error.message || 'Usuario o contraseña incorrectos');
-            btnLogin.disabled = false;
             btnLogin.textContent = 'Iniciar sesión';
         });
     });
@@ -130,12 +127,8 @@ function initLoginValidation() {
 
     function checkFormValidity() {
         if (!btnLogin) return;
-        const state = validatePassword(pwd.value || '');
-        const isUsernameValid = username ? username.value.trim().length > 0 : false;
-        const isPasswordValid = state.hasUpper && state.hasLower && state.hasNumber && state.hasLength;
-        // Comentamos la validación estricta para permitir cualquier contraseña
-        // btnLogin.disabled = !(isUsernameValid && isPasswordValid);
-        btnLogin.disabled = !isUsernameValid; // Solo validar que haya username
+        // Mantener el botón siempre habilitado
+        btnLogin.disabled = false;
     }
 
     pwd.addEventListener('input', function (e) {

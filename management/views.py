@@ -54,7 +54,7 @@ def add_worker(request):
         user = User.objects.create_user(
             username=username,
             email=email or f'{username}@temp.com',
-            password='changeme123',  # Password temporal
+            password='Change123',  # Password temporal
             first_name=request.POST.get('name', ''),
             last_name=f"{request.POST.get('first_surname', '')} {request.POST.get('second_surname', '')}".strip()
         )
@@ -69,7 +69,7 @@ def add_worker(request):
             
             return JsonResponse({
                 'success': True,
-                'message': f'Trabajador añadido correctamente. Usuario: {username} - Password temporal: changeme123',
+                'message': f'Trabajador añadido correctamente. Usuario: {username} - Password temporal: Change123',
                 'worker_id': worker.id
             })
         else:

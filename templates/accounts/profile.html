@@ -72,74 +72,128 @@
         <!-- Tab: Información general -->
         <div class="tab-pane fade show active" id="info" role="tabpanel">
             <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                     <h5 class="mb-0"><i class="bi bi-person-badge"></i> {{ STRINGS.PROFILE_PERSONAL_DATA }}</h5>
+                    <button class="btn btn-light btn-sm" id="togglePersonalEditBtn">
+                        <i class="bi bi-pencil-square"></i> Editar
+                    </button>
                 </div>
                 <div class="card-body">
-                    <div class="row mb-3">
-                        <div class="col-md-4">
-                            <strong>Nombre:</strong>
-                            <p class="mb-0">{{ worker.name }}</p>
+                    <div id="personalDisplay">
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <strong>Nombre:</strong>
+                                <p class="mb-0">{{ worker.name }}</p>
+                            </div>
+                            <div class="col-md-4">
+                                <strong>Primer apellido:</strong>
+                                <p class="mb-0">{{ worker.first_surname }}</p>
+                            </div>
+                            <div class="col-md-4">
+                                <strong>Segundo apellido:</strong>
+                                <p class="mb-0">{{ worker.second_surname|default:"-" }}</p>
+                            </div>
                         </div>
-                        <div class="col-md-4">
-                            <strong>Primer apellido:</strong>
-                            <p class="mb-0">{{ worker.first_surname }}</p>
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <strong>NIF/NIE:</strong>
+                                <p class="mb-0">{{ worker.nif_nie }}</p>
+                            </div>
+                            <div class="col-md-4">
+                                <strong>Fecha de nacimiento:</strong>
+                                <p class="mb-0">{{ worker.birthdate|date:"d/m/Y" }}</p>
+                            </div>
+                            <div class="col-md-4">
+                                <strong>Edad:</strong>
+                                <p class="mb-0">{{ worker.get_age }} años</p>
+                            </div>
                         </div>
-                        <div class="col-md-4">
-                            <strong>Segundo apellido:</strong>
-                            <p class="mb-0">{{ worker.second_surname|default:"-" }}</p>
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <strong>Género:</strong>
+                                <p class="mb-0">{{ worker.gender|default:"-" }}</p>
+                            </div>
+                            <div class="col-md-4">
+                                <strong>Teléfono:</strong>
+                                <p class="mb-0">{{ worker.phone|default:"-" }}</p>
+                            </div>
+                            <div class="col-md-4">
+                                <strong>Email:</strong>
+                                <p class="mb-0">{{ user.email|default:"-" }}</p>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <strong>Dirección:</strong>
+                                <p class="mb-0">{{ worker.address|default:"-" }}</p>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <strong>Localidad:</strong>
+                                <p class="mb-0">{{ worker.locality|default:"-" }}</p>
+                            </div>
+                            <div class="col-md-4">
+                                <strong>Provincia:</strong>
+                                <p class="mb-0">{{ worker.province|default:"-" }}</p>
+                            </div>
+                            <div class="col-md-4">
+                                <strong>País:</strong>
+                                <p class="mb-0">{{ worker.country|default:"-" }}</p>
+                            </div>
                         </div>
                     </div>
-                    <div class="row mb-3">
-                        <div class="col-md-4">
-                            <strong>NIF/NIE:</strong>
-                            <p class="mb-0">{{ worker.nif_nie }}</p>
-                        </div>
-                        <div class="col-md-4">
-                            <strong>Fecha de nacimiento:</strong>
-                            <p class="mb-0">{{ worker.birthdate|date:"d/m/Y" }}</p>
-                        </div>
-                        <div class="col-md-4">
-                            <strong>Edad:</strong>
-                            <p class="mb-0">{{ worker.get_age }} años</p>
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-md-4">
-                            <strong>Género:</strong>
-                            <p class="mb-0">{{ worker.gender|default:"-" }}</p>
-                        </div>
-                        <div class="col-md-4">
-                            <strong>Teléfono:</strong>
-                            <p class="mb-0">{{ worker.phone|default:"-" }}</p>
-                        </div>
-                        <div class="col-md-4">
-                            <strong>Email:</strong>
-                            <p class="mb-0">{{ user.email|default:"-" }}</p>
-                        </div>
-                    </div>
-                    
-                    <hr>
-                    
-                    <div class="row mb-3">
-                        <div class="col-12">
-                            <strong>Dirección:</strong>
-                            <p class="mb-0">{{ worker.address|default:"-" }}</p>
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-md-4">
-                            <strong>Localidad:</strong>
-                            <p class="mb-0">{{ worker.locality|default:"-" }}</p>
-                        </div>
-                        <div class="col-md-4">
-                            <strong>Provincia:</strong>
-                            <p class="mb-0">{{ worker.province|default:"-" }}</p>
-                        </div>
-                        <div class="col-md-4">
-                            <strong>País:</strong>
-                            <p class="mb-0">{{ worker.country|default:"-" }}</p>
-                        </div>
+
+                    <div id="personalFormWrapper" class="d-none">
+                        <div id="profileEditMessage"></div>
+                        <form id="profileEditForm">
+                            {% csrf_token %}
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <label class="form-label" for="profileName">Nombre</label>
+                                    <input type="text" class="form-control" id="profileName" value="{{ worker.name }}" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label" for="profileFirstSurname">Primer apellido</label>
+                                    <input type="text" class="form-control" id="profileFirstSurname" value="{{ worker.first_surname }}" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label" for="profileSecondSurname">Segundo apellido</label>
+                                    <input type="text" class="form-control" id="profileSecondSurname" value="{{ worker.second_surname }}">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label" for="profilePhone">Teléfono</label>
+                                    <input type="text" class="form-control" id="profilePhone" value="{{ worker.phone }}">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label" for="profileEmail">Email</label>
+                                    <input type="email" class="form-control" id="profileEmail" value="{{ user.email }}">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label" for="profileAddress">Dirección</label>
+                                    <input type="text" class="form-control" id="profileAddress" value="{{ worker.address }}">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label" for="profileLocality">Localidad</label>
+                                    <input type="text" class="form-control" id="profileLocality" value="{{ worker.locality }}">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label" for="profileProvince">Provincia</label>
+                                    <input type="text" class="form-control" id="profileProvince" value="{{ worker.province }}">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label" for="profileCountry">País</label>
+                                    <input type="text" class="form-control" id="profileCountry" value="{{ worker.country }}">
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-end mt-3 gap-2">
+                                <button type="button" class="btn btn-outline-secondary" id="cancelPersonalEdit">Cancelar</button>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-save"></i> Guardar cambios
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -148,59 +202,98 @@
         <!-- Tab: Datos laborales -->
         <div class="tab-pane fade" id="laboral" role="tabpanel">
             <div class="card shadow-sm">
-                <div class="card-header bg-success text-white">
+                <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
                     <h5 class="mb-0"><i class="bi bi-briefcase"></i> {{ STRINGS.PROFILE_EMPLOYMENT_DATA }}</h5>
+                    <button class="btn btn-light btn-sm" id="toggleLaborEditBtn">
+                        <i class="bi bi-pencil-square"></i> Editar
+                    </button>
                 </div>
                 <div class="card-body">
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <strong>Rol:</strong>
-                            <p class="mb-0"><span class="badge bg-primary">{{ worker.role }}</span></p>
+                    <div id="laborDisplay">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <strong>Rol:</strong>
+                                <p class="mb-0"><span class="badge bg-primary">{{ worker.role }}</span></p>
+                            </div>
+                            <div class="col-md-6">
+                                <strong>Fecha de contratación:</strong>
+                                <p class="mb-0">{{ worker.hire_date|date:"d/m/Y"|default:"-" }}</p>
+                            </div>
                         </div>
-                        <div class="col-md-6">
-                            <strong>Fecha de contratación:</strong>
-                            <p class="mb-0">{{ worker.hire_date|date:"d/m/Y"|default:"-" }}</p>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <strong>Número de Seguridad Social:</strong>
+                                <p class="mb-0">{{ worker.social_security_number|default:"-" }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <strong>Número de cuenta:</strong>
+                                <p class="mb-0">{{ worker.account_number|default:"-" }}</p>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <strong>Minusvalía (%):</strong>
+                                <p class="mb-0">{{ worker.disability_percentage|default:"-" }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <strong>Estado:</strong>
+                                <p class="mb-0">
+                                    <span class="badge {% if worker.is_active %}bg-success{% else %}bg-danger{% endif %}">
+                                        {% if worker.is_active %}Activo{% else %}Inactivo{% endif %}
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-12">
+                                <strong>Currículum:</strong>
+                                <p class="mb-0">
+                                    {% if worker.curriculum %}
+                                    <a href="{{ worker.curriculum.url }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-file-earmark-pdf"></i> Ver currículum
+                                    </a>
+                                    {% else %}
+                                    <span class="text-muted">No hay currículum cargado</span>
+                                    {% endif %}
+                                </p>
+                            </div>
                         </div>
                     </div>
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <strong>Número de Seguridad Social:</strong>
-                            <p class="mb-0">{{ worker.social_security_number|default:"-" }}</p>
-                        </div>
-                        <div class="col-md-6">
-                            <strong>Número de cuenta:</strong>
-                            <p class="mb-0">{{ worker.account_number|default:"-" }}</p>
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <strong>Minusvalía (%):</strong>
-                            <p class="mb-0">{{ worker.disability_percentage|default:"-" }}</p>
-                        </div>
-                        <div class="col-md-6">
-                            <strong>Estado:</strong>
-                            <p class="mb-0">
-                                <span class="badge {% if worker.is_active %}bg-success{% else %}bg-danger{% endif %}">
-                                    {% if worker.is_active %}Activo{% else %}Inactivo{% endif %}
-                                </span>
-                            </p>
-                        </div>
-                    </div>
-                    
-                    <hr>
-                    <div class="row">
-                        <div class="col-12">
-                            <strong>Currículum:</strong>
-                            <p class="mb-0">
-                                {% if worker.curriculum %}
-                                <a href="{{ worker.curriculum.url }}" target="_blank" class="btn btn-sm btn-outline-primary">
-                                    <i class="bi bi-file-earmark-pdf"></i> Ver currículum
-                                </a>
-                                {% else %}
-                                <span class="text-muted">No hay currículum cargado</span>
-                                {% endif %}
-                            </p>
-                        </div>
+
+                    <div id="laborFormWrapper" class="d-none">
+                        <div id="laborEditMessage"></div>
+                        <form id="laborEditForm">
+                            {% csrf_token %}
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label" for="laborRole">Rol</label>
+                                    <input type="text" class="form-control" id="laborRole" value="{{ worker.role }}">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label" for="laborHireDate">Fecha de contratación</label>
+                                    <input type="date" class="form-control" id="laborHireDate" value="{{ worker.hire_date|date:'Y-m-d' }}">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label" for="laborSSN">Número de Seguridad Social</label>
+                                    <input type="text" class="form-control" id="laborSSN" value="{{ worker.social_security_number }}">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label" for="laborAccount">Número de cuenta</label>
+                                    <input type="text" class="form-control" id="laborAccount" value="{{ worker.account_number }}">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label" for="laborDisability">Minusvalía (%)</label>
+                                    <input type="number" step="0.01" class="form-control" id="laborDisability" value="{{ worker.disability_percentage }}">
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-end mt-3 gap-2">
+                                <button type="button" class="btn btn-outline-secondary" id="cancelLaborEdit">Cancelar</button>
+                                <button type="submit" class="btn btn-success">
+                                    <i class="bi bi-save"></i> Guardar cambios
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -224,7 +317,15 @@
                                 <div class="mb-3">
                                     <label for="newPassword" class="form-label">{{ STRINGS.PROFILE_NEW_PASSWORD }} <span class="text-danger">*</span></label>
                                     <input type="password" class="form-control" id="newPassword" required>
-                                    <div class="form-text">{{ STRINGS.PROFILE_PASSWORD_MIN_LENGTH }}</div>
+                                    <div class="mt-2">
+                                        <small class="d-block mb-1 fw-bold">Requisitos de contraseña:</small>
+                                        <ul class="small mb-0" style="list-style: none; padding-left: 0;">
+                                            <li id="req-length" class="text-danger"><i class="bi bi-x-circle me-1"></i>Mínimo 8 caracteres</li>
+                                            <li id="req-uppercase" class="text-danger"><i class="bi bi-x-circle me-1"></i>Al menos una letra mayúscula</li>
+                                            <li id="req-lowercase" class="text-danger"><i class="bi bi-x-circle me-1"></i>Al menos una letra minúscula</li>
+                                            <li id="req-number" class="text-danger"><i class="bi bi-x-circle me-1"></i>Al menos un número</li>
+                                        </ul>
+                                    </div>
                                 </div>
                                 <div class="mb-3">
                                     <label for="confirmPassword" class="form-label">{{ STRINGS.PROFILE_CONFIRM_PASSWORD }} <span class="text-danger">*</span></label>

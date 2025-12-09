@@ -71,7 +71,7 @@ class Command(BaseCommand):
                 user = User.objects.create_user(
                     username=username,
                     email=email,
-                    password='changeme123',  # Password temporal
+                    password='Change123',  # Password temporal
                     first_name=worker.name,
                     last_name=f"{worker.first_surname} {worker.second_surname}".strip()
                 )
@@ -93,5 +93,5 @@ class Command(BaseCommand):
                 )
         
         self.stdout.write(self.style.SUCCESS(f'\n✓ {created_count} usuarios creados y vinculados'))
-        self.stdout.write(self.style.WARNING('\n⚠ PASSWORD TEMPORAL: changeme123'))
+        self.stdout.write(self.style.WARNING('\n⚠ PASSWORD TEMPORAL: Change123'))
         self.stdout.write('Los trabajadores deben cambiar su contraseña en el primer login\n')
