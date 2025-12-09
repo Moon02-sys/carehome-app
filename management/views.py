@@ -266,9 +266,9 @@ def resident_detail(request, pk):
     food_history = [{
         'date': r.date,
         'time': r.time,
-        'description': ', '.join(filter(None, [
-            f"Ingesta: {r.solid_intake}" if r.solid_intake else '',
-            f"1er: {r.first_course}" if r.first_course else '',
+        'description': '<br>'.join(filter(None, [
+            f"Sólidos: {r.solid_intake}" if r.solid_intake else '',
+            f"1º: {r.first_course}" if r.first_course else '',
             f"2º: {r.second_course}" if r.second_course else '',
             f"Postre: {r.dessert}" if r.dessert else '',
             f"Líquidos: {r.liquid_intake}" if r.liquid_intake else '',
@@ -282,7 +282,7 @@ def resident_detail(request, pk):
     medication_history = [{
         'date': r.date,
         'time': r.time,
-        'description': ', '.join(filter(None, [
+        'description': '<br>'.join(filter(None, [
             r.medication_name,
             f"Dosis: {r.dosage}" if r.dosage else '',
             f"Vía: {r.route}" if r.route else '',
@@ -295,7 +295,7 @@ def resident_detail(request, pk):
     bowel_history = [{
         'date': r.date,
         'time': r.time,
-        'description': ', '.join(filter(None, [
+        'description': '<br>'.join(filter(None, [
             f"Tipo: {r.type}" if r.type else '',
             f"Consistencia: {r.consistency}" if r.consistency else '',
             f"Color: {r.color}" if r.color else '',
