@@ -54,7 +54,7 @@ class WorkerForm(forms.ModelForm):
         fields = [
             'name', 'first_surname', 'second_surname', 'nif_nie', 
             'birthdate', 'gender', 'address', 'locality', 'province', 
-            'country', 'phone', 'role', 'social_security_number', 
+            'country', 'phone', 'role', 'shift', 'social_security_number', 
             'account_number', 'hire_date', 'disability_percentage', 'profile_photo'
         ]
         widgets = {
@@ -70,6 +70,7 @@ class WorkerForm(forms.ModelForm):
             'country': forms.TextInput(attrs={'class': 'form-control'}),
             'phone': forms.TextInput(attrs={'class': 'form-control'}),
             'role': forms.Select(attrs={'class': 'form-select'}),
+            'shift': forms.Select(attrs={'class': 'form-select'}),
             'social_security_number': forms.TextInput(attrs={'class': 'form-control'}),
             'account_number': forms.TextInput(attrs={'class': 'form-control'}),
             'hire_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),

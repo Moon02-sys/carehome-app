@@ -99,6 +99,7 @@ function submitEditWorkerForm() {
     formData.append('birthdate', birthdate);
     formData.append('gender', document.getElementById('gender').value);
     formData.append('role', document.getElementById('role').value);
+    formData.append('shift', document.getElementById('shift').value);
     formData.append('address', document.getElementById('address').value.trim());
     formData.append('locality', document.getElementById('locality').value.trim());
     formData.append('province', document.getElementById('province').value);

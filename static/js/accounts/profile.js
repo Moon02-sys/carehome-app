@@ -92,6 +92,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const payload = {
                 role: document.getElementById('laborRole').value.trim(),
+                shift: document.getElementById('laborShift').value.trim(),
                 hire_date: document.getElementById('laborHireDate').value,
                 social_security_number: document.getElementById('laborSSN').value.trim(),
                 account_number: document.getElementById('laborAccount').value.trim(),

@@ -216,6 +216,12 @@
                                 <p class="mb-0"><span class="badge bg-primary">{{ worker.role }}</span></p>
                             </div>
                             <div class="col-md-6">
+                                <strong>Turno:</strong>
+                                <p class="mb-0"><span class="badge bg-warning">{{ worker.shift|default:"-" }}</span></p>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
                                 <strong>Fecha de contratación:</strong>
                                 <p class="mb-0">{{ worker.hire_date|date:"d/m/Y"|default:"-" }}</p>
                             </div>
@@ -269,6 +275,15 @@
                                 <div class="col-md-6">
                                     <label class="form-label" for="laborRole">Rol</label>
                                     <input type="text" class="form-control" id="laborRole" value="{{ worker.role }}">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label" for="laborShift">Turno</label>
+                                    <select class="form-select" id="laborShift">
+                                        <option value="">-</option>
+                                        <option value="Mañana" {% if worker.shift == 'Mañana' %}selected{% endif %}>Mañana</option>
+                                        <option value="Tarde" {% if worker.shift == 'Tarde' %}selected{% endif %}>Tarde</option>
+                                        <option value="Noche" {% if worker.shift == 'Noche' %}selected{% endif %}>Noche</option>
+                                    </select>
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label" for="laborHireDate">Fecha de contratación</label>

@@ -53,6 +53,15 @@
                                 <option value="Enfermero" {% if worker.role == 'Enfermero' %}selected{% endif %}>{{ STRINGS.ROLE_NURSE }}</option>
                             </select>
                         </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="shift" class="form-label">Turno</label>
+                            <select class="form-select" id="shift">
+                                <option value="">{{ STRINGS.SELECT_OPTION }}</option>
+                                <option value="Mañana" {% if worker.shift == 'Mañana' %}selected{% endif %}>Mañana</option>
+                                <option value="Tarde" {% if worker.shift == 'Tarde' %}selected{% endif %}>Tarde</option>
+                                <option value="Noche" {% if worker.shift == 'Noche' %}selected{% endif %}>Noche</option>
+                            </select>
+                        </div>
                     </div>
 
                     <!-- Datos de Contacto -->

@@ -117,6 +117,12 @@ class Worker(models.Model):
         ('Enfermero', 'Enfermero'),
     ]
     
+    SHIFT_CHOICES = [
+        ('Mañana', 'Mañana'),
+        ('Tarde', 'Tarde'),
+        ('Noche', 'Noche'),
+    ]
+    
     # Relación con usuario de Django (temporalmente nullable para migración)
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='worker_profile', null=True, blank=True)
     
@@ -137,6 +143,7 @@ class Worker(models.Model):
     
     # Datos laborales
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, blank=True, verbose_name="Rol")
+    shift = models.CharField(max_length=20, choices=SHIFT_CHOICES, blank=True, verbose_name="Turno")
     social_security_number = models.CharField(max_length=20, blank=True, verbose_name="NSS")
     account_number = models.CharField(max_length=24, blank=True, verbose_name="Número de cuenta")
     disability_percentage = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True, verbose_name="Minusvalía(%)")

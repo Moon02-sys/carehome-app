@@ -92,7 +92,26 @@ def add_worker(request):
 def edit_worker(request, pk):
     try:
         worker = get_object_or_404(Worker, pk=pk)
+        user_role = request.user.groups.values_list('name', flat=True).first() if request.user else None
+        is_coordinator = user_role == 'Coordinador'
         
+        # Si es coordinador, solo puede editar el turno
+        if is_coordinator:
+            shift = request.POST.get('shift', '').strip()
+            if shift and shift in dict(Worker.SHIFT_CHOICES):
+                worker.shift = shift
+                worker.save()
+                return JsonResponse({
+                    'success': True,
+                    'message': 'Turno actualizado correctamente'
+                })
+            else:
+                return JsonResponse({
+                    'success': False,
+                    'errors': {'shift': 'Turno inválido'}
+                }, status=400)
+        
+        # Director: edición completa
         # Verificar si se debe eliminar la foto
         if request.POST.get('remove_photo') == 'true':
             if worker.profile_photo:

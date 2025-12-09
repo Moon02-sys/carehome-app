@@ -100,7 +100,8 @@ def update_profile(request):
             'social_security_number': 'social_security_number',
             'account_number': 'account_number',
             'disability_percentage': 'disability_percentage',
-            'role': 'role'
+            'role': 'role',
+            'shift': 'shift'
         }
 
         for payload_key, model_field in fields_map.items():
