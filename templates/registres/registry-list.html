@@ -82,9 +82,9 @@
                         <label for="annotationPanel" class="form-label fw-bold">Panel Informativo<span class="text-danger">*</span></label>
                         <select class="form-select" id="annotationPanel" required>
                             <option value="" selected disabled>Seleccione un panel</option>
-                            <option value="sanitario">Sanitario</option>
-                            <option value="general">General</option>
-                            <option value="incidencia">Incidencia</option>
+                            {% for val,label in PANEL_CHOICES %}
+                                <option value="{{ val }}">{{ label }}</option>
+                            {% endfor %}
                         </select>
                     </div>
 
@@ -93,10 +93,9 @@
                         <label for="annotationType" class="form-label fw-bold">Tipo de anotación<span class="text-danger">*</span></label>
                         <select class="form-select" id="annotationType" required>
                             <option value="" selected disabled>Seleccione un tipo</option>
-                            <option value="alimentacion">Alimentación</option>
-                            <option value="hidratacion">Hidratación</option>
-                            <option value="medicacion">Medicación</option>
-                            <option value="deposicion">Deposición</option>
+                            {% for val,label in TYPE_CHOICES %}
+                                <option value="{{ val }}">{{ label }}</option>
+                            {% endfor %}
                         </select>
                     </div>
 

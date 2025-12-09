@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}CareHome{% endblock %}</title>
+    <!-- Favicon -->
+    {% load static %}
+    <link rel="icon" href="{% static 'images/favicon/favicon.ico' %}" type="image/x-icon">
+    <link rel="shortcut icon" href="{% static 'images/favicon/favicon.ico' %}" type="image/x-icon">
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -32,12 +36,13 @@
             <!-- Logo space -->
             <div class="navbar-brand text-white mb-4">
                 <a class="navbar-brand text-white" href="{% url 'home:home' %}">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="27" height="37" viewBox="0 0 57 77" fill="none">
-                        <path d="M28.4188 48.4417C26.0505 43.1609 17.7617 43.7233 17.7617 50.4728C17.7617 57.2223 28.4188 62.847 28.4188 62.847C28.4188 62.847 39.0758 57.2223 39.0758 50.4728C39.0758 43.7233 30.787 43.1609 28.4188 48.4417Z" fill="#FF8EBF"></path>
-                        <path d="M9.4729 46.6757V59.1825C9.4729 61.802 9.4729 63.1127 9.98914 64.1133C10.4432 64.9933 11.1673 65.7082 12.0585 66.1566C13.0707 66.6659 14.3964 66.6659 17.0439 66.6659H39.7936C42.4411 66.6659 43.7649 66.6659 44.7771 66.1566C45.6683 65.7082 46.3948 64.9933 46.8489 64.1133C47.3646 63.1137 47.3646 61.8051 47.3646 59.1907V46.6757C47.3646 45.4261 47.3635 44.8009 47.2097 44.2194C47.0733 43.7041 46.8495 43.2165 46.5466 42.7758C46.2047 42.2786 45.7295 41.8662 44.7771 41.0433L33.4096 31.2211C31.6415 29.6933 30.7574 28.9298 29.7625 28.6392C28.8858 28.3832 27.9513 28.3832 27.0746 28.6392C26.0804 28.9296 25.1976 29.6923 23.4321 31.2178L12.0608 41.0433C11.1085 41.8662 10.6334 42.2786 10.2916 42.7758C9.98868 43.2165 9.76312 43.7041 9.62677 44.2194C9.4729 44.8009 9.4729 45.426 9.4729 46.6757Z" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></path>
-                        <path d="M15.9488 24.9466C17.5374 23.2193 19.4583 21.8404 21.5929 20.8949C23.7274 19.9493 26.0301 19.4575 28.3594 19.4493C30.6888 19.441 32.994 19.917 35.135 20.8474C37.2761 21.7778 39.2075 23.1432 40.808 24.8592M9.71277 19.0522C12.0957 16.4613 14.977 14.393 18.1788 12.9747C21.3807 11.5564 24.8336 10.8176 28.3277 10.8052C31.8217 10.7929 35.2837 11.5068 38.4952 12.9024C41.7068 14.2979 44.6028 16.3472 47.0036 18.9211" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></path>
-                    </svg>
-                    <span class="fs-5 semibold">CareHome</span>
+                    <div class="d-flex align-items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 43 43" fill="none" class="me-2">
+                            <path d="M21.1102 21.9943C18.7215 16.7135 10.3608 17.276 10.3608 24.0255C10.3608 30.775 21.1102 36.3997 21.1102 36.3997C21.1102 36.3997 31.8596 30.775 31.8596 24.0255C31.8596 17.276 23.499 16.7135 21.1102 21.9943Z" fill="#FF8EBF"/>
+                            <path d="M2.00024 20.2285V32.7353C2.00024 35.3548 2.00024 36.6655 2.52096 37.6661C2.979 38.5461 3.70933 39.261 4.60827 39.7094C5.62924 40.2187 6.96644 40.2187 9.63686 40.2187H32.5836C35.254 40.2187 36.5893 40.2187 37.6103 39.7094C38.5092 39.261 39.242 38.5461 39.7 37.6661C40.2202 36.6665 40.2202 35.3579 40.2202 32.7435V20.2285C40.2202 18.9789 40.2191 18.3537 40.064 17.7722C39.9264 17.2569 39.7006 16.7693 39.3951 16.3286C39.0503 15.8314 38.5709 15.419 37.6104 14.5961L26.1443 4.77387C24.3609 3.24608 23.4692 2.48257 22.4656 2.19202C21.5813 1.93599 20.6387 1.93599 19.7544 2.19202C18.7516 2.48235 17.8612 3.24514 16.0804 4.77063L4.61061 14.5961C3.65001 15.419 3.17083 15.8314 2.82604 16.3286C2.5205 16.7693 2.29298 17.2569 2.15544 17.7722C2.00024 18.3537 2.00024 18.9788 2.00024 20.2285Z" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    <span class="fs-4 semibold">CareHome</span>
+                    </div>
                 </a>
             </div>
             
@@ -53,13 +58,6 @@
                 <li class="mb-1">
                     <a href="{% url 'registry:registry_list' %}" class="btn btn-toggle d-inline-flex align-items-center rounded border-0">
                         <i class="bi bi-people-fill me-2"></i><span>{{ STRINGS.NAV_REGISTER }}</span>
-                    </a>
-                </li>
-                
-                <!-- Cuenta Section -->
-                <li class="mb-1">
-                    <a href="{% url 'accounts:profile' %}" class="btn btn-toggle d-inline-flex align-items-center rounded border-0">
-                        <i class="bi bi-person-circle me-2"></i><span>{{ STRINGS.NAV_ACCOUNT }}</span>
                     </a>
                 </li>
                 

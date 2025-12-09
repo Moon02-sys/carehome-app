@@ -396,27 +396,33 @@ function generateDescriptionFromFormData(annotation) {
 }
 
 function getTypeLabel(type) {
+    // Normalizar y mapear al label textual definido en TypeChoices
+    const t = (type || '').toString();
+    const key = t.replace(/[_\s]/g, '').toLowerCase();
+
     const labels = {
         'alimentacion': 'Alimentación',
+        'caida': 'Caída',
+        'citamedica': 'Cita médica',
+        'urgencias': 'Derivación a urgencias',
+        'general': 'General',
+        'direccion': 'Dirección',
         'medicacion': 'Medicación',
         'deposicion': 'Deposición',
-        'hidratacion': 'Hidratación',
+        'cuidados': 'Cuidados',
         'salida': 'Salida',
-        'cita_medica': 'Cita médica',
-        'caida': 'Caída'
     };
-    // Si no está en el diccionario, capitalizar la primera letra
-    if (labels[type]) {
-        return labels[type];
-    }
-    return type.charAt(0).toUpperCase() + type.slice(1);
+
+    return labels[key] || (type ? String(type) : '-');
 }
 
 function getPanelBadge(panel) {
     const badges = {
-        'sanitario': '<span class="badge" style="background-color: #17a2b8;">S</span>',
-        'general': '<span class="badge bg-primary">G</span>',
-        'incidencia': '<span class="badge bg-warning text-dark">I</span>'
+        'centro': '<span class="badge bg-primary">C</span>',
+        'direccion': '<span class="badge bg-info">D</span>',
+        'equipoInterdisciplinar': '<span class="badge bg-secondary">EI</span>',
+        'incidenciasSanitarias': '<span class="badge bg-warning text-dark">IS</span>',
+
     };
     return badges[panel] || '<span class="badge bg-secondary">?</span>';
 }

@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from management.models import Resident
+from resources.choices import PanelChoices, TypeChoices
 
 # Create your models here.
 
@@ -116,26 +117,18 @@ class BowelMovementRegistry(models.Model):
 
 class Annotation(models.Model):
     """Anotaciones desde los registros"""
-    PANEL_CHOICES = [
-        ('sanitario', 'Sanitario'),
-        ('general', 'General'),
-        ('incidencia', 'Incidencia'),
-    ]
+    PANEL_CHOICES = PanelChoices.choices
     
     STATUS_CHOICES = [
         ('abierto', 'Abierto'),
         ('cerrado', 'Cerrado'),
     ]
     
-    TYPE_CHOICES = [
-        ('alimentacion', 'Alimentación'),
-        ('medicacion', 'Medicación'),
-        ('deposicion', 'Deposición'),
-        ('caida', 'Caída'),
-    ]
+    TYPE_CHOICES = TypeChoices.choices
     
     resident = models.ForeignKey(Resident, on_delete=models.CASCADE, related_name='annotations', verbose_name="Residente")
-    panel = models.CharField(max_length=20, choices=PANEL_CHOICES, verbose_name="Panel")
+    # aumentar max_length para acomodar valores largos como 'equipoInterdisciplinar'
+    panel = models.CharField(max_length=32, choices=PANEL_CHOICES, verbose_name="Panel")
     type = models.CharField(max_length=20, choices=TYPE_CHOICES, verbose_name="Tipo")
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='abierto', verbose_name="Estado")
     form_data = models.JSONField(blank=True, null=True, verbose_name="Datos del formulario")
