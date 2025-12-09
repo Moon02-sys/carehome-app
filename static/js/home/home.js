@@ -264,25 +264,28 @@ async function registrarCaida() {
     const form = document.getElementById('nuevaCaidaForm');
     if (form.checkValidity()) {
         const fecha = document.getElementById('fecha').value;
+        const panel = document.getElementById('caidaPanel').value;
         const residenteId = document.getElementById('residente').value;
         const lugar = document.getElementById('lugar').value;
         const familiarInformado = document.getElementById('familiarInformado').value;
         const causa = document.getElementById('causa').value;
         const consecuencias = document.getElementById('consecuencias').value;
         const observaciones = document.getElementById('observaciones').value;
+        const editingId = document.getElementById('registrarCaidaBtn').dataset.editingId;
 
         // Preparar los datos de la caída como anotación
         const formData = {
             fecha: fecha,
             lugar: lugar,
-            familiarInformado: familiarInformado,
+            familiar_informado: familiarInformado,
             causa: causa,
-            consecuencias: consecuencias
+            consecuencias: consecuencias,
+            observaciones: observaciones
         };
 
         const annotationData = {
             resident_id: residenteId,
-            panel: 'incidencia',
+            panel: panel,
             type: 'caida',
             status: 'abierto',
             form_data: formData,
@@ -290,8 +293,17 @@ async function registrarCaida() {
         };
 
         try {
-            const response = await fetch('/registry/api/annotations/save/', {
-                method: 'POST',
+            let url = '/registry/api/annotations/save/';
+            let method = 'POST';
+            
+            // Si estamos editando, usar endpoint de actualización
+            if (editingId) {
+                url = `/registry/api/annotations/${editingId}/update/`;
+                method = 'PUT';
+            }
+
+            const response = await fetch(url, {
+                method: method,
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CSRFToken': getCookie('csrftoken')
@@ -302,10 +314,11 @@ async function registrarCaida() {
             const result = await response.json();
             
             if (result.success) {
-                showAlert('Caída registrada correctamente como anotación', 'success');
+                showAlert(editingId ? 'Caída actualizada correctamente' : 'Caída registrada correctamente como anotación', 'success');
                 var modal = bootstrap.Modal.getInstance(document.getElementById('nuevaCaidaModal'));
                 modal.hide();
                 form.reset();
+                delete document.getElementById('registrarCaidaBtn').dataset.editingId;
                 // Recargar las anotaciones para mostrar la nueva caída
                 if (typeof loadAnnotations === 'function') {
                     console.log('Llamando loadAnnotations después de registrar caída');

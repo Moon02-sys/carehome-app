@@ -127,8 +127,8 @@
                     <thead class="table-light">
                         <tr>
                             <th class="sortable" data-column="0" style="width: 80px;">Panel <i class="bi bi-arrow-down-up"></i></th>
-                            <th class="sortable" data-column="1" style="width: 180px;">Fecha - hora <i class="bi bi-arrow-down-up"></i></th>
-                            <th class="sortable" data-column="2" style="width: 150px;">Tipo <i class="bi bi-arrow-down-up"></i></th>
+                            <th class="sortable" data-column="1" style="width: 150px;">Fecha - hora <i class="bi bi-arrow-down-up"></i></th>
+                            <th class="sortable" data-column="2" style="width: 120px;">Tipo <i class="bi bi-arrow-down-up"></i></th>
                             <th style="width: 700px;">Descripción</th>
                             <th class="sortable" data-column="4">Residente <i class="bi bi-arrow-down-up"></i></th>
                             <th class="sortable" data-column="5">De <i class="bi bi-arrow-down-up"></i></th>
@@ -162,16 +162,25 @@
             <div class="modal-body">
                 <form id="nuevaCaidaForm">
 
-                    <!-- Lugar y Familiar informado -->
+                    <!-- Fecha, Residente y Panel -->
                     <div class="row">
                         <!-- Fecha -->
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-4 mb-3">
                             <label for="fecha" class="form-label">Fecha y hora<span class="text-danger">*</span></label>
                             <input type="datetime-local" class="form-control" id="fecha" required>
                         </div>
-
+                        <!-- Panel Informativo -->
+                        <div class="col-md-4 mb-3">
+                            <label for="caidaPanel" class="form-label">Panel informativo<span class="text-danger">*</span></label>
+                            <select class="form-select" id="caidaPanel" required>
+                                <option value="" selected disabled>Seleccione un panel</option>
+                                {% for val,label in PANEL_CHOICES %}
+                                    <option value="{{ val }}">{{ label }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
                         <!-- Residente -->
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-4 mb-3">
                             <label for="residente" class="form-label">Residente<span class="text-danger">*</span></label>
                             <select class="form-select" id="residente" required>
                                 <option value="" selected disabled>Nadie seleccionado</option>
@@ -180,6 +189,11 @@
                                 {% endfor %}
                             </select>
                         </div>
+                        
+                    </div>
+
+                    <!-- Lugar y Familiar informado -->
+                    <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="lugar" class="form-label">Lugar<span class="text-danger">*</span></label>
                             <select class="form-select" id="lugar" required>

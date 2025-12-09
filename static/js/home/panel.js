@@ -30,6 +30,22 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 });
             }
+            // Limpiar el formulario y resetear el título
+            document.getElementById('nuevaAnotacionForm').reset();
+            delete document.getElementById('guardarAnotacionBtn').dataset.editingId;
+            document.getElementById('nuevaAnotacionModalLabel').innerHTML = '<i class="bi bi-file-text"></i> Nueva Anotación';
+        });
+    }
+    
+    // Manejar reseteo del modal de caídas al cerrarse
+    const nuevaCaidaModal = document.getElementById('nuevaCaidaModal');
+    if (nuevaCaidaModal) {
+        nuevaCaidaModal.addEventListener('hidden.bs.modal', function() {
+            // Limpiar el formulario y resetear el título y botón
+            document.getElementById('nuevaCaidaForm').reset();
+            delete document.getElementById('registrarCaidaBtn').dataset.editingId;
+            document.getElementById('nuevaCaidaModalLabel').textContent = 'Nueva Caída';
+            document.getElementById('registrarCaidaBtn').innerHTML = '<i class="bi bi-save"></i> Registrar';
         });
     }
     
@@ -524,25 +540,136 @@ function editAnnotation(annotationId) {
             if (result.success) {
                 const annotation = result.annotations.find(a => a.id === annotationId);
                 if (annotation) {
-                    // Cargar datos en el modal de edición
-                    document.getElementById('anotacionFecha').value = annotation.form_data?.fecha || '';
-                    document.getElementById('anotacionPanel').value = annotation.panel;
-                    document.getElementById('anotacionTipo').value = annotation.type;
-                    document.getElementById('anotacionEstado').value = annotation.status;
-                    document.getElementById('anotacionResidente').value = annotation.resident.id;
-                    document.getElementById('anotacionDescripcion').value = annotation.notes;
+                    // Verificar el tipo de anotación y abrir el modal correcto
+                    // Comparar ignorando mayúsculas/minúsculas y acentos
+                    const tipo = annotation.type.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
                     
-                    // Cambiar el botón de guardar para actualizar
-                    const modal = new bootstrap.Modal(document.getElementById('nuevaAnotacionModal'));
-                    document.getElementById('nuevaAnotacionModalLabel').innerHTML = '<i class="bi bi-pencil"></i> Editar Anotación';
-                    
-                    // Guardar el ID para actualizar
-                    document.getElementById('guardarAnotacionBtn').dataset.editingId = annotationId;
-                    modal.show();
+                    // Determinar qué modal abrir según el tipo y panel
+                    if (tipo === 'caida') {
+                        // Abrir modal de caídas si existe
+                        if (document.getElementById('nuevaCaidaModal')) {
+                            editFallAnnotation(annotation);
+                        } else {
+                            editGenericAnnotation(annotation, annotationId);
+                        }
+                    } else if (tipo === 'medicacion' && document.getElementById('medicacionModal')) {
+                        // TODO: Implementar editMedicacionAnnotation cuando el modal esté disponible
+                        editGenericAnnotation(annotation, annotationId);
+                    } else if (tipo === 'deposicion' && document.getElementById('deposicionModal')) {
+                        // TODO: Implementar editDeposicionAnnotation cuando el modal esté disponible
+                        editGenericAnnotation(annotation, annotationId);
+                    } else if (tipo === 'alimentacion' && document.getElementById('alimentacionModal')) {
+                        // TODO: Implementar editAlimentacionAnnotation cuando el modal esté disponible
+                        editGenericAnnotation(annotation, annotationId);
+                    } else {
+                        // Abrir modal genérico de anotaciones para todos los demás tipos
+                        editGenericAnnotation(annotation, annotationId);
+                    }
                 }
             }
         })
         .catch(error => console.error('Error:', error));
+}
+
+// Función para editar anotaciones de caídas
+function editFallAnnotation(annotation) {
+    // Cargar datos en el modal de caídas
+    const formData = annotation.form_data || {};
+    
+    document.getElementById('fecha').value = formData.fecha || '';
+    document.getElementById('caidaPanel').value = annotation.panel || '';
+    document.getElementById('residente').value = annotation.resident.id;
+    document.getElementById('lugar').value = formData.lugar || '';
+    document.getElementById('familiarInformado').value = formData.familiar_informado || '';
+    document.getElementById('causa').value = formData.causa || '';
+    document.getElementById('consecuencias').value = formData.consecuencias || '';
+    document.getElementById('observaciones').value = formData.observaciones || annotation.notes || '';
+    
+    // Cambiar título del modal
+    document.getElementById('nuevaCaidaModalLabel').textContent = 'Editar Caída';
+    
+    // Guardar el ID para actualizar
+    const saveBtn = document.getElementById('registrarCaidaBtn');
+    saveBtn.dataset.editingId = annotation.id;
+    saveBtn.innerHTML = '<i class="bi bi-save"></i> Actualizar';
+    
+    // Abrir modal
+    const modal = new bootstrap.Modal(document.getElementById('nuevaCaidaModal'));
+    modal.show();
+}
+
+// Función para editar anotaciones genéricas
+function editGenericAnnotation(annotation, annotationId) {
+    // Cargar datos en el modal genérico
+    document.getElementById('anotacionFecha').value = annotation.form_data?.fecha || '';
+    document.getElementById('anotacionPanel').value = annotation.panel;
+    document.getElementById('anotacionTipo').value = annotation.type;
+    document.getElementById('anotacionEstado').value = annotation.status;
+    document.getElementById('anotacionResidente').value = annotation.resident.id;
+    
+    // Formatear la descripción según el tipo de anotación
+    let descripcion = annotation.notes || '';
+    const formData = annotation.form_data || {};
+    
+    // Agregar detalles específicos según el tipo
+    const tipo = annotation.type.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    
+    if (tipo === 'medicacion' && Object.keys(formData).length > 0) {
+        descripcion = formatMedicacionDetails(formData, annotation.notes);
+    } else if (tipo === 'deposicion' && Object.keys(formData).length > 0) {
+        descripcion = formatDeposicionDetails(formData, annotation.notes);
+    } else if (tipo === 'alimentacion' && Object.keys(formData).length > 0) {
+        descripcion = formatAlimentacionDetails(formData, annotation.notes);
+    }
+    
+    document.getElementById('anotacionDescripcion').value = descripcion;
+    
+    // Cambiar el botón de guardar para actualizar
+    const modal = new bootstrap.Modal(document.getElementById('nuevaAnotacionModal'));
+    document.getElementById('nuevaAnotacionModalLabel').innerHTML = '<i class="bi bi-pencil"></i> Editar Anotación';
+    
+    // Guardar el ID para actualizar
+    document.getElementById('guardarAnotacionBtn').dataset.editingId = annotationId;
+    modal.show();
+}
+
+// Funciones auxiliares para formatear detalles específicos
+function formatMedicacionDetails(formData, notes) {
+    let details = [];
+    if (formData.medication_name) details.push(`Medicamento: ${formData.medication_name}`);
+    if (formData.dosage) details.push(`Dosis: ${formData.dosage}`);
+    if (formData.time) details.push(`Hora: ${formData.time}`);
+    if (formData.administered !== undefined) details.push(`Administrado: ${formData.administered ? 'Sí' : 'No'}`);
+    
+    let result = details.join('\n');
+    if (notes) result += '\n\nNotas adicionales:\n' + notes;
+    return result;
+}
+
+function formatDeposicionDetails(formData, notes) {
+    let details = [];
+    if (formData.type) details.push(`Tipo: ${formData.type}`);
+    if (formData.consistency) details.push(`Consistencia: ${formData.consistency}`);
+    if (formData.time) details.push(`Hora: ${formData.time}`);
+    if (formData.color) details.push(`Color: ${formData.color}`);
+    
+    let result = details.join('\n');
+    if (notes) result += '\n\nNotas adicionales:\n' + notes;
+    return result;
+}
+
+function formatAlimentacionDetails(formData, notes) {
+    let details = [];
+    if (formData.meal_type) details.push(`Tipo de comida: ${formData.meal_type}`);
+    if (formData.first_course) details.push(`Primer plato: ${formData.first_course}`);
+    if (formData.second_course) details.push(`Segundo plato: ${formData.second_course}`);
+    if (formData.dessert) details.push(`Postre: ${formData.dessert}`);
+    if (formData.liquid_intake) details.push(`Líquidos: ${formData.liquid_intake}`);
+    if (formData.time) details.push(`Hora: ${formData.time}`);
+    
+    let result = details.join('\n');
+    if (notes) result += '\n\nNotas adicionales:\n' + notes;
+    return result;
 }
 
 async function saveFollowUp(annotationId) {
