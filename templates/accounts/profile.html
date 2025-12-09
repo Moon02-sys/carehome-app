@@ -127,12 +127,10 @@
                         </div>
                         <hr>
                         <div class="row mb-3">
-                            <div class="col-12">
+                            <div class="col-md-4">
                                 <strong>Dirección:</strong>
                                 <p class="mb-0">{{ worker.address|default:"-" }}</p>
                             </div>
-                        </div>
-                        <div class="row mb-3">
                             <div class="col-md-4">
                                 <strong>Localidad:</strong>
                                 <p class="mb-0">{{ worker.locality|default:"-" }}</p>
@@ -214,43 +212,41 @@
                 <div class="card-body">
                     <div id="laborDisplay">
                         <div class="row mb-3">
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <strong>Rol:</strong>
                                 <p class="mb-0"><span class="badge bg-primary">{{ worker.role }}</span></p>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <strong>Turno:</strong>
                                 <p class="mb-0"><span class="badge bg-warning">{{ worker.shift|default:"-" }}</span></p>
                             </div>
-                        </div>
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <strong>Fecha de contratación:</strong>
-                                <p class="mb-0">{{ worker.hire_date|date:"d/m/Y"|default:"-" }}</p>
-                            </div>
-                        </div>
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <strong>Número de Seguridad Social:</strong>
-                                <p class="mb-0">{{ worker.social_security_number|default:"-" }}</p>
-                            </div>
-                            <div class="col-md-6">
-                                <strong>Número de cuenta:</strong>
-                                <p class="mb-0">{{ worker.account_number|default:"-" }}</p>
-                            </div>
-                        </div>
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <strong>Minusvalía (%):</strong>
-                                <p class="mb-0">{{ worker.disability_percentage|default:"-" }}</p>
-                            </div>
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <strong>Estado:</strong>
                                 <p class="mb-0">
                                     <span class="badge {% if worker.is_active %}bg-success{% else %}bg-danger{% endif %}">
                                         {% if worker.is_active %}Activo{% else %}Inactivo{% endif %}
                                     </span>
                                 </p>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <strong>Fecha de contratación:</strong>
+                                <p class="mb-0">{{ worker.hire_date|date:"d/m/Y"|default:"-" }}</p>
+                            </div>
+                            <div class="col-md-4">
+                                <strong>Número de Seguridad Social:</strong>
+                                <p class="mb-0">{{ worker.social_security_number|default:"-" }}</p>
+                            </div>
+                            <div class="col-md-4">
+                                <strong>Número de cuenta:</strong>
+                                <p class="mb-0">{{ worker.account_number|default:"-" }}</p>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <strong>Minusvalía (%):</strong>
+                                <p class="mb-0">{{ worker.disability_percentage|default:"-" }}</p>
                             </div>
                         </div>
                         <hr>
