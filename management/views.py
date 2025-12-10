@@ -92,26 +92,10 @@ def add_worker(request):
 def edit_worker(request, pk):
     try:
         worker = get_object_or_404(Worker, pk=pk)
-        user_role = request.user.groups.values_list('name', flat=True).first() if request.user else None
-        is_coordinator = user_role == 'Coordinador'
         
-        # Si es coordinador, solo puede editar el turno
-        if is_coordinator:
-            shift = request.POST.get('shift', '').strip()
-            if shift and shift in dict(Worker.SHIFT_CHOICES):
-                worker.shift = shift
-                worker.save()
-                return JsonResponse({
-                    'success': True,
-                    'message': 'Turno actualizado correctamente'
-                })
-            else:
-                return JsonResponse({
-                    'success': False,
-                    'errors': {'shift': 'Turno inválido'}
-                }, status=400)
+        # Verificar si el usuario actual es coordinador
+        is_coordinator = hasattr(request.user, 'worker_profile') and request.user.worker_profile.role == 'Coordinador'
         
-        # Director: edición completa
         # Verificar si se debe eliminar la foto
         if request.POST.get('remove_photo') == 'true':
             if worker.profile_photo:
@@ -124,7 +108,15 @@ def edit_worker(request, pk):
                 worker.curriculum.delete()
                 worker.curriculum = None
         
-        form = WorkerForm(request.POST, request.FILES, instance=worker)
+        # Si es coordinador, puede editar todo pero solo él puede modificar el turno
+        # Si no es coordinador y intenta cambiar el turno, lo ignoramos
+        form_data = request.POST.copy()
+        
+        if not is_coordinator:
+            # Si no es coordinador, mantener el turno actual
+            form_data['shift'] = worker.shift if worker.shift else ''
+        
+        form = WorkerForm(form_data, request.FILES, instance=worker)
         
         if form.is_valid():
             worker = form.save()
@@ -166,8 +158,13 @@ def delete_worker(request, pk):
 
 def worker_detail(request, pk):
     worker = get_object_or_404(Worker.objects.select_related('user'), pk=pk)
+    
+    # Verificar si el usuario actual es coordinador
+    is_user_coordinator = hasattr(request.user, 'worker_profile') and request.user.worker_profile.role == 'Coordinador'
+    
     context = {
         'worker': worker,
+        'is_user_coordinator': is_user_coordinator,
         'STRINGS': STRINGS
     }
     return render(request, 'workers/worker-detail.html', context)

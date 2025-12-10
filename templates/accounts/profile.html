@@ -272,19 +272,6 @@
                             {% csrf_token %}
                             <div class="row g-3">
                                 <div class="col-md-6">
-                                    <label class="form-label" for="laborRole">Rol</label>
-                                    <input type="text" class="form-control" id="laborRole" value="{{ worker.role }}">
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label" for="laborShift">Turno</label>
-                                    <select class="form-select" id="laborShift">
-                                        <option value="">-</option>
-                                        <option value="Mañana" {% if worker.shift == 'Mañana' %}selected{% endif %}>Mañana</option>
-                                        <option value="Tarde" {% if worker.shift == 'Tarde' %}selected{% endif %}>Tarde</option>
-                                        <option value="Noche" {% if worker.shift == 'Noche' %}selected{% endif %}>Noche</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-6">
                                     <label class="form-label" for="laborHireDate">Fecha de contratación</label>
                                     <input type="date" class="form-control" id="laborHireDate" value="{{ worker.hire_date|date:'Y-m-d' }}">
                                 </div>

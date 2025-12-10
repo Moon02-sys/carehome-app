@@ -55,12 +55,15 @@
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="shift" class="form-label">Turno</label>
-                            <select class="form-select" id="shift">
+                            <select class="form-select" id="shift" {% if not is_user_coordinator %}disabled{% endif %}>
                                 <option value="">{{ STRINGS.SELECT_OPTION }}</option>
                                 <option value="Mañana" {% if worker.shift == 'Mañana' %}selected{% endif %}>Mañana</option>
                                 <option value="Tarde" {% if worker.shift == 'Tarde' %}selected{% endif %}>Tarde</option>
                                 <option value="Noche" {% if worker.shift == 'Noche' %}selected{% endif %}>Noche</option>
                             </select>
+                            {% if not is_user_coordinator %}
+                            <small class="text-muted"><i class="bi bi-info-circle"></i> Solo coordinadores pueden modificar el turno</small>
+                            {% endif %}
                         </div>
                     </div>
 

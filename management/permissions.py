@@ -5,6 +5,16 @@ from django.shortcuts import redirect
 from django.contrib import messages
 
 
+def is_coordinator(user):
+    """Verifica si el usuario es coordinador"""
+    return hasattr(user, 'worker_profile') and user.worker_profile.role == 'Coordinador'
+
+
+def is_director(user):
+    """Verifica si el usuario es director"""
+    return hasattr(user, 'worker_profile') and user.worker_profile.role == 'Director'
+
+
 def has_permission(perm):
     """
     Decorador que verifica permisos usando el sistema nativo de Django.
