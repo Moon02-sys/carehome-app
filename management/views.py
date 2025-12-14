@@ -7,7 +7,7 @@ from resources.strings import content as STRINGS
 from .models import Resident, Worker
 from registry.models import FoodRegistry, MedicationRegistry, BowelMovementRegistry
 from .forms import ResidentForm, WorkerForm
-from .permissions import has_permission, is_coordinator
+from .permissions import has_permission, is_coordinator, is_director
 import json
 
 def management_dashboard(request):
@@ -15,6 +15,11 @@ def management_dashboard(request):
 
 def workers_list(request):
     workers = Worker.objects.filter(is_active=True).order_by('first_surname', 'name')
+    
+    # Excluir al trabajador del usuario logueado
+    if hasattr(request.user, 'worker_profile'):
+        workers = workers.exclude(id=request.user.worker_profile.id)
+    
     context = {
         'workers': workers,
         'STRINGS': STRINGS
@@ -93,8 +98,10 @@ def edit_worker(request, pk):
     try:
         worker = get_object_or_404(Worker, pk=pk)
         
-        # Verificar si el usuario actual es coordinador
+        # Verificar si el usuario actual es director o coordinador
+        user_is_director = is_director(request.user)
         user_is_coordinator = is_coordinator(request.user)
+        can_edit_shift = user_is_director or user_is_coordinator
         
         # Verificar si se debe eliminar la foto
         if request.POST.get('remove_photo') == 'true':
@@ -108,12 +115,12 @@ def edit_worker(request, pk):
                 worker.curriculum.delete()
                 worker.curriculum = None
         
-        # Si es coordinador, puede editar todo pero solo él puede modificar el turno
-        # Si no es coordinador y intenta cambiar el turno, lo ignoramos
+        # Solo Director y Coordinador pueden modificar el turno
+        # Si no tiene permiso y intenta cambiar el turno, lo ignoramos
         form_data = request.POST.copy()
         
-        if not user_is_coordinator:
-            # Si no es coordinador, mantener el turno actual
+        if not can_edit_shift:
+            # Si no es director ni coordinador, mantener el turno actual
             form_data['shift'] = worker.shift if worker.shift else ''
         
         form = WorkerForm(form_data, request.FILES, instance=worker)
@@ -159,12 +166,15 @@ def delete_worker(request, pk):
 def worker_detail(request, pk):
     worker = get_object_or_404(Worker.objects.select_related('user'), pk=pk)
     
-    # Verificar si el usuario actual es coordinador
+    # Verificar si el usuario actual es director o coordinador
+    is_user_director = is_director(request.user)
     is_user_coordinator = is_coordinator(request.user)
+    can_edit_shift = is_user_director or is_user_coordinator
     
     context = {
         'worker': worker,
         'is_user_coordinator': is_user_coordinator,
+        'can_edit_shift': can_edit_shift,
         'STRINGS': STRINGS
     }
     return render(request, 'workers/worker-detail.html', context)
