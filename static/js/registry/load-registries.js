@@ -398,7 +398,7 @@ function setupEntryButtons(entryItem, type, residentId = null) {
             if (notes) {
                 summaryParts.push(`Obs: ${notes}`);
             }
-            summaryText = summaryParts.length > 0 ? summaryParts.join(' | ') : 'Sin información';
+            summaryText = summaryParts.length > 0 ? summaryParts.join(', ') : 'Sin información';
             
         } else if (type === 'medicacion') {
             const medicationName = formView.querySelector('.medication-name-select').value;
