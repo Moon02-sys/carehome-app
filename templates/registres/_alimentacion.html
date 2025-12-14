@@ -28,7 +28,10 @@
     <div class="card">
         <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
             <h6 class="mb-0">Registro de Alimentación e Hidratación</h6>
-            <input type="date" class="form-control form-control-sm" id="dateInput" style="width: auto;" value="{% now 'Y-m-d' %}">
+            <div class="d-flex align-items-center gap-2">
+                <label for="dateInput" class="mb-0 text-white fw-bold"><i class="bi bi-calendar3"></i> Fecha:</label>
+                <input type="date" class="form-control form-control-sm" id="dateInput" style="width: auto;" value="{% now 'Y-m-d' %}">
+            </div>
         </div>
         <div class="card-body">
             <!-- Container for entries -->

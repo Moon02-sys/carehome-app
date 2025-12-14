@@ -304,9 +304,14 @@ function setupEntryButtons(entryItem, type, residentId = null) {
             return;
         }
         
+        // Obtener la fecha del input de fecha correspondiente al tipo de registro
+        const tabId = type === 'alimentacion' ? 'alimentacion' : type === 'medicacion' ? 'medicacion' : 'deposicion';
+        const dateInput = document.querySelector(`#${tabId} #dateInput`);
+        const selectedDate = dateInput ? dateInput.value : new Date().toISOString().split('T')[0];
+        
         let registryData = {
             resident_id: finalResidentId,
-            date: new Date().toISOString().split('T')[0],
+            date: selectedDate,
             time: `${hour.padStart(2, '0')}:${minute.padStart(2, '0')}`
         };
         
