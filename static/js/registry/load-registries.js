@@ -102,14 +102,26 @@ function loadFoodRegistries(registries) {
         
         let summaryParts = [];
         
+        // Mapeo de valores a textos legibles
+        const mealTypeLabels = {
+            'desayuno': 'Desayuno',
+            'comida': 'Comida',
+            'merienda': 'Merienda',
+            'cena': 'Cena'
+        };
+        
         // Mostrar "Alimentación: [tipo]" en lugar de "Sólidos:"
-        if (registry.solid_intake) {summaryParts.push(`Alimentación: ${registry.solid_intake}`);}
+        if (registry.solid_intake) {
+            const mealText = mealTypeLabels[registry.solid_intake] || registry.solid_intake;
+            summaryParts.push(`Alimentación: ${mealText}`);
+        }
         
         // Mostrar hidratación con cantidad
         if (registry.liquid_intake || registry.quantity) {
             let hydrationText = 'Hidratación:';
             if (registry.liquid_intake) {
-                hydrationText += ` ${registry.liquid_intake}`;
+                const liquidText = mealTypeLabels[registry.liquid_intake] || registry.liquid_intake;
+                hydrationText += ` ${liquidText}`;
             }
             if (registry.quantity) {
                 hydrationText += registry.liquid_intake ? ` - ${registry.quantity}` : ` ${registry.quantity}`;
