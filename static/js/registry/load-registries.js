@@ -304,10 +304,12 @@ function setupEntryButtons(entryItem, type, residentId = null) {
             return;
         }
         
-        // Obtener la fecha del input de fecha correspondiente al tipo de registro
-        const tabId = type === 'alimentacion' ? 'alimentacion' : type === 'medicacion' ? 'medicacion' : 'deposicion';
-        const dateInput = document.querySelector(`#${tabId} #dateInput`);
-        const selectedDate = dateInput ? dateInput.value : new Date().toISOString().split('T')[0];
+        // Obtener la fecha del input de fecha del tab activo actual
+        const activeTab = document.querySelector('.tab-pane.show.active');
+        const dateInput = activeTab ? activeTab.querySelector('#dateInput') : null;
+        const selectedDate = dateInput && dateInput.value ? dateInput.value : new Date().toISOString().split('T')[0];
+        
+        console.log('Fecha seleccionada para guardar:', selectedDate);
         
         let registryData = {
             resident_id: finalResidentId,
