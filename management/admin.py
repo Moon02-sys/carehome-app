@@ -1,8 +1,6 @@
 from django.contrib import admin
 from .models import Worker
 
-# Register your models here.
-
 @admin.register(Worker)
 class WorkerAdmin(admin.ModelAdmin):
     list_display = ['name', 'first_surname', 'second_surname', 'nif_nie', 'phone', 'email', 'is_active']

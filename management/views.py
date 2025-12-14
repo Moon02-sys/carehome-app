@@ -7,7 +7,7 @@ from resources.strings import content as STRINGS
 from .models import Resident, Worker
 from registry.models import FoodRegistry, MedicationRegistry, BowelMovementRegistry
 from .forms import ResidentForm, WorkerForm
-from .permissions import has_permission
+from .permissions import has_permission, is_coordinator
 import json
 
 def management_dashboard(request):
@@ -55,7 +55,7 @@ def add_worker(request):
         user = User.objects.create_user(
             username=username,
             email=email or f'{username}@temp.com',
-            password='Change123',  # Password temporal
+            password='Change123',  # Contraseña temporal
             first_name=request.POST.get('name', ''),
             last_name=f"{request.POST.get('first_surname', '')} {request.POST.get('second_surname', '')}".strip()
         )
@@ -83,8 +83,8 @@ def add_worker(request):
     except Exception as e:
         return JsonResponse({
             'success': False,
-            'message': str(e)
-        }, status=500)
+            'message': f'Error al crear trabajador: {str(e)}'
+        }, status=400)
 
 @login_required
 @has_permission('management.change_worker')
@@ -94,7 +94,7 @@ def edit_worker(request, pk):
         worker = get_object_or_404(Worker, pk=pk)
         
         # Verificar si el usuario actual es coordinador
-        is_coordinator = hasattr(request.user, 'worker_profile') and request.user.worker_profile.role == 'Coordinador'
+        user_is_coordinator = is_coordinator(request.user)
         
         # Verificar si se debe eliminar la foto
         if request.POST.get('remove_photo') == 'true':
@@ -112,7 +112,7 @@ def edit_worker(request, pk):
         # Si no es coordinador y intenta cambiar el turno, lo ignoramos
         form_data = request.POST.copy()
         
-        if not is_coordinator:
+        if not user_is_coordinator:
             # Si no es coordinador, mantener el turno actual
             form_data['shift'] = worker.shift if worker.shift else ''
         
@@ -130,11 +130,11 @@ def edit_worker(request, pk):
                 'success': False,
                 'errors': form.errors
             }, status=400)
-    except Exception as e:
+    except Exception:
         return JsonResponse({
             'success': False,
-            'message': str(e)
-        }, status=500)
+            'message': 'No se pudo actualizar el trabajador'
+        }, status=400)
 
 @login_required
 @has_permission('management.delete_worker')
@@ -160,7 +160,7 @@ def worker_detail(request, pk):
     worker = get_object_or_404(Worker.objects.select_related('user'), pk=pk)
     
     # Verificar si el usuario actual es coordinador
-    is_user_coordinator = hasattr(request.user, 'worker_profile') and request.user.worker_profile.role == 'Coordinador'
+    is_user_coordinator = is_coordinator(request.user)
     
     context = {
         'worker': worker,

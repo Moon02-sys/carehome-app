@@ -24,7 +24,7 @@ def registry_list(request):
 @login_required
 @require_http_methods(["POST", "PUT"])
 def save_food_registry(request):
-    """Guardar o actualizar registro de alimentación"""
+    """Guarda el registro de comida del residente"""
     try:
         data = json.loads(request.body)
         registry_id = data.get('registry_id')
@@ -62,10 +62,10 @@ def save_food_registry(request):
             'message': 'Registro guardado exitosamente',
             'registry_id': registry.id
         })
-    except Exception as e:
+    except Exception:
         return JsonResponse({
             'success': False,
-            'message': f'Error al guardar: {str(e)}'
+            'message': 'No se pudo guardar el registro de alimentación'
         }, status=400)
 
 @login_required
@@ -103,10 +103,7 @@ def save_medication_registry(request):
             'registry_id': registry.id
         })
     except Exception as e:
-        return JsonResponse({
-            'success': False,
-            'message': f'Error al guardar: {str(e)}'
-        }, status=400)
+        return JsonResponse({'success': False, 'message': str(e)}, status=400)
 
 @login_required
 @require_http_methods(["POST", "PUT"])
@@ -156,7 +153,7 @@ def save_bowel_registry(request):
 @login_required
 @require_http_methods(["GET"])
 def get_resident_registries(request, resident_id):
-    """Obtener todos los registros de un residente"""
+    """Devuelve los registros del residente (comida, medicación, deposición)"""
     try:
         resident = Resident.objects.get(id=resident_id)
         
@@ -238,7 +235,7 @@ def edit_registry(request, pk):
 @login_required
 @require_http_methods(["DELETE"])
 def delete_food_registry(request, registry_id):
-    """Eliminar registro de alimentación"""
+    """Borra un registro de comida"""
     try:
         registry = FoodRegistry.objects.get(id=registry_id)
         registry.delete()
@@ -280,7 +277,7 @@ def delete_bowel_registry(request, registry_id):
 @login_required
 @require_http_methods(["POST"])
 def save_annotation(request):
-    """Guardar una nueva anotación"""
+    """Crea una anotación nueva en el panel seleccionado"""
     try:
         data = json.loads(request.body)
         

@@ -3,8 +3,6 @@ from django.contrib.auth.models import User
 from management.models import Resident
 from resources.choices import PanelChoices, TypeChoices
 
-# Create your models here.
-
 class MedicationRegistry(models.Model):
     """Registro de administración de medicación"""
     resident = models.ForeignKey(Resident, on_delete=models.CASCADE, related_name='medication_registries', verbose_name="Residente")

@@ -1,8 +1,6 @@
 from django.db import models
 from management.models import Resident, Worker
 
-# Create your models here.
-
 class Fall(models.Model):
     PLACE_CHOICES = [
         ('habitacion', 'Habitación'),

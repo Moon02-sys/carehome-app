@@ -3,8 +3,6 @@ from django.contrib.auth.models import User, Group
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-# Create your models here.
-
 class Resident(models.Model):
     GENDER_CHOICES = [
         ('M', 'Masculino'),
@@ -12,19 +10,19 @@ class Resident(models.Model):
     ]
     
     # Datos personales
-    name = models.CharField(max_length=100, verbose_name="Nombre")
+    name = models.CharField(max_length=100)
     first_surname = models.CharField(max_length=100, verbose_name="Primer apellido")
     second_surname = models.CharField(max_length=100, blank=True, verbose_name="Segundo apellido")
     nif_nie = models.CharField(max_length=20, unique=True, verbose_name="NIF/NIE")
     birthdate = models.DateField(verbose_name="Fecha de nacimiento")
-    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, verbose_name="Género")
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
     
     # Datos de contacto
-    address = models.CharField(max_length=255, blank=True, verbose_name="Dirección")
-    locality = models.CharField(max_length=100, blank=True, verbose_name="Localidad")
-    province = models.CharField(max_length=100, blank=True, verbose_name="Provincia")
-    country = models.CharField(max_length=100, default="España", verbose_name="País")
-    phone = models.CharField(max_length=20, blank=True, verbose_name="Teléfono")
+    address = models.CharField(max_length=255, blank=True)
+    locality = models.CharField(max_length=100, blank=True)
+    province = models.CharField(max_length=100, blank=True)
+    country = models.CharField(max_length=100, default="España")
+    phone = models.CharField(max_length=20, blank=True)
     
     # Datos médicos
     social_security_number = models.CharField(max_length=20, blank=True, verbose_name="Número de Seguridad Social")
@@ -37,7 +35,7 @@ class Resident(models.Model):
         ('O+', 'O+'), ('O-', 'O-'),
     ]
     blood_type = models.CharField(max_length=3, choices=BLOOD_TYPE_CHOICES, blank=True, verbose_name="Grupo Sanguíneo")
-    allergies = models.TextField(blank=True, verbose_name="Alergias")
+    allergies = models.TextField(blank=True)
     chronic_diseases = models.TextField(blank=True, verbose_name="Enfermedades Crónicas")
     current_medications = models.TextField(blank=True, verbose_name="Medicación Actual")
     
@@ -127,19 +125,19 @@ class Worker(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='worker_profile', null=True, blank=True)
     
     # Datos personales
-    name = models.CharField(max_length=100, verbose_name="Nombre")
+    name = models.CharField(max_length=100)
     first_surname = models.CharField(max_length=100, verbose_name="Primer apellido")
     second_surname = models.CharField(max_length=100, blank=True, verbose_name="Segundo apellido")
     nif_nie = models.CharField(max_length=20, unique=True, verbose_name="NIF/NIE")
     birthdate = models.DateField(verbose_name="Fecha de nacimiento")
-    gender = models.CharField(max_length=10, choices=GENDER_CHOICES, blank=True, verbose_name="Género")
+    gender = models.CharField(max_length=10, choices=GENDER_CHOICES, blank=True)
     
     # Datos de contacto
-    address = models.CharField(max_length=255, blank=True, verbose_name="Dirección")
-    locality = models.CharField(max_length=100, blank=True, verbose_name="Localidad")
+    address = models.CharField(max_length=255, blank=True)
+    locality = models.CharField(max_length=100, blank=True)
     province = models.CharField(max_length=100, choices=PROVINCE_CHOICES, blank=True, verbose_name="Provincia")
-    country = models.CharField(max_length=100, blank=True, verbose_name="País")
-    phone = models.CharField(max_length=20, blank=True, verbose_name="Teléfono")
+    country = models.CharField(max_length=100, blank=True)
+    phone = models.CharField(max_length=20, blank=True)
     
     # Datos laborales
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, blank=True, verbose_name="Rol")

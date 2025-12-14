@@ -164,11 +164,11 @@ def update_profile(request):
             }
         })
 
-    except Exception as e:
+    except Exception:
         return JsonResponse({
             'success': False,
-            'message': str(e)
-        }, status=500)
+            'message': 'Error al actualizar el perfil'
+        }, status=400)
 
 
 @login_required
@@ -206,23 +206,23 @@ def change_password(request):
             'message': 'Contraseña actualizada correctamente'
         })
         
-    except Exception as e:
+    except Exception:
         return JsonResponse({
             'success': False,
-            'message': str(e)
-        }, status=500)
+            'message': 'No se pudo cambiar la contraseña'
+        }, status=400)
 
 
 @require_http_methods(["POST"])
 def recover_password(request):
-    """Recover password by username (no email). This will set the password for the user if username exists."""
+    """Recuperar contraseña por nombre de usuario. Establece nueva contraseña si el usuario existe."""
     try:
         data = json.loads(request.body)
         username = data.get('username')
         new_password = data.get('new_password')
 
         if not username or not new_password:
-            return JsonResponse({'success': False, 'message': 'Username and new_password required'}, status=400)
+            return JsonResponse({'success': False, 'message': 'Usuario y nueva contraseña requeridos'}, status=400)
 
         user = User.objects.filter(username=username).first()
         if not user:
@@ -234,5 +234,5 @@ def recover_password(request):
         user.set_password(new_password)
         user.save()
         return JsonResponse({'success': True, 'message': 'Contraseña cambiada con éxito'})
-    except Exception as e:
-        return JsonResponse({'success': False, 'message': str(e)}, status=500)
+    except Exception:
+        return JsonResponse({'success': False, 'message': 'Error en la recuperación de contraseña'}, status=400)
