@@ -116,12 +116,10 @@
                         <div class="col-7"><span class="badge bg-info">{{ worker.role }}</span></div>
                     </div>
                     {% endif %}
-                    {% if worker.shift %}
                     <div class="row mb-2">
                         <div class="col-5 fw-bold">Turno:</div>
-                        <div class="col-7"><span class="badge bg-warning">{{ worker.shift }}</span></div>
+                        <div class="col-7"><span class="badge bg-warning">{{ worker.shift|default:"-" }}</span></div>
                     </div>
-                    {% endif %}
                 </div>
             </div>
 

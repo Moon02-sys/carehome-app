@@ -52,6 +52,14 @@
                                         {{ STRINGS.SECOND_SURNAME_LABEL }}
                                         <i class="bi bi-arrow-down-up ms-1"></i>
                                     </th>
+                                    <th scope="col" class="fw-bold" style="cursor: pointer;" onclick="sortTable(3)">
+                                        {{ STRINGS.ROLE_LABEL }}
+                                        <i class="bi bi-arrow-down-up ms-1"></i>
+                                    </th>
+                                    <th scope="col" class="fw-bold" style="cursor: pointer;" onclick="sortTable(4)">
+                                        Turno
+                                        <i class="bi bi-arrow-down-up ms-1"></i>
+                                    </th>
                                     <th scope="col" class="fw-bold text-center">{{ STRINGS.ACTIONS }}</th>
                                 </tr>
                             </thead>
@@ -62,6 +70,20 @@
                                     <td class="align-middle">{{ worker.name }}</td>
                                     <td class="align-middle">{{ worker.first_surname }}</td>
                                     <td class="align-middle">{{ worker.second_surname }}</td>
+                                    <td class="align-middle">
+                                        {% if worker.role %}
+                                            <span class="badge bg-info">{{ worker.role }}</span>
+                                        {% else %}
+                                            <span class="text-muted">-</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="align-middle">
+                                        {% if worker.shift %}
+                                            <span class="badge bg-warning">{{ worker.shift }}</span>
+                                        {% else %}
+                                            <span class="text-muted">-</span>
+                                        {% endif %}
+                                    </td>
                                     <td class="text-center align-middle">
                                         <div class="btn-group" role="group">
                                             <button class="btn btn-sm btn-outline-primary" title="Editar" onclick="event.stopPropagation(); window.location.href='{% url 'management:worker_detail' worker.id %}?edit=true';">

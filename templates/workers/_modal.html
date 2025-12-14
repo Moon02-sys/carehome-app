@@ -15,30 +15,30 @@
                     <div class="row">
                         <div class="col-md-4 mb-3">
                             <label for="name" class="form-label">{{ STRINGS.NAME_LABEL }}<span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="name" value="{{ worker.name }}" required>
+                            <input type="text" class="form-control" id="name" value="{{ worker.name }}" required {% if is_user_coordinator and not can_edit_shift %}disabled{% endif %}>
                         </div>
                         <div class="col-md-4 mb-3">
                             <label for="first_surname" class="form-label">{{ STRINGS.FIRST_SURNAME_LABEL }}<span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="first_surname" value="{{ worker.first_surname }}" required>
+                            <input type="text" class="form-control" id="first_surname" value="{{ worker.first_surname }}" required {% if is_user_coordinator and not can_edit_shift %}disabled{% endif %}>
                         </div>
                         <div class="col-md-4 mb-3">
                             <label for="second_surname" class="form-label">{{ STRINGS.SECOND_SURNAME_LABEL }}</label>
-                            <input type="text" class="form-control" id="second_surname" value="{{ worker.second_surname }}">
+                            <input type="text" class="form-control" id="second_surname" value="{{ worker.second_surname }}" {% if is_user_coordinator and not can_edit_shift %}disabled{% endif %}>
                         </div>
                     </div>
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="nif_nie" class="form-label">{{ STRINGS.NIF_NIE_LABEL }}<span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="nif_nie" value="{{ worker.nif_nie }}" required>
+                            <input type="text" class="form-control" id="nif_nie" value="{{ worker.nif_nie }}" required {% if is_user_coordinator and not can_edit_shift %}disabled{% endif %}>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="birthdate" class="form-label">{{ STRINGS.BIRTHDATE_LABEL }}<span class="text-danger">*</span></label>
-                            <input type="date" class="form-control" id="birthdate" value="{{ worker.birthdate|date:'Y-m-d' }}" required>
+                            <input type="date" class="form-control" id="birthdate" value="{{ worker.birthdate|date:'Y-m-d' }}" required {% if is_user_coordinator and not can_edit_shift %}disabled{% endif %}>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="gender" class="form-label">{{ STRINGS.GENDER_LABEL }}</label>
-                            <select class="form-select" id="gender">
+                            <select class="form-select" id="gender" {% if is_user_coordinator and not can_edit_shift %}disabled{% endif %}>
                                 <option value="">{{ STRINGS.SELECT_OPTION }}</option>
                                 <option value="H" {% if worker.gender == 'H' %}selected{% endif %}>{{ STRINGS.GENDER_MAN }}</option>
                                 <option value="M" {% if worker.gender == 'M' %}selected{% endif %}>{{ STRINGS.GENDER_WOMAN }}</option>
@@ -46,7 +46,7 @@
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="role" class="form-label">{{ STRINGS.ROLE_LABEL }}</label>
-                            <select class="form-select" id="role">
+                            <select class="form-select" id="role" {% if is_user_coordinator and not can_edit_shift %}disabled{% endif %}>
                                 <option value="">{{ STRINGS.SELECT_OPTION }}</option>
                                 <option value="Director" {% if worker.role == 'Director' %}selected{% endif %}>{{ STRINGS.ROLE_DIRECTOR }}</option>
                                 <option value="Coordinador" {% if worker.role == 'Coordinador' %}selected{% endif %}>{{ STRINGS.ROLE_COORDINATOR }}</option>
@@ -72,18 +72,18 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="address" class="form-label">{{ STRINGS.ADDRESS_LABEL }}</label>
-                            <input type="text" class="form-control" id="address" value="{{ worker.address }}">
+                            <input type="text" class="form-control" id="address" value="{{ worker.address }}" {% if is_user_coordinator and not can_edit_shift %}disabled{% endif %}>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="locality" class="form-label">{{ STRINGS.LOCALITY_LABEL }}</label>
-                            <input type="text" class="form-control" id="locality" value="{{ worker.locality }}">
+                            <input type="text" class="form-control" id="locality" value="{{ worker.locality }}" {% if is_user_coordinator and not can_edit_shift %}disabled{% endif %}>
                         </div>
                     </div>
 
                     <div class="row">
                         <div class="col mb-3">
                             <label for="province" class="form-label">{{ STRINGS.PROVINCE_LABEL }}</label>
-                            <select class="form-select" id="province">
+                            <select class="form-select" id="province" {% if is_user_coordinator and not can_edit_shift %}disabled{% endif %}>
                                 <option value="">{{ STRINGS.SELECT_OPTION }}</option>
                                 <option value="Huesca" {% if worker.province == 'Huesca' %}selected{% endif %}>Huesca</option>
                                 <option value="Teruel" {% if worker.province == 'Teruel' %}selected{% endif %}>Teruel</option>
@@ -98,11 +98,11 @@
                     <div class="row">
                         <div class="col mb-3">
                             <label for="phone" class="form-label">{{ STRINGS.PHONE_LABEL }}</label>
-                            <input type="tel" class="form-control" id="phone" value="{{ worker.phone }}">
+                            <input type="tel" class="form-control" id="phone" value="{{ worker.phone }}" {% if is_user_coordinator and not can_edit_shift %}disabled{% endif %}>
                         </div>
                         <div class="col mb-3">
                             <label for="email" class="form-label">{{ STRINGS.EMAIL_LABEL }}</label>
-                            <input type="email" class="form-control" id="email" value="{{ worker.email }}">
+                            <input type="email" class="form-control" id="email" value="{{ worker.email }}" {% if is_user_coordinator and not can_edit_shift %}disabled{% endif %}>
                         </div>
                     </div>
 
@@ -111,31 +111,31 @@
                     <div class="row">
                         <div class="col mb-3">
                             <label for="social_security_number" class="form-label">{{ STRINGS.SOCIAL_SECURITY_NUMBER_LABEL }}</label>
-                            <input type="text" class="form-control" id="social_security_number" value="{{ worker.social_security_number }}">
+                            <input type="text" class="form-control" id="social_security_number" value="{{ worker.social_security_number }}" {% if is_user_coordinator and not can_edit_shift %}disabled{% endif %}>
                         </div>
                         <div class="col mb-3">
                             <label for="account_number" class="form-label">{{ STRINGS.ACCOUNT_NUMBER_LABEL }}</label>
-                            <input type="text" class="form-control" id="account_number" value="{{ worker.account_number }}">
+                            <input type="text" class="form-control" id="account_number" value="{{ worker.account_number }}" {% if is_user_coordinator and not can_edit_shift %}disabled{% endif %}>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col mb-3">
                             <label for="hire_date" class="form-label">{{ STRINGS.HIRE_DATE_LABEL }}</label>
-                            <input type="date" class="form-control" id="hire_date" value="{% if worker.hire_date %}{{ worker.hire_date|date:'Y-m-d' }}{% endif %}">
+                            <input type="date" class="form-control" id="hire_date" value="{% if worker.hire_date %}{{ worker.hire_date|date:'Y-m-d' }}{% endif %}" {% if is_user_coordinator and not can_edit_shift %}disabled{% endif %}>
                         </div>
                         <div class="col mb-3">
                             <label for="disability_percentage" class="form-label">{{ STRINGS.DISABILITY_PERCENTAGE_LABEL }}</label>
-                            <input type="number" class="form-control" id="disability_percentage" min="0" max="100" step="0.01" value="{% if worker.disability_percentage %}{{ worker.disability_percentage }}{% endif %}">
+                            <input type="number" class="form-control" id="disability_percentage" min="0" max="100" step="0.01" value="{% if worker.disability_percentage %}{{ worker.disability_percentage }}{% endif %}" {% if is_user_coordinator and not can_edit_shift %}disabled{% endif %}>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col mb-3">
                             <label for="curriculum" class="form-label">{{ STRINGS.CURRICULUM_LABEL }}</label>
-                            <input type="file" class="form-control" id="curriculum" accept=".pdf">
+                            <input type="file" class="form-control" id="curriculum" accept=".pdf" {% if is_user_coordinator and not can_edit_shift %}disabled{% endif %}>
                             {% if worker.curriculum %}
                                 <div class="mt-2">
                                     <small class="text-muted d-block">{{ STRINGS.CURRENT_FILE }}: {{ worker.curriculum.name }}</small>
-                                    <button type="button" class="btn btn-sm btn-outline-danger mt-1" id="removeCurriculumBtn">
+                                    <button type="button" class="btn btn-sm btn-outline-danger mt-1" id="removeCurriculumBtn" {% if is_user_coordinator and not can_edit_shift %}disabled{% endif %}>
                                         <i class="bi bi-trash"></i> {{ STRINGS.REMOVE_CURRICULUM }}
                                     </button>
                                     <input type="hidden" id="remove_curriculum" value="false">
@@ -144,7 +144,7 @@
                         </div>
                         <div class="col mb-3">
                             <label for="profile_photo" class="form-label">{{ STRINGS.PROFILE_PHOTO_LABEL }}</label>
-                            <input type="file" class="form-control" id="profile_photo" accept="image/*">
+                            <input type="file" class="form-control" id="profile_photo" accept="image/*" {% if is_user_coordinator and not can_edit_shift %}disabled{% endif %}>
                             {% if worker.profile_photo %}
                                 <div class="mt-2">
                                     <small class="text-muted d-block">{{ STRINGS.CURRENT_PHOTO }}: {{ worker.profile_photo.name }}</small>
