@@ -198,9 +198,6 @@ async function loadAnnotations() {
                     </button>
                 </td>
                 <td>
-                    <button class="btn btn-sm btn-outline-primary" onclick="editAnnotation(${annotation.id})" title="Editar">
-                        <i class="bi bi-pencil"></i>
-                    </button>
                     <button class="btn btn-sm btn-outline-danger" onclick="deleteAnnotation(${annotation.id})" title="Eliminar">
                         <i class="bi bi-trash"></i>
                     </button>

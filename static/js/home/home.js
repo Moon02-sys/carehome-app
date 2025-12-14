@@ -16,16 +16,10 @@ document.addEventListener('DOMContentLoaded', function() {
         nuevaCaidaModal.addEventListener('show.bs.modal', function() {
             const fechaInput = document.getElementById('fecha');
             if (fechaInput && !fechaInput.value) {
-                // Si el input es datetime-local, asignar fecha y hora local
-                if (fechaInput.type === 'datetime-local') {
-                    const d = new Date();
-                    const pad = (n) => String(n).padStart(2, '0');
-                    const local = `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
-                    fechaInput.value = local;
-                } else {
-                    const today = new Date().toISOString().split('T')[0];
-                    fechaInput.value = today;
-                }
+                const d = new Date();
+                const pad = (n) => String(n).padStart(2, '0');
+                const local = `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+                fechaInput.value = local;
             }
         });
 
@@ -262,16 +256,31 @@ function clearSearch() {
 
 async function registrarCaida() {
     const form = document.getElementById('nuevaCaidaForm');
-    if (form.checkValidity()) {
-        const fecha = document.getElementById('fecha').value;
-        const panel = document.getElementById('caidaPanel').value;
-        const residenteId = document.getElementById('residente').value;
-        const lugar = document.getElementById('lugar').value;
-        const familiarInformado = document.getElementById('familiarInformado').value;
-        const causa = document.getElementById('causa').value;
-        const consecuencias = document.getElementById('consecuencias').value;
-        const observaciones = document.getElementById('observaciones').value;
-        const editingId = document.getElementById('registrarCaidaBtn').dataset.editingId;
+    if (form && form.checkValidity()) {
+        const fechaEl = document.getElementById('fecha');
+        const panelEl = document.getElementById('caidaPanel');
+        const residenteEl = document.getElementById('residente');
+        const lugarEl = document.getElementById('lugar');
+        const familiarEl = document.getElementById('familiarInformado');
+        const causaEl = document.getElementById('causa');
+        const consecuenciasEl = document.getElementById('consecuencias');
+        const observacionesEl = document.getElementById('observaciones');
+        const btnEl = document.getElementById('registrarCaidaBtn');
+        
+        if (!fechaEl || !panelEl || !residenteEl || !lugarEl || !familiarEl || !causaEl || !consecuenciasEl) {
+            showAlert('Error: Formulario incompleto', 'danger');
+            return;
+        }
+        
+        const fecha = fechaEl.value;
+        const panel = panelEl.value;
+        const residenteId = residenteEl.value;
+        const lugar = lugarEl.value;
+        const familiarInformado = familiarEl.value;
+        const causa = causaEl.value;
+        const consecuencias = consecuenciasEl.value;
+        const observaciones = observacionesEl ? observacionesEl.value : '';
+        const editingId = btnEl ? btnEl.dataset.editingId : null;
 
         // Preparar los datos de la caída como anotación
         const formData = {

@@ -457,11 +457,11 @@ function setupEntryButtons(entryItem, type, residentId = null) {
                 formView.style.display = 'none';
                 compactView.style.display = 'block';
             } else {
-                alert('Error al guardar: ' + result.message);
+                showAlert('Error al guardar: ' + result.message, 'danger');
             }
         } catch (error) {
             console.error('Error:', error);
-            alert('Error al guardar el registro. Por favor, intente nuevamente.');
+            showAlert('Error al guardar el registro. Por favor, intente nuevamente.', 'danger');
         }
     });
     
@@ -481,46 +481,26 @@ function setupEntryButtons(entryItem, type, residentId = null) {
     });
     
     // Botón eliminar
-    entryItem.querySelector('.delete-entry')?.addEventListener('click', async function() {
-        if (confirm('¿Está seguro de eliminar este registro?')) {
-            const registryId = this.closest('.entry-item').dataset.registryId;
-            
-            if (!registryId) {
-                // Si no tiene ID, es un registro nuevo que no se guardó
-                this.closest('.entry-item').remove();
-                return;
-            }
-            
-            // Determinar la URL según el tipo
-            let deleteUrl = '';
-            if (type === 'alimentacion') {
-                deleteUrl = `/registry/api/delete-food/${registryId}/`;
-            } else if (type === 'medicacion') {
-                deleteUrl = `/registry/api/delete-medication/${registryId}/`;
-            } else if (type === 'deposicion') {
-                deleteUrl = `/registry/api/delete-bowel/${registryId}/`;
-            }
-            
-            try {
-                const response = await fetch(deleteUrl, {
-                    method: 'DELETE',
-                    headers: {
-                        'X-CSRFToken': getCookie('csrftoken')
-                    }
-                });
-                
-                const result = await response.json();
-                
-                if (result.success) {
-                    this.closest('.entry-item').remove();
-                } else {
-                    alert('Error al eliminar: ' + result.message);
-                }
-            } catch (error) {
-                console.error('Error al eliminar:', error);
-                alert('Error al eliminar el registro');
-            }
+    entryItem.querySelector('.delete-entry')?.addEventListener('click', function() {
+        const entryElement = this.closest('.entry-item');
+        const registryId = entryElement.dataset.registryId;
+        
+        if (!registryId) {
+            // Si no tiene ID, es un registro nuevo que no se guardó
+            entryElement.remove();
+            return;
         }
+        
+        // Guardar referencia para el modal
+        window.pendingDeleteRegistry = {
+            id: registryId,
+            element: entryElement,
+            type: type
+        };
+        
+        // Mostrar modal de confirmación
+        const deleteModal = new bootstrap.Modal(document.getElementById('deleteRegistryConfirmModal'));
+        deleteModal.show();
     });
 }
 
@@ -543,3 +523,50 @@ function getCookie(name) {
     }
     return cookieValue;
 }
+
+// Manejador del botón de confirmación de eliminación de registro
+document.getElementById('confirmDeleteRegistryBtn')?.addEventListener('click', async function() {
+    const pendingDelete = window.pendingDeleteRegistry;
+    if (!pendingDelete) return;
+    
+    const { id, element, type } = pendingDelete;
+    
+    // Determinar la URL según el tipo
+    let deleteUrl = '';
+    if (type === 'alimentacion') {
+        deleteUrl = `/registry/api/delete-food/${id}/`;
+    } else if (type === 'medicacion') {
+        deleteUrl = `/registry/api/delete-medication/${id}/`;
+    } else if (type === 'deposicion') {
+        deleteUrl = `/registry/api/delete-bowel/${id}/`;
+    }
+    
+    try {
+        const response = await fetch(deleteUrl, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            }
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            element.remove();
+            
+            // Cerrar el modal
+            const deleteModal = bootstrap.Modal.getInstance(document.getElementById('deleteRegistryConfirmModal'));
+            deleteModal.hide();
+            
+            showAlert('Registro eliminado correctamente', 'success');
+        } else {
+            showAlert('Error al eliminar: ' + result.message, 'danger');
+        }
+    } catch (error) {
+        console.error('Error al eliminar:', error);
+        showAlert('Error al eliminar el registro', 'danger');
+    }
+    
+    // Limpiar la referencia
+    window.pendingDeleteRegistry = null;
+});

@@ -39,14 +39,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Recargar página para ver cambios
                     window.location.reload();
                 } else {
-                    alert('Error: ' + (data.message || 'No se pudo eliminar el trabajador'));
+                    showAlert('Error: ' + (data.message || 'No se pudo eliminar el trabajador'), 'danger');
                     confirmDeleteBtn.disabled = false;
                     confirmDeleteBtn.innerHTML = '<i class="bi bi-trash"></i> Eliminar';
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('Error al eliminar el trabajador');
+                showAlert('Error al eliminar el trabajador', 'danger');
                 confirmDeleteBtn.disabled = false;
                 confirmDeleteBtn.innerHTML = '<i class="bi bi-trash"></i> Eliminar';
             });
