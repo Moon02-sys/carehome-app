@@ -242,7 +242,8 @@ function clearSearch() {
     const table = document.querySelector('.table tbody');
     if (!table) return;
     
-    const rows = Array.from(table.getElementsByTagName('tr'));
+    // Filtrar solo filas de datos (excluir filas con colspan como "Cargando...")
+    const rows = Array.from(table.querySelectorAll('tr')).filter(r => !r.querySelector('td[colspan]'));
     
     // Ordenar por el índice original
     rows.sort((a, b) => {
@@ -254,7 +255,7 @@ function clearSearch() {
     // Reordenar las filas en el DOM
     rows.forEach(row => table.appendChild(row));
     
-    // Mostrar todas las filas
+    // Mostrar todas las filas de datos
     rows.forEach(row => {
         row.style.display = '';
     });
