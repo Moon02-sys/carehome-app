@@ -39,7 +39,7 @@
                             <button class="btn btn-primary" onclick="window.location.href='{% url 'management:residents_list' %}'">
                                 <i class="bi bi-arrow-left"></i> {{ STRINGS.BUTTON_BACK }}
                             </button>
-                            {% if perms.management.change_resident %}
+                            {% if user.worker_profile.role == 'Director' or user.worker_profile.role == 'Coordinador' %}
                             <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editResidentModal">
                                 <i class="bi bi-pencil"></i> {{ STRINGS.BUTTON_EDIT }}
                             </button>

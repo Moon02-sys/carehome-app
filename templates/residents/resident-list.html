@@ -66,9 +66,11 @@
                                     <td class="align-middle">{{ resident.second_surname }}</td>
                                     <td class="text-center align-middle">
                                         <div class="btn-group" role="group">
+                                            {% if user.worker_profile.role == 'Director' or user.worker_profile.role == 'Coordinador' %}
                                             <button class="btn btn-sm btn-outline-primary" title="{{ STRINGS.BUTTON_EDIT }}" onclick="event.stopPropagation(); window.location.href='{% url 'management:resident_detail' resident.pk %}?edit=true';">
                                                 <i class="bi bi-pencil"></i>
                                             </button>
+                                            {% endif %}
                                             {% if perms.management.delete_resident %}
                                             <button class="btn btn-sm btn-outline-danger" title="{{ STRINGS.BUTTON_DELETE }}" onclick="event.stopPropagation(); openDeleteResidentModal({{ resident.pk }}, '{{ resident.get_full_name }}');">
                                                 <i class="bi bi-x-lg"></i>
