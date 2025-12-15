@@ -229,29 +229,39 @@ function filterTable() {
 }
 
 function clearSearch() {
-    document.getElementById('searchInput').value = '';
-    sortDirection = {}; // Reiniciar el ordenamiento
+    // Limpiar el input de búsqueda
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.value = '';
+    }
+    
+    // Reiniciar el ordenamiento
+    sortDirection = {};
     
     // Restaurar el orden original de las filas
     const table = document.querySelector('.table tbody');
-    const rows = Array.from(table.getElementsByTagName('tr'));
+    if (!table) return;
     
-    // Guardar el orden original con un atributo data
-    rows.forEach((row, index) => {
-        if (!row.hasAttribute('data-original-index')) {
-            row.setAttribute('data-original-index', index);
-        }
-    });
+    const rows = Array.from(table.getElementsByTagName('tr'));
     
     // Ordenar por el índice original
     rows.sort((a, b) => {
-        return parseInt(a.getAttribute('data-original-index')) - parseInt(b.getAttribute('data-original-index'));
+        const indexA = parseInt(a.getAttribute('data-original-index')) || 0;
+        const indexB = parseInt(b.getAttribute('data-original-index')) || 0;
+        return indexA - indexB;
     });
     
-    // Reordenar las filas
+    // Reordenar las filas en el DOM
     rows.forEach(row => table.appendChild(row));
     
-    filterTable();
+    // Mostrar todas las filas
+    rows.forEach(row => {
+        row.style.display = '';
+    });
+    
+    // Actualizar contadores
+    updateFallsCounter();
+    updateResidentsCounter();
 }
 
 async function registrarCaida() {
