@@ -39,11 +39,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Guardar el orden original de las filas al cargar la página
-    const table = document.querySelector('.table tbody');
-    const rows = Array.from(table.getElementsByTagName('tr'));
-    rows.forEach((row, index) => {
-        row.setAttribute('data-original-index', index);
-    });
+    setOriginalRowOrder();
     
     // Inicializar tooltips de Bootstrap
     var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
@@ -231,9 +227,9 @@ function filterTable() {
 function clearSearch() {
     // Limpiar el input de búsqueda
     const searchInput = document.getElementById('searchInput');
-    if (searchInput) {
-        searchInput.value = '';
-    }
+    if (!searchInput) return;
+    
+    searchInput.value = '';
     
     // Reiniciar el ordenamiento
     sortDirection = {};
@@ -255,14 +251,8 @@ function clearSearch() {
     // Reordenar las filas en el DOM
     rows.forEach(row => table.appendChild(row));
     
-    // Mostrar todas las filas de datos
-    rows.forEach(row => {
-        row.style.display = '';
-    });
-    
-    // Actualizar contadores
-    updateFallsCounter();
-    updateResidentsCounter();
+    // Aplicar el filtro (con input vacío mostrará todas las filas)
+    filterTable();
 }
 
 async function registrarCaida() {
@@ -371,4 +361,15 @@ function getCookie(name) {
         }
     }
     return cookieValue;
+}
+
+function setOriginalRowOrder() {
+    const table = document.querySelector('.table tbody');
+    if (!table) return;
+
+    // Solo filas de datos, omitiendo placeholders con colspan
+    const rows = Array.from(table.querySelectorAll('tr')).filter(row => !row.querySelector('td[colspan]'));
+    rows.forEach((row, index) => {
+        row.setAttribute('data-original-index', index);
+    });
 }

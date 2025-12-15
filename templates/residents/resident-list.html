@@ -21,8 +21,8 @@
     <div class="row mb-4">
         <div class="col-md-6 col-lg-4">
             <div class="input-group">
-                <input type="text" class="form-control border-secondary" placeholder="{{ STRINGS.PLACEHOLDER_SEARCH_RESIDENT }}" aria-label="{{ STRINGS.PLACEHOLDER_SEARCH_RESIDENT }}">
-                <button class="btn btn-secondary" onclick="clearSearch()">{{ STRINGS.BUTTON_CLEAR }}</button>
+                <input type="text" id="residentSearchInput" class="form-control border-secondary" placeholder="{{ STRINGS.PLACEHOLDER_SEARCH_RESIDENT }}" aria-label="{{ STRINGS.PLACEHOLDER_SEARCH_RESIDENT }}">
+                <button class="btn btn-secondary" id="residentClearBtn" type="button" onclick="clearResidentSearch()">{{ STRINGS.BUTTON_CLEAR }}</button>
             </div>
         </div>
         <div class="col-md-6 col-lg-8 text-end">

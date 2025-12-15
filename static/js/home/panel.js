@@ -274,6 +274,13 @@ async function loadAnnotations() {
     });
     
     tbody.innerHTML = html;
+
+    // Recalcular índices originales para que el botón Limpiar restaure el orden
+    if (typeof setOriginalRowOrder === 'function') {
+        setOriginalRowOrder();
+    } else {
+        console.warn('setOriginalRowOrder no está disponible');
+    }
     
     // Actualizar los contadores después de cargar las anotaciones
     if (typeof updateFallsCounter === 'function') {

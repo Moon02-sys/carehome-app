@@ -5,6 +5,7 @@
 <script src="{% static 'js/management/worker-add.js' %}"></script>
 <script src="{% static 'js/management/table-sort.js' %}"></script>
 <script src="{% static 'js/management/worker-list-delete.js' %}"></script>
+<script src="{% static 'js/management/worker-list.js' %}"></script>
 {% endblock %}
 
 {% block content %}
@@ -19,8 +20,8 @@
     <div class="row mb-4">
         <div class="col-md-6 col-lg-4">
             <div class="input-group">
-                <input type="text" class="form-control border-secondary" placeholder="{{ STRINGS.PLACEHOLDER_SEARCH_WORKER }}" aria-label="{{ STRINGS.PLACEHOLDER_SEARCH_WORKER }}">
-                <button class="btn btn-secondary" onclick="clearSearch()">{{ STRINGS.BUTTON_CLEAR }}</button>
+                <input type="text" id="workerSearchInput" class="form-control border-secondary" placeholder="{{ STRINGS.PLACEHOLDER_SEARCH_WORKER }}" aria-label="{{ STRINGS.PLACEHOLDER_SEARCH_WORKER }}">
+                <button class="btn btn-secondary" id="workerClearBtn" type="button" onclick="clearWorkerSearch()">{{ STRINGS.BUTTON_CLEAR }}</button>
             </div>
         </div>
         <div class="col-md-6 col-lg-8 text-end">
