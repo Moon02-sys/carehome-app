@@ -368,29 +368,15 @@ function setupEntryButtons(entryItem, type, residentId = null) {
                 summaryParts.push(`Alimentación: ${mealText}`);
             }
             
-            // Mostrar platos si están seleccionados
-            if (firstCourse) {
-                const firstText = formView.querySelector('.first-course-select').selectedOptions[0]?.text;
-                summaryParts.push(`1º: ${firstText}`);
-            }
-            if (secondCourse) {
-                const secondText = formView.querySelector('.second-course-select').selectedOptions[0]?.text;
-                summaryParts.push(`2º: ${secondText}`);
-            }
-            if (dessert) {
-                const dessertText = formView.querySelector('.dessert-select').selectedOptions[0]?.text;
-                summaryParts.push(`Postre: ${dessertText}`);
-            }
-            
             // Mostrar hidratación
             if (liquidIntake || quantity) {
-                let hydrationText = 'Hidratación:';
+                let hydrationText = 'Hidratación';
                 if (liquidIntake) {
                     const liquidText = formView.querySelector('.liquid-intake-select').selectedOptions[0]?.text;
-                    hydrationText += ` ${liquidText}`;
+                    hydrationText += `: ${liquidText}`;
                 }
                 if (quantity) {
-                    hydrationText += liquidIntake ? ` - ${quantity}` : ` ${quantity}`;
+                    hydrationText += liquidIntake ? ` - ${quantity}` : `: ${quantity}`;
                 }
                 summaryParts.push(hydrationText);
             }
